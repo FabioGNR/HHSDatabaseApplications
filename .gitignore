@@ -19,3 +19,4 @@ dist/
 nbdist/
 nbactions.xml
 .nb-gradle/
+/DBApplication/nbproject/private/
