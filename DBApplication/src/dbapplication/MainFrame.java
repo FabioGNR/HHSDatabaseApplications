@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import dbapplication.student.*;
 import dbapplication.program.*;
 import dbapplication.institute.*;
+import javax.swing.JDialog;
 
 /**
  *
@@ -14,15 +15,13 @@ import dbapplication.institute.*;
  */
 public class MainFrame extends JFrame {
     
-     enum  ButtonType{
-            Student, Institute, Program
-        }
+    enum ButtonType{
+        Student, Institute, Program
+    }
 
     public MainFrame() {
-
         setupFrame();
         createComponents();
-
     }
 
     private void setupFrame() {
@@ -52,9 +51,9 @@ public class MainFrame extends JFrame {
         programButton.setLocation(50, 170);
         
         // add action listeners
-        instituteButton.addActionListener(new SelectionListener(ButtonType.Institute));
-        studentButton.addActionListener(new SelectionListener(ButtonType.Student));
-        programButton.addActionListener(new SelectionListener(ButtonType.Program));
+        instituteButton.addActionListener(new SelectionListener(new SearchInstituteFrame(this), new RegisterInstituteFrame(this)));
+        studentButton.addActionListener(new SelectionListener(new SearchStudentFrame(this), new RegisterStudentFrame(this)));
+        programButton.addActionListener(new SelectionListener(new SearchProgramFrame(this), new RegisterProgramFrame(this)));
         
         //add to Frame
         add(instituteButton); 
@@ -66,24 +65,16 @@ public class MainFrame extends JFrame {
     
     
     class SelectionListener implements ActionListener{
-        ButtonType buttonType;
-        public SelectionListener(ButtonType type) {
-            buttonType = type;
+        private JDialog searchDialog, registerDialog;
+        public SelectionListener(JDialog search, JDialog register) {
+            searchDialog = search;
+            registerDialog = register;
         }
 
         @Override
         public void actionPerformed(ActionEvent ae) {
-            ChoiceListener choiceListener = null;
-            switch(buttonType) {
-                case Student:
-                    choiceListener = new ChoiceListener(SearchStudentFrame.class, RegisterStudentFrame.class);
-                    break;
-            }
-            if(choiceListener != null)
-            {
-                ChoiceFrame frame = new ChoiceFrame(choiceListener);
-                
-            }
+            ChoiceListener choiceListener = new ChoiceListener(searchDialog, registerDialog);
+            ChoiceDialog choice = new ChoiceDialog(MainFrame.this, choiceListener);
         }   
     }
 

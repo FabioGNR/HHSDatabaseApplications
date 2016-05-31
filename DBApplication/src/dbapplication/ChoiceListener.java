@@ -2,6 +2,7 @@ package dbapplication;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 /**
@@ -9,25 +10,19 @@ import javax.swing.JFrame;
  * @author omari_000
  */
 public class ChoiceListener {
-    Class searchFrame, registerFrame;
-    public ChoiceListener(Class search, Class register) {
-        searchFrame = search;
-        registerFrame = register;
+    JDialog searchDialog, registerDialog;
+    public ChoiceListener(JDialog search, JDialog register) {
+        searchDialog = search;
+        registerDialog = register;
     }
     
     public void SearchClicked() {
-        try {
-            searchFrame.newInstance();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        searchDialog.setVisible(true);
+        searchDialog.toFront();
     }
     
     public void RegisterClicked() {
-        try {
-            registerFrame.newInstance();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }        
+        registerDialog.setVisible(true);     
+        registerDialog.toFront();
     }
 }
