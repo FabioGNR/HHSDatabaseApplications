@@ -16,14 +16,14 @@ public class DBApplication {
         // De onderstaande zorgt voor problemen op mijn Mac(jordain), UB zo laten tot dat we een oplossingen kunnen vinden
         
         
-   /*  try {
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally{
-*/
             JFrame frame = new MainFrame(); 
         }
     }
+}
     
