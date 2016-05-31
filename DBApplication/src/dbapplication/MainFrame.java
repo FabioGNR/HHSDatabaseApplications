@@ -27,6 +27,9 @@ public class MainFrame extends JFrame {
         setupFrame();
         createComponents();
         MaakConnectie();
+        // setVisible moet op einde 
+        // anders worden components niet zichtbaar
+        setVisible(true); 
     }
 
     private void setupFrame() {
@@ -34,8 +37,7 @@ public class MainFrame extends JFrame {
         setLayout(null);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setTitle("International office Exchange students systeem");
-        setVisible(true);
+        setTitle("International office Exchange students systeem"); 
     }
 
     private void createComponents() {

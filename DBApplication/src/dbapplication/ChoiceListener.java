@@ -10,7 +10,7 @@ import javax.swing.JFrame;
  * @author omari_000
  */
 public class ChoiceListener {
-    JDialog searchDialog, registerDialog;
+    private final JDialog searchDialog, registerDialog;
     public ChoiceListener(JDialog search, JDialog register) {
         searchDialog = search;
         registerDialog = register;

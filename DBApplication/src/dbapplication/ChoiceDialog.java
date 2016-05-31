@@ -13,7 +13,7 @@ import javax.swing.JPanel;
  */
 public class ChoiceDialog extends JDialog {
 
-    private ChoiceListener choiceListener;
+    private final ChoiceListener choiceListener;
 
     private enum Choice {
         Search, Register
