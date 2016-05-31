@@ -51,6 +51,11 @@ public class MainFrame extends JFrame {
         studentButton.setLocation(50, 110);
         programButton.setLocation(50, 170);
         
+        // add action listeners
+        instituteButton.addActionListener(new SelectionListener(ButtonType.Institute));
+        studentButton.addActionListener(new SelectionListener(ButtonType.Student));
+        programButton.addActionListener(new SelectionListener(ButtonType.Program));
+        
         //add to Frame
         add(instituteButton); 
         add(studentButton);
@@ -68,13 +73,17 @@ public class MainFrame extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent ae) {
-            ChoiceListener choiceListener;
+            ChoiceListener choiceListener = null;
             switch(buttonType) {
                 case Student:
                     choiceListener = new ChoiceListener(SearchStudentFrame.class, RegisterStudentFrame.class);
-                    
+                    break;
             }
-            ChoiceFrame frame = new ChoiceFrame(choiceListener);
+            if(choiceListener != null)
+            {
+                ChoiceFrame frame = new ChoiceFrame(choiceListener);
+                
+            }
         }   
     }
 
