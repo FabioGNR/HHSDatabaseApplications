@@ -29,7 +29,7 @@ public class MainFrame extends JFrame {
         MaakConnectie();
         // setVisible moet op einde 
         // anders worden components niet zichtbaar
-        setVisible(true); 
+        setVisible(true);
     }
 
     private void setupFrame() {
@@ -37,7 +37,7 @@ public class MainFrame extends JFrame {
         setLayout(null);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setTitle("International office Exchange students systeem"); 
+        setTitle("International office Exchange students systeem");
     }
 
     private void createComponents() {
@@ -86,12 +86,11 @@ public class MainFrame extends JFrame {
     }
 
     public static void MaakConnectie() {
-        DBConnectie.setUsernameAndURL();
         Connection Connectie = null;
         Statement stat = null;
 
         try {
-            Connectie = DBConnectie.getConnection();
+            Connectie = DBConnection.getConnection();
             System.out.println("Connection Succesfull");
 
             //Statements: Voor het testen dat de connectie werkt
@@ -99,27 +98,19 @@ public class MainFrame extends JFrame {
             ResultSet result = stat.executeQuery("SELECT * FROM student ");
 
             while (result.next()) {
-                System.out.println(result.getString("Name"));
-                System.out.println(result.getString("Student_id"));
+                //System.out.println(result.getString("Name"));
+                //System.out.println(result.getString("Student_id"));
             }
 
         } catch (SQLException error) {
             System.out.println("Error: " + error.getMessage());
 
         } finally {
-
-            if (Connectie != null) {
+            if (stat != null) {
                 try {
-                    Connectie.close();
+                    stat.close();
                 } catch (SQLException error) {
                 }
-                if (stat != null) {
-                    try {
-                        stat.close();
-                    } catch (SQLException error) {
-                    }
-                }
-
             }
         }
     }

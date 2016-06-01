@@ -2,6 +2,7 @@ package dbapplication;
 
 import java.sql.SQLException;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 public class DBApplication {
@@ -13,9 +14,14 @@ public class DBApplication {
     public static void main(String[] args) throws SQLException {
  
         
-        // De onderstaande zorgt voor problemen op mijn Mac(jordain), UB zo laten tot dat we een oplossingen kunnen vinden
-        
-        
+        // connectie maken met database
+        if(!DBConnection.connect()) {
+            new JOptionPane("Connection to database failed", 
+                    JOptionPane.ERROR_MESSAGE, JOptionPane.OK_OPTION)
+                    .setVisible(true);
+            return;
+        }
+      
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             

@@ -1,20 +1,32 @@
 package dbapplication.student;
 
 import dbapplication.JSearchField;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.TableColumnModel;
 
 /**
  *
  * @author omari_000
  */
 public class SearchStudentFrame extends JDialog{
-    JTextField searchField;
-    JButton searchButton;
-    JComboBox searchConditionCombo;
+    private JTextField searchField;
+    private JButton searchButton;
+    private JComboBox searchConditionCombo;
+    private JTable resultTable;
+    private JScrollPane resultPanel;
+    private StudentTableModel resultModel;
+    
     public SearchStudentFrame(JFrame owner) {
         super(owner, true);
         setupFrame();     
@@ -36,10 +48,36 @@ public class SearchStudentFrame extends JDialog{
         searchButton = new JButton("Search");
         searchButton.setLocation(220, 20);
         searchButton.setSize(90, 30);
+        searchButton.addActionListener(new SearchListener());
         add(searchButton);
         searchConditionCombo = new JComboBox(new String[]{"Student ID", "Name", "Email"});
         searchConditionCombo.setLocation(340, 20);
         searchConditionCombo.setSize(100, 30);
         add(searchConditionCombo);
+        resultTable = new JTable();
+        resultTable.setLocation(0, 0);
+        resultTable.setSize(400, 300);
+        resultModel = new StudentTableModel();
+        resultTable.setModel(resultModel);
+        resultTable.setPreferredScrollableViewportSize(new Dimension(400, 300));
+        resultTable.setFillsViewportHeight(true);
+        resultPanel = new JScrollPane(resultTable);
+        resultPanel.setLocation(20, 60);
+        resultPanel.setSize(400, 300);
+        add(resultPanel);
+    }
+    
+    private void search(String filter, String conditionColumn) {
+        ArrayList<Student> students = Student.searchStudents(filter, conditionColumn);
+        resultModel.setResults(students);
+    }
+    
+    class SearchListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            search(searchField.getText(), "name");
+        }
+        
     }
 }
