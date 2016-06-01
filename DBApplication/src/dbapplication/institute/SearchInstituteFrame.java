@@ -39,7 +39,7 @@ public class SearchInstituteFrame extends JDialog{
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setLayout(null);        
     }
-    // one sec goed
+    
     private void createComponents() {
         searchField = new JSearchField();
         searchField.setLocation(20, 20);
