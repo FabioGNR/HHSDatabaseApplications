@@ -1,9 +1,6 @@
 package dbapplication.institute;
 
-import dbapplication.ChoiceDialog;
-import dbapplication.ChoiceListener;
 import dbapplication.DBConnection;
-import dbapplication.MainFrame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
@@ -92,7 +89,7 @@ public class RegisterInstituteFrame extends JDialog {
         addButton.setLocation(400, 400);
         addButton.setSize(60, 60);
         addButton.addActionListener(lis);
-        addButton.setText("Add");
+        addButton.setText("Registreer");
         add(addButton);
 
         isBusinessLabel = new JLabel();
@@ -162,10 +159,10 @@ public class RegisterInstituteFrame extends JDialog {
                 preparedStatement.setString(5, address);
                 preparedStatement.setInt(6, is_business);
                 preparedStatement.executeUpdate();
-                System.out.println("preparedstatement werkt");
+                System.out.println("Preparedstatement Werkt");
             } catch (SQLException error) {
                 System.out.println("Error: " + error.getMessage());
-                System.out.println("preparedstatement werkt niet");
+                System.out.println("Preparedstatement Werkt Niet");
             }
 
         }
