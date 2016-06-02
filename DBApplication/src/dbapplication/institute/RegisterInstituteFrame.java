@@ -87,7 +87,7 @@ public class RegisterInstituteFrame extends JDialog {
         add(studyField);
 
         // de buttons:
-        theListener lis = new theListener();
+        AddButtonListener lis = new AddButtonListener();
         addButton = new JButton();
         addButton.setLocation(400, 400);
         addButton.setSize(60, 60);
@@ -105,14 +105,12 @@ public class RegisterInstituteFrame extends JDialog {
         yesBox.setLocation(300, 20);
         yesBox.setSize(100, 30);
         yesBox.setText("Yes");
-        yesBox.addActionListener(lis);
         add(yesBox);
 
         noBox = new JCheckBox();
         noBox.setLocation(300, 50);
         noBox.setSize(100, 30);
         noBox.setText("No");
-        noBox.addActionListener(lis);
         add(noBox);
 
         ButtonGroup group = new ButtonGroup();
@@ -121,47 +119,40 @@ public class RegisterInstituteFrame extends JDialog {
 
     }
 
-    private class theListener implements ActionListener {
+    private class AddButtonListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent event) {
             String org_id, city, name, country, address;
-            int is_business= 0;
-            if (event.getSource() == addButton) {
+            int is_business;
+            org_id = orgField.getText();
+            city = cityField.getText();
+            name = nameField.getText();
+            country = countryField.getText();
+            address = addressField.getText();
+            // is_business is 1 als yes is geselecteerd, anders 0
+            is_business = yesBox.isSelected() ? 1 : 0;
 
-                org_id = orgField.getText();
-                city = cityField.getText();
-                name = nameField.getText();
-                country = countryField.getText();
-                address = addressField.getText();
-
-                Connection Connectie = DBConnection.getConnection();
-
-                PreparedStatement preparedStatement = null;
-                add2Institute(Connectie, preparedStatement, org_id, city, name, country, address, is_business);
-
-            } else if (event.getSource() == yesBox) {
-                is_business = 1;
-                System.out.println("1 is gezet");
-            }
-            else if (event.getSource() == noBox) {
-                is_business = 0;
-                System.out.println("0 is gezet");
-            }
-
+            add2Institute(org_id, city, 
+                    name, country, address, is_business);
         }
 
-        private void add2Institute(Connection Connectie, PreparedStatement preparedStatement, String org_id, String city, String name, String country, String address, int is_business) {
+        private void add2Institute(String org_id, String city, 
+                String name, String country, String address, int is_business) {
+            Connection connection = DBConnection.getConnection();
             try {
-                preparedStatement = Connectie.prepareStatement("INSERT INTO institute (org_id, city, name, country, address, is_business) VALUES (?,?,?,?,?,?)");
+                PreparedStatement statement = connection.prepareStatement(
+                        "INSERT INTO institute "
+                            + "(org_id, city, name, country, address, is_business) "
+                            + "VALUES (?,?,?,?,?,?)");
 
-                preparedStatement.setString(1, org_id);
-                preparedStatement.setString(2, city);
-                preparedStatement.setString(3, name);
-                preparedStatement.setString(4, country);
-                preparedStatement.setString(5, address);
-                preparedStatement.setInt(6, is_business);
-                preparedStatement.executeUpdate();
+                statement.setString(1, org_id);
+                statement.setString(2, city);
+                statement.setString(3, name);
+                statement.setString(4, country);
+                statement.setString(5, address);
+                statement.setInt(6, is_business);
+                statement.executeUpdate();
                 System.out.println("preparedstatement werkt");
             } catch (SQLException error) {
                 System.out.println("Error: " + error.getMessage());
