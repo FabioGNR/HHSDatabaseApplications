@@ -46,21 +46,19 @@ public class Institute {
         return institute;
     }
     
-    public static void insertInstitute(String org_id, String city, 
+    public static void insertInstitute(String city, 
                 String name, String country, String address, int is_business) {
         Connection connection = DBConnection.getConnection();
         try {
             PreparedStatement statement = connection.prepareStatement(
                     "INSERT INTO institute "
-                        + "(org_id, city, name, country, address, is_business) "
-                        + "VALUES (?,?,?,?,?,?)");
-
-            statement.setString(1, org_id);
-            statement.setString(2, city);
-            statement.setString(3, name);
-            statement.setString(4, country);
-            statement.setString(5, address);
-            statement.setInt(6, is_business);
+                        + "(city, name, country, address, is_business) "
+                        + "VALUES (?,?,?,?,?)");
+            statement.setString(1, city);
+            statement.setString(2, name);
+            statement.setString(3, country);
+            statement.setString(4, address);
+            statement.setInt(5, is_business);
             statement.executeUpdate();
             System.out.println("preparedstatement werkt");
         } catch (SQLException error) {

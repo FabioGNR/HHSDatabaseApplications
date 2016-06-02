@@ -1,6 +1,7 @@
 package dbapplication.institute;
 
 import dbapplication.JSearchField;
+import dbapplication.SearchFilter;
 import dbapplication.institute.InstituteTableModel;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -50,7 +51,14 @@ public class SearchInstituteFrame extends JDialog{
         searchButton.setSize(90, 30);
         searchButton.addActionListener(new SearchListener());
         add(searchButton);
-        searchConditionCombo = new JComboBox(new String[]{"org_id", "city", "name", "country", "address", "is_business"});
+        searchConditionCombo = new JComboBox(new SearchFilter[]{
+            new SearchFilter("ID", "org_id"), 
+            new SearchFilter("City", "city"), 
+            new SearchFilter("Name", "name"), 
+            new SearchFilter("Country", "country"), 
+            new SearchFilter("Address", "address"), 
+            new SearchFilter("Business?", "is_business")
+        });
         searchConditionCombo.setLocation(340, 20);
         searchConditionCombo.setSize(100, 30);
         add(searchConditionCombo);
@@ -76,7 +84,9 @@ public class SearchInstituteFrame extends JDialog{
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            search(searchField.getText(), "name");
+            int selectedIndex = searchConditionCombo.getSelectedIndex();
+            SearchFilter selectedFilter = (SearchFilter)searchConditionCombo.getItemAt(selectedIndex);
+            search(searchField.getText(), selectedFilter.getColumnName());
         }
         
     }

@@ -1,6 +1,7 @@
 package dbapplication.student;
 
 import dbapplication.JSearchField;
+import dbapplication.SearchFilter;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -50,7 +51,10 @@ public class SearchStudentFrame extends JDialog{
         searchButton.setSize(90, 30);
         searchButton.addActionListener(new SearchListener());
         add(searchButton);
-        searchConditionCombo = new JComboBox(new String[]{"Student ID", "Name", "Email"});
+        searchConditionCombo = new JComboBox(new SearchFilter[]{
+            new SearchFilter("Student ID", "student_id"), 
+            new SearchFilter("Name", "name"), 
+            new SearchFilter("Email", "email")});
         searchConditionCombo.setLocation(340, 20);
         searchConditionCombo.setSize(100, 30);
         add(searchConditionCombo);
@@ -76,7 +80,9 @@ public class SearchStudentFrame extends JDialog{
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            search(searchField.getText(), "name");
+            int selectedIndex = searchConditionCombo.getSelectedIndex();
+            SearchFilter selectedFilter = (SearchFilter)searchConditionCombo.getItemAt(selectedIndex);
+            search(searchField.getText(), selectedFilter.getColumnName());
         }
         
     }

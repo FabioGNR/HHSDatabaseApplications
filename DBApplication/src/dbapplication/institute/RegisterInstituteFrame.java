@@ -1,14 +1,11 @@
 package dbapplication.institute;
 
-import dbapplication.ChoiceDialog;
-import dbapplication.ChoiceListener;
-import dbapplication.DBConnection;
-import dbapplication.MainFrame;
+
+import dbapplication.JEditField;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -24,7 +21,6 @@ import javax.swing.JTextField;
 public class RegisterInstituteFrame extends JDialog {
 
     private JTextField nameField;
-    private JTextField orgField;
     private JTextField cityField;
     private JTextField countryField;
     private JTextField addressField;
@@ -42,7 +38,7 @@ public class RegisterInstituteFrame extends JDialog {
     }
 
     private void setupFrame() {
-        setSize(510, 510);
+        setSize(510, 290);
         setResizable(false);
         setLayout(null);
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -50,55 +46,43 @@ public class RegisterInstituteFrame extends JDialog {
     }
 
     private void createComponents() {
-        nameField = new JTextField();
+        nameField = new JEditField("Name");
         nameField.setLocation(20, 20);
         nameField.setSize(180, 30);
-        nameField.setText("Name");
         add(nameField);
 
-        orgField = new JTextField();
-        orgField.setLocation(20, 70);
-        orgField.setSize(180, 30);
-        orgField.setText("Org_ID");
-        add(orgField);
-
-        cityField = new JTextField();
-        cityField.setLocation(20, 120);
+        cityField = new JEditField("City");
+        cityField.setLocation(20, 70);
         cityField.setSize(180, 30);
-        cityField.setText("City");
         add(cityField);
 
-        countryField = new JTextField();
-        countryField.setLocation(20, 170);
+        countryField = new JEditField("Country");
+        countryField.setLocation(20, 120);
         countryField.setSize(180, 30);
-        countryField.setText("Country");
         add(countryField);
 
-        addressField = new JTextField();
-        addressField.setLocation(20, 220);
+        addressField = new JEditField("Address");
+        addressField.setLocation(20, 170);
         addressField.setSize(180, 30);
-        addressField.setText("Address");
         add(addressField);
 
-        studyField = new JTextField();
-        studyField.setLocation(20, 270);
+        studyField = new JEditField("???");
+        studyField.setLocation(20, 220);
         studyField.setSize(180, 30);
-        studyField.setText("Study");
         add(studyField);
 
         // de buttons:
         AddButtonListener lis = new AddButtonListener();
-        addButton = new JButton();
-        addButton.setLocation(400, 400);
-        addButton.setSize(60, 60);
+        addButton = new JButton("Register");
+        addButton.setLocation(400, 180);
+        addButton.setSize(90, 60);
         addButton.addActionListener(lis);
-        addButton.setText("Add");
         add(addButton);
 
         isBusinessLabel = new JLabel();
         isBusinessLabel.setLocation(230, 20);
         isBusinessLabel.setSize(100, 30);
-        isBusinessLabel.setText("is_business");
+        isBusinessLabel.setText("Business?");
         add(isBusinessLabel);
 
         yesBox = new JCheckBox();
@@ -123,18 +107,20 @@ public class RegisterInstituteFrame extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent event) {
-            String org_id, city, name, country, address;
+            String city, name, country, address;
             int is_business;
-            org_id = orgField.getText();
             city = cityField.getText();
+            if(city.isEmpty()) city = null;
             name = nameField.getText();
+            if(name.isEmpty()) name = null;
             country = countryField.getText();
+            if(country.isEmpty()) country = null;
             address = addressField.getText();
+            if(address.isEmpty()) address = null;
             // is_business is 1 als yes is geselecteerd, anders 0
             is_business = yesBox.isSelected() ? 1 : 0;
 
-            Institute.insertInstitute(org_id, city, 
-                    name, country, address, is_business);
+            Institute.insertInstitute(city, name, country, address, is_business);
         }
     }
 }
