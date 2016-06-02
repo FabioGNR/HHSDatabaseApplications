@@ -1,6 +1,5 @@
 package dbapplication.institute;
 
-
 import dbapplication.JEditField;
 
 import java.awt.event.ActionEvent;
@@ -25,7 +24,6 @@ public class RegisterInstituteFrame extends JDialog {
     private JTextField countryField;
     private JTextField addressField;
 
-    private JTextField studyField;
     private JButton addButton;
     private JCheckBox yesBox;
     private JCheckBox noBox;
@@ -66,11 +64,6 @@ public class RegisterInstituteFrame extends JDialog {
         addressField.setSize(180, 30);
         add(addressField);
 
-        studyField = new JEditField("???");
-        studyField.setLocation(20, 220);
-        studyField.setSize(180, 30);
-        add(studyField);
-
         // de buttons:
         AddButtonListener lis = new AddButtonListener();
         addButton = new JButton("Register");
@@ -110,13 +103,21 @@ public class RegisterInstituteFrame extends JDialog {
             String city, name, country, address;
             int is_business;
             city = cityField.getText();
-            if(city.isEmpty()) city = null;
+            if (city.isEmpty()) {
+                city = null;
+            }
             name = nameField.getText();
-            if(name.isEmpty()) name = null;
+            if (name.isEmpty()) {
+                name = null;
+            }
             country = countryField.getText();
-            if(country.isEmpty()) country = null;
+            if (country.isEmpty()) {
+                country = null;
+            }
             address = addressField.getText();
-            if(address.isEmpty()) address = null;
+            if (address.isEmpty()) {
+                address = null;
+            }
             // is_business is 1 als yes is geselecteerd, anders 0
             is_business = yesBox.isSelected() ? 1 : 0;
 
