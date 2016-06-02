@@ -133,32 +133,8 @@ public class RegisterInstituteFrame extends JDialog {
             // is_business is 1 als yes is geselecteerd, anders 0
             is_business = yesBox.isSelected() ? 1 : 0;
 
-            add2Institute(org_id, city, 
+            Institute.insertInstitute(org_id, city, 
                     name, country, address, is_business);
-        }
-
-        private void add2Institute(String org_id, String city, 
-                String name, String country, String address, int is_business) {
-            Connection connection = DBConnection.getConnection();
-            try {
-                PreparedStatement statement = connection.prepareStatement(
-                        "INSERT INTO institute "
-                            + "(org_id, city, name, country, address, is_business) "
-                            + "VALUES (?,?,?,?,?,?)");
-
-                statement.setString(1, org_id);
-                statement.setString(2, city);
-                statement.setString(3, name);
-                statement.setString(4, country);
-                statement.setString(5, address);
-                statement.setInt(6, is_business);
-                statement.executeUpdate();
-                System.out.println("preparedstatement werkt");
-            } catch (SQLException error) {
-                System.out.println("Error: " + error.getMessage());
-                System.out.println("preparedstatement werkt niet");
-            }
-
         }
     }
 }

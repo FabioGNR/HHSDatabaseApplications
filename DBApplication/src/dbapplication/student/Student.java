@@ -25,10 +25,11 @@ public class Student {
     public static ArrayList<Student> searchStudents(String filter, String conditionColumn) {
         ArrayList<Student> students = new ArrayList<>();
         try {
+            // column names can't be set dynamically with preparedstatement
+            // luckily conditionColumn isn't user input
             PreparedStatement stat = DBConnection.getConnection().prepareStatement(
-                    "SELECT * FROM student WHERE ? LIKE ?");
-            stat.setString(1, conditionColumn);
-            stat.setString(2, "%"+filter+"%");
+                    "SELECT * FROM student WHERE `"+conditionColumn+"` LIKE ?");
+            stat.setString(1, "%"+filter+"%");
             ResultSet results = stat.executeQuery();
             while(results.next()) {
                 students.add(new Student(results));
