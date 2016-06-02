@@ -1,6 +1,5 @@
 package dbapplication.institute;
 
-import dbapplication.student.Student;
 import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 

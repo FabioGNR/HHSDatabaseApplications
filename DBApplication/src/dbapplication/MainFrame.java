@@ -70,8 +70,9 @@ public class MainFrame extends JFrame {
     }
 
     class SelectionListener implements ActionListener {
-
-        private JDialog searchDialog, registerDialog;
+        // deze listener geeft mogelijke dialogs door aan een choicelistener
+        // en geeft die listener door aan choiceframe
+        private final JDialog searchDialog, registerDialog;
 
         public SelectionListener(JDialog search, JDialog register) {
             searchDialog = search;
