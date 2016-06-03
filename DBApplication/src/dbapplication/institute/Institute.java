@@ -14,6 +14,7 @@ import java.util.ArrayList;
 public class Institute {
     private String org_id, city, name, country, address, is_business;
     private String[] cellData;
+    
     public Institute(ResultSet result) throws SQLException
     {
         org_id = result.getString("org_id");
@@ -94,7 +95,7 @@ public class Institute {
         Connection connection = DBConnection.getConnection();
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "DELETE Institute WHERE name = ?");
+                    "DELETE From institute WHERE name = ?");
             
             statement.setString(1, Name);
             

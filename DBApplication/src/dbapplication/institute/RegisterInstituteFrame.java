@@ -123,5 +123,7 @@ public class RegisterInstituteFrame extends JDialog {
 
             Institute.insertInstitute(city, name, country, address, is_business);
         }
+        
+        
     }
 }
