@@ -4,6 +4,7 @@ import dbapplication.JEditField;
 import dbapplication.JSearchField;
 import dbapplication.SearchFilter;
 import dbapplication.institute.InstituteTableModel;
+import dbapplication.student.Student;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,6 +19,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
+import javax.swing.JRadioButton;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumnModel;
 
@@ -43,8 +45,8 @@ public class SearchInstituteFrame extends JDialog {
     private JLabel companyLabel;
     private JLabel uniLabel;
     
-    private JCheckBox yesBox;
-    private JCheckBox noBox;
+    private JRadioButton yesBox;
+    private JRadioButton noBox;
     
     private JButton searchButton;
     private JButton companyButton;
@@ -159,14 +161,14 @@ public class SearchInstituteFrame extends JDialog {
         isBusinessLabel.setSize(100, 30);
         isBusinessLabel.setText("Business?");
         add(isBusinessLabel);
-
-        yesBox = new JCheckBox();
+//button
+        yesBox = new JRadioButton();
         yesBox.setLocation(560, 270);
         yesBox.setSize(50, 30);
         yesBox.setText("Yes");
         add(yesBox);
 
-        noBox = new JCheckBox();
+        noBox = new JRadioButton();
         noBox.setLocation(610, 270);
         noBox.setSize(50, 30);
         noBox.setText("No");
@@ -205,10 +207,32 @@ public class SearchInstituteFrame extends JDialog {
     class SearchListener implements ActionListener {
 
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent event) {
+            int is_business;
             int selectedIndex = searchConditionCombo.getSelectedIndex();
             SearchFilter selectedFilter = (SearchFilter) searchConditionCombo.getItemAt(selectedIndex);
             search(searchField.getText(), selectedFilter.getColumnName());
+            
+            
+             
+              if (event.getSource() == yesBox) {
+
+                cityField.setVisible(false);
+                addressField.setVisible(false);
+                
+                System.out.println("hhs student");
+              
+
+            }
+            if (event.getSource() == noBox) {
+               
+                cityField.setVisible(true);
+                addressField.setVisible(true);
+                System.out.println("exchangestudent");
+                
+            }
+             
+             
         }
 
     }

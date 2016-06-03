@@ -177,6 +177,11 @@ public class RegisterStudentFrame extends JDialog {
                 System.out.println("exchangestudent");
                 Student.insertExchange_Student(student_id, name, gender, email, city, address, university);
             }
+            
+            if(event.getSource() == addButton){
+                
+                
+            }
 
         }
 
