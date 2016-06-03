@@ -40,6 +40,8 @@ public class SearchInstituteFrame extends JDialog {
     
     private JButton searchButton;
     private JButton addButton;
+    private JButton updateButton;
+    private JButton deleteButton;
     
     private JComboBox searchConditionCombo;
     private JComboBox showProgramsCombo;
@@ -148,6 +150,16 @@ public class SearchInstituteFrame extends JDialog {
         showProgramsCombo.setLocation(500, 270);
         showProgramsCombo.setSize(150, 30);
         add(showProgramsCombo);
+        
+        updateButton = new JButton("Update");
+        updateButton.setLocation(440, 20);
+        updateButton.setSize(90, 30);
+        add(updateButton);
+        
+        deleteButton = new JButton("Delete");
+        deleteButton.setLocation(540, 20);
+        deleteButton.setSize(90, 30);
+        add(deleteButton);
     }
 
     private void search(String filter, String conditionColumn) {
