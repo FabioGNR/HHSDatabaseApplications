@@ -4,7 +4,6 @@ import dbapplication.JEditField;
 import dbapplication.JSearchField;
 import dbapplication.SearchFilter;
 import dbapplication.institute.InstituteTableModel;
-import dbapplication.student.Student;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,7 +18,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
-import javax.swing.JRadioButton;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumnModel;
 
@@ -30,32 +28,27 @@ import javax.swing.table.TableColumnModel;
 public class SearchInstituteFrame extends JDialog {
 
     private JTextField searchField;
-    private JTextField org_idField;
     private JTextField cityField;
     private JTextField nameField;
     private JTextField countryField;
     private JTextField addressField;
     
-    private JLabel org_idLabel;
     private JLabel cityLabel;
     private JLabel nameLabel;
     private JLabel countryLabel;
     private JLabel addressLabel;
-    private JLabel isBusinessLabel;
-    private JLabel companyLabel;
-    private JLabel uniLabel;
-    
-    private JRadioButton yesBox;
-    private JRadioButton noBox;
     
     private JButton searchButton;
-    private JButton companyButton;
-    private JButton uniButton;
+    private JButton addButton;
     
     private JComboBox searchConditionCombo;
+    private JComboBox showProgramsCombo;
+    
     private JTable resultTable;
     private JScrollPane resultPanel;
     private InstituteTableModel resultModel;
+    
+    private static String[] programs = {"Building process", "Business intelligence", "Database design", "Financial accounting", "Marketing", "Mechanica", "Programming"};
 
     public SearchInstituteFrame(JFrame owner) {
         super(owner, true);
@@ -79,7 +72,7 @@ public class SearchInstituteFrame extends JDialog {
         searchButton = new JButton("Search");
         searchButton.setLocation(215, 20);
         searchButton.setSize(90, 30);
-        searchButton.addActionListener(new SearchListener());
+        searchButton.addActionListener(new SearchInstituteFrame.SearchListener());
         add(searchButton);
         
         searchConditionCombo = new JComboBox(new SearchFilter[]{
@@ -105,16 +98,6 @@ public class SearchInstituteFrame extends JDialog {
         resultPanel.setLocation(20, 60);
         resultPanel.setSize(400, 300);
         add(resultPanel);
-        
-        org_idLabel = new JLabel("Org_id");
-        org_idLabel.setLocation(500, 20);
-        org_idLabel.setSize(90, 30);
-        add(org_idLabel);
-        
-        org_idField = new JEditField("Org_id");
-        org_idField.setLocation(550, 20);
-        org_idField.setSize(90, 30);
-        add(org_idField);
         
         cityLabel = new JLabel("City");
         cityLabel.setLocation(500, 70);
@@ -156,47 +139,15 @@ public class SearchInstituteFrame extends JDialog {
         addressField.setSize(90, 30);
         add(addressField);
         
-        isBusinessLabel = new JLabel();
-        isBusinessLabel.setLocation(500, 270);
-        isBusinessLabel.setSize(100, 30);
-        isBusinessLabel.setText("Business?");
-        add(isBusinessLabel);
-//button
-        yesBox = new JRadioButton();
-        yesBox.setLocation(560, 270);
-        yesBox.setSize(50, 30);
-        yesBox.setText("Yes");
-        add(yesBox);
-
-        noBox = new JRadioButton();
-        noBox.setLocation(610, 270);
-        noBox.setSize(50, 30);
-        noBox.setText("No");
-        add(noBox);
-
-        ButtonGroup group = new ButtonGroup();
-        group.add(yesBox);
-        group.add(noBox);
+        addButton = new JButton("Add");
+        addButton.setLocation(660, 270);
+        addButton.setSize(90, 30);
+        add(addButton);
         
-        companyLabel = new JLabel("Company");
-        companyLabel.setLocation(500, 320);
-        companyLabel.setSize(90, 30);
-        add(companyLabel);
-        
-        uniLabel = new JLabel("University");
-        uniLabel.setLocation(500, 370);
-        uniLabel.setSize(90, 30);
-        add(uniLabel);
-        
-        companyButton = new JButton("Choose");
-        companyButton.setLocation(560, 320);
-        companyButton.setSize(90, 30);
-        add(companyButton);
-        
-        uniButton = new JButton("Choose");
-        uniButton.setLocation(560, 370);
-        uniButton.setSize(90, 30);
-        add(uniButton);
+        showProgramsCombo = new JComboBox(programs);
+        showProgramsCombo.setLocation(500, 270);
+        showProgramsCombo.setSize(150, 30);
+        add(showProgramsCombo);
     }
 
     private void search(String filter, String conditionColumn) {
@@ -215,20 +166,6 @@ public class SearchInstituteFrame extends JDialog {
             
             
              
-              if (event.getSource() == yesBox) {
-
-                cityField.setVisible(false);
-                addressField.setVisible(false);
-                
-                System.out.println("hhs student");
-              
-
-            }
-            if (event.getSource() == noBox) {
-               
-                cityField.setVisible(true);
-                addressField.setVisible(true);
-                System.out.println("exchangestudent");
                 
             }
              
@@ -236,4 +173,4 @@ public class SearchInstituteFrame extends JDialog {
         }
 
     }
-}
+

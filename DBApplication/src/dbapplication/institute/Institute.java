@@ -66,19 +66,19 @@ public class Institute {
             System.out.println("preparedstatement werkt niet");
         }
     }
-    public static void UpdateInstitute(int org_id ,String city, String name, String country, String address, int is_business){
+    public static void UpdateInstitute(String city, String name, String country, String address){
         
         Connection connection = DBConnection.getConnection();
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "UPDATE institute SET org_id = ?,city = ?, name = ?, country= ?, address= ?, is_business= ?) "
-                        + "WHERE org_id = ?");
-            statement.setInt(1, org_id);
-            statement.setString(2, city);
-            statement.setString(3, name);
-            statement.setString(4, country);
-            statement.setString(5, address);
-            statement.setInt(6, is_business);
+                    "UPDATE institute SET city = ?, name = ?, country= ?, address= ?) "
+                        + "WHERE name = ?");
+            
+            statement.setString(1, city);
+            statement.setString(2, name);
+            statement.setString(3, country);
+            statement.setString(4, address);
+            statement.setString(5, name);
             statement.executeUpdate();
             System.out.println("preparedstatement werkt");
         } catch (SQLException error) {
@@ -87,9 +87,38 @@ public class Institute {
         }
 
     }
+    
+    
+    public static void DELETEInstitute(String Name){
+        
+        Connection connection = DBConnection.getConnection();
+        try {
+            PreparedStatement statement = connection.prepareStatement(
+                    "DELETE Institute WHERE name = ?");
+            
+            statement.setString(1, Name);
+            
+            statement.executeUpdate();
+            System.out.println("preparedstatement werkt");
+        } catch (SQLException error) {
+            System.out.println("Error: " + error.getMessage());
+            System.out.println("preparedstatement werkt niet");
+        }
+        
+    }
+    
+    
+    
+    
+    
+    
+    
+    
     public String getDataAt(int cell) {
         return cellData[cell];
     }
+    
+    
     
     public String getOrgid() {
         return org_id;
