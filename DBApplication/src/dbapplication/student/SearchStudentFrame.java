@@ -62,11 +62,13 @@ public class SearchStudentFrame extends JDialog{
         searchField.setLocation(20, 20);
         searchField.setSize(180, 30);
         add(searchField);
+        
         searchButton = new JButton("Search");
         searchButton.setLocation(220, 20);
         searchButton.setSize(90, 30);
         searchButton.addActionListener(new SearchListener());
         add(searchButton);
+        
         searchConditionCombo = new JComboBox(new SearchFilter[]{
             new SearchFilter("Student ID", "student_id"), 
             new SearchFilter("Name", "name"), 
@@ -74,6 +76,7 @@ public class SearchStudentFrame extends JDialog{
         searchConditionCombo.setLocation(340, 20);
         searchConditionCombo.setSize(100, 30);
         add(searchConditionCombo);
+        
         resultTable = new JTable();
         resultTable.setLocation(0, 0);
         resultTable.setSize(400, 500);
@@ -87,18 +90,22 @@ public class SearchStudentFrame extends JDialog{
         resultPanel.setLocation(20, 60);
         resultPanel.setSize(420, 500);
         add(resultPanel);
+        
         selectedStudentLabel = new JLabel("Selected student:");
         selectedStudentLabel.setLocation(450, 20);
         selectedStudentLabel.setSize(150, 30);
         add(selectedStudentLabel);
+        
         nameField = new JEditField("Name");
         nameField.setLocation(450, 60);
         nameField.setSize(150, 30);
         add(nameField);
+        
         emailField = new JEditField("Email");
         emailField.setLocation(450, 100);
         emailField.setSize(150, 30);
         add(emailField);
+        
         genderFBox = new JRadioButton("Female");
         genderFBox.setLocation(450, 140);
         genderFBox.setSize(75, 30);
@@ -110,11 +117,13 @@ public class SearchStudentFrame extends JDialog{
         genderGroup.add(genderMBox);
         add(genderFBox);
         add(genderMBox);
+        
         saveButton = new JButton("Save");
         saveButton.setLocation(450, 490);
         saveButton.setSize(75, 30);
         saveButton.addActionListener(new StudentEditListener());
         add(saveButton);
+        
         deleteButton = new JButton("Delete");
         deleteButton.setLocation(525, 490);
         deleteButton.setSize(75, 30);

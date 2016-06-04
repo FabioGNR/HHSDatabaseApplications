@@ -67,12 +67,12 @@ public class Institute {
             System.out.println("preparedstatement werkt niet");
         }
     }
-    public static void UpdateInstitute(String city, String name, String country, String address){
+    public boolean updateInstitute(){
         
         Connection connection = DBConnection.getConnection();
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "UPDATE institute SET city = ?, name = ?, country= ?, address= ?) "
+                    "UPDATE institute SET city = ?, name = ?, country = ?, address = ?) "
                         + "WHERE name = ?");
             
             statement.setString(1, city);
@@ -81,46 +81,44 @@ public class Institute {
             statement.setString(4, address);
             statement.setString(5, name);
             statement.executeUpdate();
+            
             System.out.println("preparedstatement werkt");
         } catch (SQLException error) {
+            
             System.out.println("Error: " + error.getMessage());
             System.out.println("preparedstatement werkt niet");
+            return false;
         }
-
+        return true;
     }
     
     
-    public static void DELETEInstitute(String Name){
+    public boolean deleteInstitute() {
         
         Connection connection = DBConnection.getConnection();
         try {
             PreparedStatement statement = connection.prepareStatement(
                     "DELETE From institute WHERE name = ?");
             
-            statement.setString(1, Name);
-            
+            statement.setString(1, name);
             statement.executeUpdate();
+            
             System.out.println("preparedstatement werkt");
         } catch (SQLException error) {
+            
             System.out.println("Error: " + error.getMessage());
             System.out.println("preparedstatement werkt niet");
+            return false;
         }
+        return true;
         
     }
-    
-    
-    
-    
-    
-    
     
     
     public String getDataAt(int cell) {
         return cellData[cell];
     }
-    
-    
-    
+
     public String getOrgid() {
         return org_id;
     }
