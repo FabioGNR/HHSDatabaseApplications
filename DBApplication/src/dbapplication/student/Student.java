@@ -13,8 +13,12 @@ import java.util.ArrayList;
  */
 public class Student {
 
-    private String name, studentid, gender, email;
-    private String[] cellData;
+    enum StudentType {
+        Exchange, HHS
+    }
+    
+    protected String name, studentid, gender, email;
+    protected String[] cellData;
 
     public Student(ResultSet result) throws SQLException {
         studentid = result.getString("student_id");
@@ -44,7 +48,7 @@ public class Student {
         return students;
     }
 
-    public static void insertHHS_Student(String student_id, String name, String gender, String email, String hhs_study) {
+    protected static boolean insertNewStudent(String student_id, String name, String gender, String email) {
         Connection connection = DBConnection.getConnection();
 
         try {
@@ -57,52 +61,33 @@ public class Student {
             statement.setString(2, name);
             statement.setString(3, gender);
             statement.setString(4, email);
-
-            PreparedStatement statement2 = connection.prepareStatement(
-                    "INSERT INTO hhs_student "
-                    + "(student_id, hhs_study) "
-                    + "VALUES (?,?)");
-            statement2.setString(1, student_id);
-            statement2.setString(2, hhs_study);
-
-            statement2.executeUpdate();
+            statement.executeUpdate();
             System.out.println("Preparedstatement werkt ");
+            statement.close();
         } catch (SQLException error) {
             System.out.println("Error: " + error.getMessage());
             System.out.println("preparedstatement werkt niet :(");
-        }
+            return false;
+        }  
+        return true;
     }
 
-    public static void insertExchange_Student(String student_id, String name, String gender, String email, String city, String adress, String university) {
+    public boolean delete() {
         Connection connection = DBConnection.getConnection();
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "INSERT INTO student "
-                    + "(student_id ,name, gender, email ) "
-                    + "VALUES (?,?,?,?)");
-            statement.setString(1, student_id);
-            statement.setString(2, name);
-            statement.setString(3, gender);
-            statement.setString(4, email);
-
+                    "DELETE FROM student WHERE student_id=?");
+            statement.setString(1, studentid);
             statement.executeUpdate();
-
-            PreparedStatement statement2 = connection.prepareStatement(
-                    "INSERT INTO exhange_student "
-                    + "(student_id , city, adress , university) "
-                    + "VALUES (?,?,?,?)");
-            statement2.setString(1, student_id);
-            statement2.setString(2, city);
-            statement2.setString(3, adress);
-            statement2.setString(4, university);
-
-            statement2.executeUpdate();
 
             System.out.println("Preparedstatement werkt!");
         } catch (SQLException error) {
+            
             System.out.println("Error: " + error.getMessage());
             System.out.println("preparedstatement werkt niet");
-        }
+            return false;
+        }      
+        return true;
     }
 
     public String getDataAt(int cell) {

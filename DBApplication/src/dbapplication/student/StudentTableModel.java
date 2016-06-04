@@ -32,6 +32,10 @@ public class StudentTableModel extends AbstractTableModel{
     public String getColumnName(int column) {
         return columnNames[column];
     }
+    
+    public Student getStudentAt(int rowIndex) {
+        return searchResults.get(rowIndex);
+    }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {

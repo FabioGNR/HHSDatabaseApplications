@@ -120,70 +120,58 @@ public class RegisterStudentFrame extends JDialog {
     }
 
     private class AddButtonListener implements ActionListener {
-
         @Override
-        public void actionPerformed(ActionEvent event) {
-
-            String name, gender, email, city, address, hhs_study, university, student_id;
-
-            name = nameField.getText();
-            if (name.isEmpty()) {
-                name = null;
-            }
-            gender = genderField.getText();
-            if (gender.isEmpty()) {
-                gender = null;
-            }
-            email = emailField.getText();
-            if (email.isEmpty()) {
-                email = null;
-            }
-            city = cityField.getText();
-            if (city.isEmpty()) {
-                city = null;
-            }
-            address = addressField.getText();
-            if (address.isEmpty()) {
-                address = null;
-            }
-            hhs_study = studyField.getText();
-            if (hhs_study.isEmpty()) {
-                hhs_study = null;
-            }
-
-            university = uniField.getText();
-            if (university.isEmpty()) {
-                university = null;
-            }
-
-            student_id = studentidField.getText();
-            if (student_id.isEmpty()) {
-                student_id = null;
-            }
-
+        public void actionPerformed(ActionEvent event) {    
             if (event.getSource() == hhs_studentButton) {
-
                 cityField.setVisible(false);
                 addressField.setVisible(false);
                 studyField.setVisible(true);
-                System.out.println("hhs student");
-                Student.insertHHS_Student(student_id, name, gender, email, hhs_study);
-
             }
             if (event.getSource() == ex_studentButton) {
                 studyField.setVisible(false);
                 cityField.setVisible(true);
-                addressField.setVisible(true);
-                System.out.println("exchangestudent");
-                Student.insertExchange_Student(student_id, name, gender, email, city, address, university);
-            }
-            
+                addressField.setVisible(true);    
+            }         
             if(event.getSource() == addButton){
-                
-                
+                String name = nameField.getText();
+                if (name.isEmpty()) {
+                    name = null;
+                }
+                String gender = genderField.getText();
+                if (gender.isEmpty()) {
+                    gender = null;
+                }
+                String email = emailField.getText();
+                if (email.isEmpty()) {
+                    email = null;
+                }
+                String student_id = studentidField.getText();
+                if (student_id.isEmpty()) {
+                    student_id = null;
+                }
+                if(hhs_studentButton.isSelected()) {
+                    String hhs_study = studyField.getText();
+                    if (hhs_study.isEmpty()) {
+                        hhs_study = null;
+                    }
+                    HHSStudent.insertNewHHSStudent(student_id, name, gender, email, hhs_study);
+                }
+                else {               
+                    String city = cityField.getText();
+                    if (city.isEmpty()) {
+                        city = null;
+                    }
+                    String address = addressField.getText();
+                    if (address.isEmpty()) {
+                        address = null;
+                    }
+                    String university = uniField.getText();
+                    if (university.isEmpty()) {
+                        university = null;
+                    }
+                    ExchangeStudent.insertNewExchangeStudent(student_id, name, gender, email, city, address, university);
+                }      
             }
-
         }
-
     }
 }
