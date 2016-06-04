@@ -61,6 +61,7 @@ public class Institute {
             statement.setString(4, address);
             statement.setInt(5, is_business);
             statement.executeUpdate();
+            statement.close();
             System.out.println("preparedstatement werkt");
         } catch (SQLException error) {
             System.out.println("Error: " + error.getMessage());
@@ -72,8 +73,7 @@ public class Institute {
         Connection connection = DBConnection.getConnection();
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "UPDATE institute SET city = ?, name = ?, country = ?, address = ?) "
-                        + "WHERE name = ?");
+                    "UPDATE institute SET city = ?, name = ?, country = ?, address = ? WHERE name = ?");
             
             statement.setString(1, city);
             statement.setString(2, name);
@@ -81,6 +81,7 @@ public class Institute {
             statement.setString(4, address);
             statement.setString(5, name);
             statement.executeUpdate();
+            
             
             System.out.println("preparedstatement werkt");
         } catch (SQLException error) {
@@ -98,7 +99,7 @@ public class Institute {
         Connection connection = DBConnection.getConnection();
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "DELETE From institute WHERE name = ?");
+                    "DELETE FROM institute WHERE name = ?");
             
             statement.setString(1, name);
             statement.executeUpdate();

@@ -193,10 +193,12 @@ public class SearchInstituteFrame extends JDialog {
                 
             } else if (e.getSource() == deleteButton) {
                 // show confirm dialog and confirm that the user choose "OK"
+                    System.out.println("deleted");
                 int choice = JOptionPane.showConfirmDialog(SearchInstituteFrame.this, "Are you sure you want to delete this institute?",
                         "Delete institute", JOptionPane.OK_CANCEL_OPTION);
                 if (choice == JOptionPane.OK_OPTION) {
                     selectedInstitute.deleteInstitute();
+                    
                 }
             }
         }
