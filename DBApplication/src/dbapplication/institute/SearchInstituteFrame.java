@@ -189,11 +189,11 @@ public class SearchInstituteFrame extends JDialog {
                 int update = JOptionPane.showOptionDialog(SearchInstituteFrame.this, "Institute has been updated", "Updated", JOptionPane.PLAIN_MESSAGE, 
                          JOptionPane.INFORMATION_MESSAGE, null, null, null);
                 if (update == JOptionPane.OK_OPTION) {
-                selectedInstitute.updateInstitute();
-                
-            } else if (e.getSource() == deleteButton) {
+                selectedInstitute.updateInstitute(); 
+                }
+            }
+                if (e.getSource() == deleteButton) {
                 // show confirm dialog and confirm that the user choose "OK"
-                    System.out.println("deleted");
                 int choice = JOptionPane.showConfirmDialog(SearchInstituteFrame.this, "Are you sure you want to delete this institute?",
                         "Delete institute", JOptionPane.OK_CANCEL_OPTION);
                 if (choice == JOptionPane.OK_OPTION) {
@@ -204,7 +204,7 @@ public class SearchInstituteFrame extends JDialog {
         }
     }
         
-    }
+    
     
     private void search(String filter, String conditionColumn) {
         ArrayList<dbapplication.institute.Institute> institute = dbapplication.institute.Institute.searchInstitute(filter, conditionColumn);
