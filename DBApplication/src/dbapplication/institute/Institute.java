@@ -68,18 +68,19 @@ public class Institute {
             System.out.println("preparedstatement werkt niet");
         }
     }
-    public boolean updateInstitute(){
+    public boolean updateInstitute(String city, 
+                String name, String country, String address){
         
         Connection connection = DBConnection.getConnection();
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "UPDATE institute SET city = ?, name = ?, country = ?, address = ? WHERE name = ?");
+                    "UPDATE institute SET city = ?, name = ?, country = ?, address = ? WHERE org_id = ?");
             
             statement.setString(1, city);
             statement.setString(2, name);
             statement.setString(3, country);
             statement.setString(4, address);
-            statement.setString(5, name);
+            statement.setString(5, org_id);
             statement.executeUpdate();
             
             

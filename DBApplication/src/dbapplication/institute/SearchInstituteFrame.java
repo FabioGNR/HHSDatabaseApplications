@@ -189,7 +189,7 @@ public class SearchInstituteFrame extends JDialog {
                 int update = JOptionPane.showOptionDialog(SearchInstituteFrame.this, "Institute has been updated", "Updated", JOptionPane.PLAIN_MESSAGE, 
                          JOptionPane.INFORMATION_MESSAGE, null, null, null);
                 if (update == JOptionPane.OK_OPTION) {
-                selectedInstitute.updateInstitute(); 
+                selectedInstitute.updateInstitute(cityField.getText(), nameField.getText(), countryField.getText(), addressField.getText());
                 }
             }
                 if (e.getSource() == deleteButton) {
