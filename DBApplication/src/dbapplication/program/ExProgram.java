@@ -18,7 +18,7 @@ public class ExProgram {
     public ExProgram(ResultSet result) throws SQLException {
         name = result.getString("name");
         programCode = result.getString("code");
-        cellData = new String[]{"name", "code"};
+        cellData = new String[]{programCode, name};
     }
 
     public static ArrayList<ExProgram> searchExProgram(String filter, String conditionColumn) {
@@ -40,7 +40,7 @@ public class ExProgram {
         return program;
     }
 
-    public static void insertInternship(String exPcode, String org_id, String name) {
+    public static boolean insertInternship(String exPcode, String name) {
         Connection connection = DBConnection.getConnection();
 
         try {
@@ -51,22 +51,15 @@ public class ExProgram {
 
             statement.setString(1, exPcode);
             statement.setString(2, name);
-
-            PreparedStatement statement2 = connection.prepareStatement(
-                    "INSERT INTO internship "
-                    + "(org_id, name) "
-                    + "VALUES (?,?)");
-
-            statement.setString(1, org_id);
-            statement.setString(2, name);
-
-            statement2.executeUpdate();
+            statement.executeUpdate();
             System.out.println("Preparedstatement passed ");
+            statement.close();
         } catch (SQLException error) {
             System.out.println("Error: " + error.getMessage());
             System.out.println("preparedstatement was not succesful");
+            return false;
         }
-
+        return true;
     }
 
     public static void insertStudyProgram(String exPcode, String name, String org_id, String study, String type, String max_credits) {
