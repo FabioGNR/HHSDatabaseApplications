@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import dbapplication.JEditField;
 import static dbapplication.program.RegisterProgramFrame.ButtonAction.Internship;
 import java.awt.CardLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
@@ -16,18 +17,13 @@ import javax.swing.*;
  */
 public class RegisterProgramFrame extends JDialog {
 
-    private final String INTERNSHIP_CARD_ID = "Internship";
-    private final String STUDY_CARD_ID = "Study";
-    private CardLayout cardContainer;
-
-    private JTextField orgIDField, nameField, addressField, cityField, countryField, studyField;
+    private JTextField orgIDField, nameField, studyField;
     private JButton registerButton;
     private JRadioButton internshipButton, studyButton;
     private JRadioButton term1, term2, term3, term4, term5;
     private JRadioButton minor, eps, summerSchool;
     private ButtonGroup buttonGroup;
-    private JPanel containerPanel, internshipPanel, studyPanel;
-    private JComboBox studyBox;
+    private JCheckBox[] termBoxes = new JCheckBox[6];
 
     enum ButtonAction {
         Internship, StudyProgram
@@ -36,8 +32,7 @@ public class RegisterProgramFrame extends JDialog {
     public RegisterProgramFrame(JFrame owner) {
         super(owner, true);
         setupFrame();
-        addContainerPanel();
-//        createInternshipComponents();
+        createInternshipComponents();
         createStudyProgram();
     }
 
@@ -59,18 +54,6 @@ public class RegisterProgramFrame extends JDialog {
         nameField.setBounds(20, 100, 100, 25);
         add(nameField);
 
-        addressField = new JEditField("Address");
-        addressField.setBounds(20, 150, 100, 25);
-        add(addressField);
-
-        cityField = new JEditField("City");
-        cityField.setBounds(20, 200, 100, 25);
-        add(cityField);
-
-        countryField = new JEditField("Country");
-        countryField.setBounds(20, 250, 100, 25);
-        add(countryField);
-
 //        ActionListener registerListener = new 
         registerButton = new JButton("Register");
         registerButton.setBounds(350, 380, 100, 25);
@@ -91,74 +74,36 @@ public class RegisterProgramFrame extends JDialog {
         buttonGroup = new ButtonGroup();
         buttonGroup.add(studyButton);
         buttonGroup.add(internshipButton);
-
-        term1 = new JRadioButton("term 1");
-        term1.setBounds(300, 50, 100, 25);
-        add(term1);
-
-        term2 = new JRadioButton("term 2");
-        term2.setBounds(300, 75, 100, 25);
-        add(term2);
-
-        term3 = new JRadioButton("term 3");
-        term3.setBounds(300, 100, 100, 25);
-        add(term3);
-
-        term4 = new JRadioButton("term 4");
-        term4.setBounds(300, 125, 100, 25);
-        add(term4);
-
-        term5 = new JRadioButton("term 5");
-        term5.setBounds(300, 150, 100, 25);
-        add(term5);
+        for (int i = 0; i < termBoxes.length; i++) {
+            termBoxes[i] = new JCheckBox("Term "+(i+1));
+            termBoxes[i].setBounds(400, 50+(i*25), 100, 25);
+            add(termBoxes[i]);
+        }
     }
 
     private void createStudyProgram() {
-
-        createInternshipComponents();
-
         minor = new JRadioButton("Minor");
-        minor.setBounds(225, 50, 100, 25);
+        minor.setBounds(225, 50, 170, 25);
+        minor.setVisible(false);
         add(minor);
 
         eps = new JRadioButton("European Project Semester");
-        eps.setBounds(225, 100, 100, 25);
+        eps.setBounds(225, 100, 170, 25);
+        eps.setVisible(false);
         add(eps);
 
         summerSchool = new JRadioButton("Summer School");
-        summerSchool.setBounds(225, 150, 100, 25);
+        summerSchool.setBounds(225, 150, 170, 25);
+        summerSchool.setVisible(false);
         add(summerSchool);
 
-    }
-
-    private void addContainerPanel() {
-
-        internshipPanel = new JPanel();
-        internshipPanel.setLayout(null);
-        studyPanel = new JPanel();
-        studyPanel.setLayout(null);
-
-        cardContainer = new CardLayout();
-        containerPanel = new JPanel(cardContainer);
-        containerPanel.add(internshipPanel, INTERNSHIP_CARD_ID);
-        containerPanel.add(studyPanel, STUDY_CARD_ID);
-        add(containerPanel);
     }
 
     class ButtonListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            String name, org_id, address, city, country, study, type, max_credits, exPcode;
-
-            if (internshipButton.isSelected()) {
-                cardContainer.show(containerPanel, INTERNSHIP_CARD_ID);
-            } else if (studyButton.isSelected()) {
-                cardContainer.show(containerPanel, STUDY_CARD_ID);
-            } else {
-                cardContainer.show(containerPanel, INTERNSHIP_CARD_ID);
-            }
-
+            String name, org_id,study;
             if (e.getSource() == registerButton) {
                 name = nameField.getText();
                 if (name.isEmpty()) {
@@ -168,23 +113,16 @@ public class RegisterProgramFrame extends JDialog {
                 if (org_id.isEmpty()) {
                     org_id = null;
                 }
-                address = addressField.getText();
-                if (address.isEmpty()) {
-                    address = null;
-                }
-                city = cityField.getText();
-                if (city.isEmpty()) {
-                    city = null;
-                }
-                country = countryField.getText();
-                if (country.isEmpty()) {
-                    country = null;
-                }
                 study = studyField.getText();
                 if (study.isEmpty()) {
                     study = null;
                 }
-
+            }
+            else {
+                boolean studyProgramSelected = studyButton.isSelected();
+                eps.setVisible(studyProgramSelected);
+                summerSchool.setVisible(studyProgramSelected);
+                minor.setVisible(studyProgramSelected);
             }
         }
     }
