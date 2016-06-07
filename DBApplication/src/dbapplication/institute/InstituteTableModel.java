@@ -9,7 +9,7 @@ import javax.swing.table.AbstractTableModel;
  */
 public class InstituteTableModel extends AbstractTableModel{
     private ArrayList<Institute> searchResults = new ArrayList<>();
-    private final String[] columnNames = new String[] { "org_id", "city", "name", "country", "address", "is_business" };
+    private final String[] columnNames = new String[] { "Name", "City", "Country", "Address", "Company?" };
     public InstituteTableModel() {
         super();
     }

@@ -1,6 +1,8 @@
 package dbapplication.student;
 
 import dbapplication.JEditField;
+import dbapplication.institute.Institute;
+import dbapplication.institute.SelectInstituteDialog;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,16 +20,11 @@ import javax.swing.JTextField;
  */
 public class RegisterStudentFrame extends JDialog {
 
-    private JTextField nameField;
-    private JTextField genderField;
-    private JTextField emailField;
-    private JTextField cityField;
-    private JTextField addressField;
-    private JTextField studyField;
-    private JTextField uniField;
-    private JTextField studentidField;
+    private JTextField nameField, genderField, emailField, cityField;
+    private JTextField addressField, studyField, uniField, studentidField;
 
-    private JButton addButton;
+    private JButton addButton, selectUniButton;
+    private String selectedInstCode = "";
     private JRadioButton hhs_studentButton;
     private JRadioButton ex_studentButton;
 
@@ -48,130 +45,140 @@ public class RegisterStudentFrame extends JDialog {
     private void createComponents() {
 
         studentidField = new JEditField("Student ID");
+        studentidField.setBounds(20, 70, 180, 30);
         studentidField.setLocation(20, 70);
         studentidField.setSize(180, 30);
         add(studentidField);
 
         nameField = new JEditField("Name");
-        nameField.setLocation(20, 120);
-        nameField.setSize(180, 30);
+        nameField.setBounds(20, 120, 180, 30);
         add(nameField);
 
         genderField = new JEditField("Gender");
-        genderField.setLocation(20, 170);
-        genderField.setSize(180, 30);
+        genderField.setBounds(20, 170, 180, 30);
         add(genderField);
 
         emailField = new JEditField("Email");
-        emailField.setLocation(20, 220);
-        emailField.setSize(180, 30);
+        emailField.setBounds(20, 220, 180, 30);
         add(emailField);
 
         cityField = new JEditField("City");
-        cityField.setLocation(20, 270);
-        cityField.setSize(180, 30);
+        cityField.setBounds(20, 270, 180, 30);
         add(cityField);
         cityField.setVisible(false);
 
         addressField = new JEditField("Address");
-        addressField.setLocation(20, 320);
-        addressField.setSize(180, 30);
+        addressField.setBounds(20, 320, 180, 30);
         add(addressField);
         addressField.setVisible(false);
 
         uniField = new JEditField("University");
-        uniField.setLocation(20, 370);
-        uniField.setSize(180, 30);
+        uniField.setBounds(20, 370, 180, 30);
+        uniField.setEnabled(false);
         add(uniField);
         uniField.setVisible(false);
+        
+        selectUniButton = new JButton("...");
+        selectUniButton.setBounds(200, 370, 40, 30);
+        add(selectUniButton);
+        selectUniButton.addActionListener(new SelectUniversityListener());
+        selectUniButton.setVisible(false);
 
         studyField = new JEditField("Study");
-        studyField.setLocation(20, 270);
-        studyField.setSize(180, 30);
+        studyField.setBounds(20, 270, 180, 30);
         add(studyField);
         studyField.setVisible(false);
 
         // de buttons:
-        RegisterStudentFrame.AddButtonListener lis = new RegisterStudentFrame.AddButtonListener();
+        AddButtonListener addLis = new AddButtonListener();
         addButton = new JButton("Register");
-        addButton.setLocation(400, 180);
-        addButton.setSize(90, 60);
-        addButton.addActionListener(lis);
+        addButton.setBounds(400, 180, 90, 60);
+        addButton.addActionListener(addLis);
         add(addButton);
 
+        SwitchStudentListener switchLis = new SwitchStudentListener();
         hhs_studentButton = new JRadioButton();
-        hhs_studentButton.setLocation(300, 20);
-        hhs_studentButton.setSize(100, 30);
+        hhs_studentButton.setBounds(300, 20, 100, 30);
         hhs_studentButton.setText("hhs student");
-        hhs_studentButton.addActionListener(lis);
+        hhs_studentButton.addActionListener(switchLis);
         add(hhs_studentButton);
 
         ex_studentButton = new JRadioButton();
-        ex_studentButton.setLocation(300, 50);
-        ex_studentButton.setSize(100, 30);
+        ex_studentButton.setBounds(300, 50, 100, 30);
         ex_studentButton.setText("exchange student");
-        ex_studentButton.addActionListener(lis);
+        ex_studentButton.addActionListener(switchLis);
         add(ex_studentButton);
 
         ButtonGroup group = new ButtonGroup();
         group.add(hhs_studentButton);
         group.add(ex_studentButton);
-
+    }
+    
+    private class SelectUniversityListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            SelectInstituteDialog dlg = new SelectInstituteDialog((JFrame)getOwner(), SelectInstituteDialog.InstituteType.University);
+            dlg.setVisible(true);
+            // pauses until dialog is closed
+            Institute institute = dlg.getSelectedInstitute();
+            if(institute != null)
+                uniField.setText(institute.getName());
+        }     
+    }
+    
+    private class SwitchStudentListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            boolean showExchangeFields = ex_studentButton.isSelected();
+            cityField.setVisible(showExchangeFields);
+            addressField.setVisible(showExchangeFields);
+            studyField.setVisible(!showExchangeFields);
+            uniField.setVisible(showExchangeFields);
+            selectUniButton.setVisible(showExchangeFields);
+        }       
     }
 
     private class AddButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent event) {    
-            if (event.getSource() == hhs_studentButton) {
-                cityField.setVisible(false);
-                addressField.setVisible(false);
-                studyField.setVisible(true);
+            String name = nameField.getText();
+            if (name.isEmpty()) {
+                name = null;
             }
-            if (event.getSource() == ex_studentButton) {
-                studyField.setVisible(false);
-                cityField.setVisible(true);
-                addressField.setVisible(true);    
-            }         
-            if(event.getSource() == addButton){
-                String name = nameField.getText();
-                if (name.isEmpty()) {
-                    name = null;
-                }
-                String gender = genderField.getText();
-                if (gender.isEmpty()) {
-                    gender = null;
-                }
-                String email = emailField.getText();
-                if (email.isEmpty()) {
-                    email = null;
-                }
-                String student_id = studentidField.getText();
-                if (student_id.isEmpty()) {
-                    student_id = null;
-                }
-                if(hhs_studentButton.isSelected()) {
-                    String hhs_study = studyField.getText();
-                    if (hhs_study.isEmpty()) {
-                        hhs_study = null;
-                    }
-                    HHSStudent.insertNewHHSStudent(student_id, name, gender, email, hhs_study);
-                }
-                else {               
-                    String city = cityField.getText();
-                    if (city.isEmpty()) {
-                        city = null;
-                    }
-                    String address = addressField.getText();
-                    if (address.isEmpty()) {
-                        address = null;
-                    }
-                    String university = uniField.getText();
-                    if (university.isEmpty()) {
-                        university = null;
-                    }
-                    ExchangeStudent.insertNewExchangeStudent(student_id, name, gender, email, city, address, university);
-                }      
+            String gender = genderField.getText();
+            if (gender.isEmpty()) {
+                gender = null;
             }
+            String email = emailField.getText();
+            if (email.isEmpty()) {
+                email = null;
+            }
+            String student_id = studentidField.getText();
+            if (student_id.isEmpty()) {
+                student_id = null;
+            }
+            if(hhs_studentButton.isSelected()) {
+                String hhs_study = studyField.getText();
+                if (hhs_study.isEmpty()) {
+                    hhs_study = null;
+                }
+                HHSStudent.insertNewHHSStudent(student_id, name, gender, email, hhs_study);
+            }
+            else {               
+                String city = cityField.getText();
+                if (city.isEmpty()) {
+                    city = null;
+                }
+                String address = addressField.getText();
+                if (address.isEmpty()) {
+                    address = null;
+                }
+                String university = uniField.getText();
+                if (university.isEmpty()) {
+                    university = null;
+                }
+                ExchangeStudent.insertNewExchangeStudent(student_id, name, gender, email, city, address, university);
+            }      
         }
     }
 }

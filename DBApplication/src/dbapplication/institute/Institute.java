@@ -23,7 +23,7 @@ public class Institute {
         country = result.getString("country");
         address = result.getString("address");
         is_business = result.getString("is_business");
-        cellData = new String[] {org_id, city, name, country, address, is_business};
+        cellData = new String[] {name, city, country, address, is_business.equals("1") ? "Yes" : "No"};
     }
     
     public static ArrayList<Institute> searchInstitute(String filter, String conditionColumn) {

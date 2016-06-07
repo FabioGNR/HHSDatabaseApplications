@@ -235,7 +235,7 @@ public class SearchInstituteFrame extends JDialog {
             }
             selectedInstitute = resultModel.getInstituteAt(selectedRow);
             selectedInstituteLabel.setText(
-                    "Selected institute: " + selectedInstitute.getOrgid());
+                    "Selected institute: " + selectedInstitute.getName());
 
             nameField.setText(selectedInstitute.getName());
 
