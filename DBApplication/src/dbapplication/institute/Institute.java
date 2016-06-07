@@ -82,6 +82,7 @@ public class Institute {
             statement.setString(4, address);
             statement.setString(5, org_id);
             statement.executeUpdate();
+            statement.close();
             
             
             System.out.println("preparedstatement werkt");
@@ -104,6 +105,7 @@ public class Institute {
             
             statement.setString(1, name);
             statement.executeUpdate();
+            statement.close();
             
             System.out.println("preparedstatement werkt");
         } catch (SQLException error) {

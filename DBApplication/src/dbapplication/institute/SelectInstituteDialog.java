@@ -42,6 +42,8 @@ public class SelectInstituteDialog extends JDialog{
         requiredType = type;
         setupFrame();
         createComponents();
+        // fill JTable searching on empty filter
+        search("", "name");
     }
     
     private void setupFrame() {
@@ -150,7 +152,7 @@ public class SelectInstituteDialog extends JDialog{
             }
             Institute inst = resultModel.getInstituteAt(selectedRow);
             // if the selected institute matches the required type
-            if((requiredType == InstituteType.Company && inst.getIsbusiness().equals("1"))
+            if(requiredType == null || (requiredType == InstituteType.Company && inst.getIsbusiness().equals("1"))
                     || (requiredType == InstituteType.University && inst.getIsbusiness().equals("0"))) {
                 selectedInstitute = inst;
                 selectedInstituteLabel.setText(

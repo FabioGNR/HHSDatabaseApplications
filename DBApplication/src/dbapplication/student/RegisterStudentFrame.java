@@ -24,7 +24,7 @@ public class RegisterStudentFrame extends JDialog {
     private JTextField addressField, studyField, uniField, studentidField;
 
     private JButton addButton, selectUniButton;
-    private String selectedInstCode = "";
+    private String selectedInstCode = null;
     private JRadioButton hhs_studentButton;
     private JRadioButton ex_studentButton;
 
@@ -122,7 +122,10 @@ public class RegisterStudentFrame extends JDialog {
             // pauses until dialog is closed
             Institute institute = dlg.getSelectedInstitute();
             if(institute != null)
+            {
                 uniField.setText(institute.getName());
+                selectedInstCode = institute.getOrgid();
+            }
         }     
     }
     
@@ -173,11 +176,7 @@ public class RegisterStudentFrame extends JDialog {
                 if (address.isEmpty()) {
                     address = null;
                 }
-                String university = uniField.getText();
-                if (university.isEmpty()) {
-                    university = null;
-                }
-                ExchangeStudent.insertNewExchangeStudent(student_id, name, gender, email, city, address, university);
+                ExchangeStudent.insertNewExchangeStudent(student_id, name, gender, email, city, address, selectedInstCode);
             }      
         }
     }
