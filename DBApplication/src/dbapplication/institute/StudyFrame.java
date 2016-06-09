@@ -7,14 +7,12 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -32,15 +30,14 @@ public class StudyFrame extends JDialog{
     private JTable resultTable;
     private JScrollPane resultPanel;
     private StudyTableModel resultModel;
-    private JEditField nameField;
-    private JRadioButton genderFBox;
-    private JRadioButton genderMBox;
-    private JEditField emailField;
+    private JEditField codefield;
+   
+    private JEditField org_idField;
     private JButton saveButton;
     private JButton deleteButton;
     
     private JLabel selectedStudyLabel;
-    private StudyFrame selectedStudy = null;
+    private Study selectedStudy = null;
     
     public StudyFrame(JFrame owner) {
         super(owner, true);
@@ -96,43 +93,33 @@ public class StudyFrame extends JDialog{
         selectedStudyLabel.setSize(150, 30);
         add(selectedStudyLabel);
         
-        nameField = new JEditField("Name");
-        nameField.setLocation(450, 60);
-        nameField.setSize(150, 30);
-        add(nameField);
+        codefield = new JEditField("Name");
+        codefield.setLocation(450, 60);
+        codefield.setSize(150, 30);
+        add(codefield);
         
-        emailField = new JEditField("Email");
-        emailField.setLocation(450, 100);
-        emailField.setSize(150, 30);
-        add(emailField);
+        org_idField = new JEditField("Email");
+        org_idField.setLocation(450, 100);
+        org_idField.setSize(150, 30);
+        add(org_idField);
         
-        genderFBox = new JRadioButton("Female");
-        genderFBox.setLocation(450, 140);
-        genderFBox.setSize(75, 30);
-        genderMBox = new JRadioButton("Male");
-        genderMBox.setLocation(525, 140);
-        genderMBox.setSize(75, 30);
-        ButtonGroup genderGroup = new ButtonGroup();
-        genderGroup.add(genderFBox);
-        genderGroup.add(genderMBox);
-        add(genderFBox);
-        add(genderMBox);
+        
         
         saveButton = new JButton("Save");
         saveButton.setLocation(450, 490);
         saveButton.setSize(75, 30);
-        saveButton.addActionListener(new StudentEditListener());
+        saveButton.addActionListener(new StudyEditListener());
         add(saveButton);
         
         deleteButton = new JButton("Delete");
         deleteButton.setLocation(525, 490);
         deleteButton.setSize(75, 30);
-        deleteButton.addActionListener(new StudentEditListener());
+        deleteButton.addActionListener(new StudyEditListener());
         add(deleteButton);
     }
     
     private void search(String filter, String conditionColumn) {
-        ArrayList<StudyFrame> study = StudyFrame.searchStudy(filter, conditionColumn);
+        ArrayList<Study> study = Study.searchStudy(filter, conditionColumn);
         resultModel.setResults(study);
     }
     
@@ -145,10 +132,10 @@ public class StudyFrame extends JDialog{
             }
             else if(e.getSource() == deleteButton) {
                 // show confirm dialog and confirm that the user choose "OK"
-                int choice = JOptionPane.showConfirmDialog(SearchStudentFrame.this, "Are you sure you want to delete this student?", 
+                int choice = JOptionPane.showConfirmDialog(StudyFrame.this, "Are you sure you want to delete this student?", 
                     "Delete student", JOptionPane.OK_CANCEL_OPTION);
                 if(choice == JOptionPane.OK_OPTION) {
-                    selectedStudy.delete();
+                    selectedStudy.deleteStudy();
                 }
             }
         }    
@@ -161,16 +148,11 @@ public class StudyFrame extends JDialog{
             // and update the fields to reflect it
             int selectedRow = resultTable.getSelectedRow();
             if(selectedRow < 0) return; // selection cleared
-            selectedStudy = resultModel.getStudentAt(selectedRow);
-            selectedStudyLabel.setText("Selected student: "+selectedStudy.getStudentid());
-            nameField.setText(selectedStudy.getName());
-            emailField.setText(selectedStudy.getEmail());
-            JRadioButton correctGenderBox;
-            if(selectedStudy.getGender().equals("f"))
-                correctGenderBox = genderFBox;
-            else 
-                correctGenderBox = genderMBox;
-            correctGenderBox.setSelected(true);
+            selectedStudy = resultModel.getStudyAt(selectedRow);
+            selectedStudyLabel.setText("Selected study: "+selectedStudy.getCode());
+            codefield.setText(selectedStudy.getCode());
+            org_idField.setText(selectedStudy.getorg_id());
+            
         }       
     }
     
@@ -181,5 +163,19 @@ public class StudyFrame extends JDialog{
             SearchFilter selectedFilter = (SearchFilter)searchConditionCombo.getItemAt(selectedIndex);
             search(searchField.getText(), selectedFilter.getColumnName());
         }      
+        /*
+        private class SelectstudyListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            SelectProgramDialog dlg = new SelectInstituteDialog((JFrame)getOwner(), SelectInstituteDialog.InstituteType.University);
+            dlg.setVisible(true);
+            // pauses until dialog is closed
+            Institute institute = dlg.getSelectedInstitute();
+            if(institute != null)
+            {
+                uniField.setText(s.getName());
+                selectedInstCode = institute.getOrgid();
+            }
+        }  */   
     }
 }

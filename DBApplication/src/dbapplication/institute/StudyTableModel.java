@@ -8,13 +8,13 @@ import javax.swing.table.AbstractTableModel;
  * @author Sishi
  */
 public class StudyTableModel extends AbstractTableModel{
-    private ArrayList<StudyFrame> searchResults = new ArrayList<>();
+    private ArrayList<Study> searchResults = new ArrayList<>();
     private final String[] columnNames = new String[] { "Code", "Org_ID", "Contactperson" };
     public StudyTableModel() {
         super();
     }
     
-    public void setResults(ArrayList<StudyFrame> results) {
+    public void setResults(ArrayList<Study> results) {
         searchResults = results;
         this.fireTableDataChanged();
     }
@@ -34,7 +34,7 @@ public class StudyTableModel extends AbstractTableModel{
         return columnNames[column];
     }
     
-    public Institute getStudyFrameAt(int rowIndex) {
+    public Study getStudyAt(int rowIndex) {
         return searchResults.get(rowIndex);
     }
 
