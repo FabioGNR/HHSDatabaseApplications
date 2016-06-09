@@ -20,7 +20,7 @@ public class Study {
         org_id = result.getString("org_id");
         contactperson = result.getString("contactperson");
         
-        cellData = new String[] {contactperson, org_id};
+        cellData = new String[] {code ,contactperson, org_id};
     }
     
     public static ArrayList<Study> searchStudy(String filter, String conditionColumn) {

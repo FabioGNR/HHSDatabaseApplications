@@ -3,7 +3,6 @@ package dbapplication.institute;
 import dbapplication.JEditField;
 import dbapplication.JSearchField;
 import dbapplication.SearchFilter;
-import dbapplication.program.SelectProgramDialog;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -46,7 +45,7 @@ public class StudyFrame extends JDialog{
         setupFrame();     
         createComponents();
         // fill JTable searching on empty filter
-        search("", "name");
+        search("", "code");
     }
     
     private void setupFrame() {

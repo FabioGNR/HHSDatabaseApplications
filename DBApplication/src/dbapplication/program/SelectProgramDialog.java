@@ -50,7 +50,7 @@ public class SelectProgramDialog extends JDialog {
         setupFrame();
         createComponents();
         // fill JTable searching on empty filter
-        search("", "name");
+        search("", "code");
     }
     
     private void setupFrame() {
