@@ -40,5 +40,5 @@ public class ProgramTableModel extends AbstractTableModel{
     public Object getValueAt(int rowIndex, int columnIndex) {
         return searchProgram.get(rowIndex).getDataAt(columnIndex);
     }
-    
+
 }

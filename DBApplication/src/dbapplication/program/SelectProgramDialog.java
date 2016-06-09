@@ -2,6 +2,8 @@ package dbapplication.program;
 
 import dbapplication.JSearchField;
 import dbapplication.SearchFilter;
+import dbapplication.institute.Study;
+import dbapplication.institute.StudyTableModel;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -11,9 +13,11 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -21,17 +25,24 @@ import javax.swing.event.ListSelectionListener;
  *
  * @author Sishi
  */
-/*public class SelectProgramDialog extends JDialog {
+public class SelectProgramDialog extends JDialog {
     
     public enum ProgramType { Internship, studyProgram }
     private final ProgramType requiredType;
+    
     private JTextField searchField;
+    private JLabel selectedStudyLabel;
+    
+    private JButton cancelButton;
     private JButton searchButton;
-    private JComboBox conditionBox;
+    private JButton okButton;
+    
+    private JComboBox searchConditionCombo;
     private JTable resultTable;
     private JScrollPane resultPanel;
-    private ProgramTableModel resultModel; 
-    private ExProgram selectedExProgram = null;
+    
+    private StudyTableModel resultModel; 
+    private Study selectedStudy = null;
     
     public SelectProgramDialog (Frame owner, ProgramType type) {
         super(owner, true);
@@ -47,43 +58,68 @@ import javax.swing.event.ListSelectionListener;
         setResizable(false);
         setLayout(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setTitle("Select Program");
+        setTitle("Select Study");
     }
     
     private void createComponents() {
+        SelectionListener select = new SelectionListener();
+        searchListener search = new searchListener();
+        CloseDialogListener close = new CloseDialogListener();
+        
         searchField = new JSearchField();
         searchField.setBounds(20, 20, 180, 30);
         add(searchField);
         
         searchButton = new JButton("Search");
         searchButton.setBounds(220, 20, 90, 30);
-        searchButton.addActionListener(new SearchProgramFrame.SearchListener());
+        searchButton.addActionListener(search);
         add(searchButton);
         
-        conditionBox = new JComboBox(new SearchFilter[]{
-            new SearchFilter("ExProCode", "code"),
-            new SearchFilter("Name", "name")});
-        conditionBox.setBounds(340, 20, 100, 30);
-        add(conditionBox);
+        searchConditionCombo = new JComboBox(new SearchFilter[]{
+            new SearchFilter("Code", "code"),
+            new SearchFilter("Org_ID", "org_id"),
+            new SearchFilter("Contactperson", "contactperson")
+        });
+        searchConditionCombo.setBounds(340, 20, 100, 30);
+        add(searchConditionCombo);
         
         resultTable = new JTable();
         resultTable.setBounds(0, 0, 400, 300);
-        resultModel = new ProgramTableModel();
+        resultModel = new StudyTableModel();
         resultTable.setModel(resultModel);
         resultTable.setPreferredScrollableViewportSize(new Dimension(400, 300));
         resultTable.setFillsViewportHeight(true);
+        resultTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        resultTable.getSelectionModel().addListSelectionListener(select);
         resultPanel = new JScrollPane(resultTable);
         resultPanel.setBounds(20, 60, 400, 300);
         add(resultPanel);
+        
+        cancelButton = new JButton("Cancel");
+        cancelButton.setLocation(450, 450);
+        cancelButton.setSize(100, 80);
+        cancelButton.addActionListener(close);
+        add(cancelButton);
+        
+        okButton = new JButton("OK");
+        okButton.setLocation(500, 500);
+        okButton.setSize(100, 80);
+        okButton.addActionListener(close);
+        add(okButton);
+        
+        selectedStudyLabel = new JLabel("Selected study");
+        selectedStudyLabel.setLocation(20, 450);
+        selectedStudyLabel.setSize(100, 80);
+        add(selectedStudyLabel);
     }
     
-    public ExProgram getSelectedProgram() {
-        return selectedExProgram;
+    public Study getSelectedStudy() {
+        return selectedStudy;
     }
     
     private void search(String filter, String conditionColumn) {
-        ArrayList<dbapplication.program.ExProgram> program = dbapplication.program.ExProgram.searchExProgram(filter, conditionColumn);
-        resultModel.setResults(program);
+        ArrayList<dbapplication.institute.Study> study = dbapplication.institute.Study.searchStudy(filter, conditionColumn);
+        resultModel.setResults(study);
     }
     
     class CloseDialogListener implements ActionListener {
@@ -91,14 +127,14 @@ import javax.swing.event.ListSelectionListener;
         @Override
         public void actionPerformed(ActionEvent e) {
             if(e.getSource() == cancelButton) {
-                selectedExProgram = null;
+                selectedStudy = null;
             }
             dispose();
         }
         
     }
     
-    class SearchListener implements ActionListener {
+    class searchListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent event) {
@@ -119,15 +155,14 @@ import javax.swing.event.ListSelectionListener;
             if (selectedRow < 0) {
                 return; // selection cleared
             }
-            ExProgram inst = resultModel.getExProgramAt(selectedRow);
+            Study inst = resultModel.getStudyAt(selectedRow);
             // if the selected institute matches the required type
-            if(requiredType == null || (requiredType == SelectProgramDialog.ProgramType.Company && inst.getIsbusiness().equals("1"))
-                    || (requiredType == SelectProgramDialog.ProgramType.University && inst.getIsbusiness().equals("0"))) {
-                selectedExProgram = inst;
-                selectedExProgramLabel.setText(
-                        "Selected program: " + selectedExProgram.getName());
+            if(requiredType == null || (requiredType == SelectProgramDialog.ProgramType.Internship)
+                    || (requiredType == SelectProgramDialog.ProgramType.studyProgram)) {
+                selectedStudy = inst;
+                selectedStudyLabel.setText(
+                        "Selected study: " + selectedStudy.getCode());
             }
         }
     }
 }
-*/

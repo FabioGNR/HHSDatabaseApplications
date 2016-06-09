@@ -124,7 +124,7 @@ public class Study {
         return code;
     }
     
-    public String getorg_id() {
+    public String getOrg_id() {
         return org_id;
     }
 

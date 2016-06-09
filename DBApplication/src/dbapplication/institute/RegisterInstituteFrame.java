@@ -1,6 +1,7 @@
 package dbapplication.institute;
 
 import dbapplication.JEditField;
+import dbapplication.program.SelectProgramDialog;
 //import dbapplication.program.SelectProgramDialog;
 
 import java.awt.event.ActionEvent;
@@ -35,6 +36,7 @@ public class RegisterInstituteFrame extends JDialog {
     private JRadioButton noRadio;
     private JLabel isBusinessLabel;
     
+    private String selectedStudy;
     private static String[] programs = {"Building process", "Business intelligence", "Database design", "Financial accounting", "Marketing", "Mechanica", "Programming"};
 
     public RegisterInstituteFrame(JFrame owner) {
@@ -109,43 +111,42 @@ public class RegisterInstituteFrame extends JDialog {
         programField = new JEditField("Programs");
         programField.setLocation(20, 220);
         programField.setSize(100, 30);
-        //programField.setEnabled(false);
+        programField.setEnabled(false);
         add(programField);
-        //programField.setVisible(false);
+        programField.setVisible(false);
         
-        selectProgramButton = new JButton("...");
+        selectProgramButton = new JButton("Show study");
         selectProgramButton.setLocation(150, 220);
         selectProgramButton.setSize(100, 30);
         add(selectProgramButton);
-        //selectProgramButton.addActionListener(new SelectProgramListener());
-       // selectProgramButton.setVisible(false); 
+        selectProgramButton.addActionListener(new SelectProgramListener());
+        selectProgramButton.setVisible(false); 
 
     }
     
-    /*private class SelectProgramListener implements ActionListener {
+    private class SelectProgramListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
          
-            SelectProgramDialog dlg = new SelectProgramDialog( (JFrame)getOwner(), SelectProgramDialog.ProgramType.Internship);
-            dlg.setVisible(true);
-        }
-            SelectInstituteDialog dlg = new SelectInstituteDialog((JFrame)getOwner(), SelectInstituteDialog.InstituteType.University);
+            SelectProgramDialog dlg = new SelectProgramDialog((JFrame)getOwner(), SelectProgramDialog.ProgramType.studyProgram);
             dlg.setVisible(true);
             // pauses until dialog is closed
-            Institute institute = dlg.getSelectedInstitute();
-            if(institute != null)
+            Study study = dlg.getSelectedStudy();
+            if(study != null)
             {
-                uniField.setText(institute.getName());
-                selectedInstCode = institute.getOrgid();
+                //uniField.setText(getName());
+                selectedStudy = study.getCode();
             }
-        }
-    }*/    
+        }  
+    }
+        
     
     private class SwitchInstituteListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             boolean showExchangeFields = noRadio.isSelected();
             programField.setVisible(showExchangeFields);
+            selectProgramButton.setVisible(showExchangeFields);
         }       
     }
     
