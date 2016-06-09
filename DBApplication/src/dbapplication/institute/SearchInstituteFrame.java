@@ -3,6 +3,7 @@ package dbapplication.institute;
 import dbapplication.JEditField;
 import dbapplication.JSearchField;
 import dbapplication.SearchFilter;
+import dbapplication.program.SelectStudyDialog;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,7 +34,7 @@ public class SearchInstituteFrame extends JDialog {
     private JTextField nameField;
     private JTextField countryField;
     private JTextField addressField;
-    private JTextField showProgramsCombo;
+    private JTextField studyField;
 
     private JLabel cityLabel;
     private JLabel nameLabel;
@@ -43,7 +44,7 @@ public class SearchInstituteFrame extends JDialog {
     private JLabel isBusinessLabel;
 
     private JButton searchButton;
-    private JButton addButton;
+    private JButton showButton;
     private JButton updateButton;
     private JButton deleteButton;
 
@@ -56,6 +57,7 @@ public class SearchInstituteFrame extends JDialog {
     private JScrollPane resultPanel;
     private InstituteTableModel resultModel;
 
+    private String selectedStudy;
     private Institute selectedInstitute = null;
     private static String[] programs = {"Building process", "Business intelligence", "Database design", "Financial accounting", "Marketing", "Mechanica", "Programming"};
 
@@ -67,7 +69,7 @@ public class SearchInstituteFrame extends JDialog {
     }
 
     private void setupFrame() {
-        setSize(750, 450);
+        setSize(700, 480);
         setTitle("Search Institute");
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setLayout(null);
@@ -77,6 +79,8 @@ public class SearchInstituteFrame extends JDialog {
     private void createComponents() {
         SearchListener lis = new SearchListener();
         InstituteEditListener edit = new InstituteEditListener();
+        SelectStudyListener studyLis = new SelectStudyListener();
+        SwitchInstituteListener switchLis = new SwitchInstituteListener();
 
         searchField = new JSearchField();
         searchField.setLocation(20, 20);
@@ -114,96 +118,124 @@ public class SearchInstituteFrame extends JDialog {
         resultPanel.setLocation(20, 60);
         resultPanel.setSize(400, 300);
         add(resultPanel);
+        
+        selectedInstituteLabel = new JLabel("Selected institute:");
+        selectedInstituteLabel.setLocation(440, 20);
+        selectedInstituteLabel.setSize(200, 30);
+        add(selectedInstituteLabel);
 
         cityLabel = new JLabel("City");
-        cityLabel.setLocation(440, 120);
+        cityLabel.setLocation(440, 70);
         cityLabel.setSize(90, 30);
         add(cityLabel);
 
         cityField = new JEditField("City");
-        cityField.setLocation(490, 120);
-        cityField.setSize(90, 30);
+        cityField.setLocation(490, 70);
+        cityField.setSize(120, 30);
         add(cityField);
 
         nameLabel = new JLabel("Name");
-        nameLabel.setLocation(440, 170);
+        nameLabel.setLocation(440, 120);
         nameLabel.setSize(90, 30);
         add(nameLabel);
 
         nameField = new JEditField("Name");
-        nameField.setLocation(490, 170);
-        nameField.setSize(90, 30);
+        nameField.setLocation(490, 120);
+        nameField.setSize(120, 30);
         add(nameField);
 
         countryLabel = new JLabel("Country");
-        countryLabel.setLocation(440, 220);
+        countryLabel.setLocation(440, 170);
         countryLabel.setSize(90, 30);
         add(countryLabel);
 
         countryField = new JEditField("Country");
-        countryField.setLocation(490, 220);
-        countryField.setSize(90, 30);
+        countryField.setLocation(490, 170);
+        countryField.setSize(120, 30);
         add(countryField);
 
         addressLabel = new JLabel("Address");
-        addressLabel.setLocation(440, 270);
+        addressLabel.setLocation(440, 220);
         addressLabel.setSize(90, 30);
         add(addressLabel);
 
         addressField = new JEditField("Address");
-        addressField.setLocation(490, 270);
-        addressField.setSize(90, 30);
+        addressField.setLocation(490, 220);
+        addressField.setSize(120, 30);
         add(addressField);
 
-        addButton = new JButton("Add");
-        addButton.setLocation(600, 350);
-        addButton.setSize(90, 30);
-        add(addButton);
-
-        showProgramsCombo = new JEditField("Programs");
-        showProgramsCombo.setLocation(440, 350);
-        showProgramsCombo.setSize(150, 30);
-        add(showProgramsCombo);
-
-        updateButton = new JButton("Update");
-        updateButton.setLocation(440, 20);
-        updateButton.setSize(90, 30);
-        updateButton.addActionListener(edit);
-        add(updateButton);
-
-        deleteButton = new JButton("Delete");
-        deleteButton.setLocation(540, 20);
-        deleteButton.setSize(90, 30);
-        deleteButton.addActionListener(edit);
-        add(deleteButton);
-
-        selectedInstituteLabel = new JLabel("Selected institute:");
-        selectedInstituteLabel.setLocation(440, 70);
-        selectedInstituteLabel.setSize(150, 30);
-        add(selectedInstituteLabel);
-        
-        isBusinessLabel = new JLabel();
-        isBusinessLabel.setLocation(440, 320);
+        isBusinessLabel = new JLabel("Business?");
+        isBusinessLabel.setLocation(440, 270);
         isBusinessLabel.setSize(100, 30);
-        isBusinessLabel.setText("Business?");
         add(isBusinessLabel);
 
-        yesRadio = new JRadioButton();
-        yesRadio.setLocation(510, 320);
+        yesRadio = new JRadioButton("Yes");
+        yesRadio.setLocation(510, 270);
         yesRadio.setSize(50, 30);
-        yesRadio.setText("Yes");
+        yesRadio.addActionListener(switchLis);
         add(yesRadio);
 
-        noRadio = new JRadioButton();
-        noRadio.setLocation(560, 320);
+        noRadio = new JRadioButton("No");
+        noRadio.setLocation(560, 270);
         noRadio.setSize(50, 30);
-        noRadio.setText("No");
+        noRadio.addActionListener(switchLis);
         add(noRadio);
 
         ButtonGroup group = new ButtonGroup();
         group.add(yesRadio);
         group.add(noRadio);
+        
+        studyField = new JEditField("Studies");
+        studyField.setLocation(440, 320);
+        studyField.setSize(70, 30);
+        studyField.setEnabled(false);
+        add(studyField);
+        studyField.setVisible(false);
+        
+        showButton = new JButton("Show studies");
+        showButton.setLocation(520, 320);
+        showButton.setSize(120, 30);
+        add(showButton);
+        showButton.addActionListener(studyLis);
+        showButton.setVisible(false); 
 
+        updateButton = new JButton("Update");
+        updateButton.setLocation(440, 370);
+        updateButton.setSize(90, 30);
+        updateButton.addActionListener(edit);
+        add(updateButton);
+
+        deleteButton = new JButton("Delete");
+        deleteButton.setLocation(540, 370);
+        deleteButton.setSize(90, 30);
+        deleteButton.addActionListener(edit);
+        add(deleteButton);
+
+    }
+    
+    private class SelectStudyListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+         
+            SelectStudyDialog dlg = new SelectStudyDialog((JFrame)getOwner(), SelectStudyDialog.ProgramType.studyProgram);
+            dlg.setVisible(true);
+            // pauses until dialog is closed
+            Study study = dlg.getSelectedStudy();
+            if(study != null)
+            {
+                //uniField.setText(getName());
+                selectedStudy = study.getCode();
+            }
+        }  
+    }
+    
+    private class SwitchInstituteListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            boolean showExchangeFields = noRadio.isSelected();
+            studyField.setVisible(showExchangeFields);
+            showButton.setVisible(showExchangeFields);
+        }       
     }
 
     class InstituteEditListener implements ActionListener {

@@ -25,7 +25,7 @@ import javax.swing.event.ListSelectionListener;
  *
  * @author Sishi
  */
-public class SelectProgramDialog extends JDialog {
+public class SelectStudyDialog extends JDialog {
     
     public enum ProgramType { Internship, studyProgram }
     private final ProgramType requiredType;
@@ -44,7 +44,7 @@ public class SelectProgramDialog extends JDialog {
     private StudyTableModel resultModel; 
     private Study selectedStudy = null;
     
-    public SelectProgramDialog (Frame owner, ProgramType type) {
+    public SelectStudyDialog (Frame owner, ProgramType type) {
         super(owner, true);
         requiredType = type;
         setupFrame();
@@ -54,7 +54,7 @@ public class SelectProgramDialog extends JDialog {
     }
     
     private void setupFrame() {
-        setSize(510, 510);
+        setSize(450, 480);
         setResizable(false);
         setLayout(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -80,7 +80,7 @@ public class SelectProgramDialog extends JDialog {
             new SearchFilter("Org_ID", "org_id"),
             new SearchFilter("Contactperson", "contactperson")
         });
-        searchConditionCombo.setBounds(340, 20, 100, 30);
+        searchConditionCombo.setBounds(320, 20, 100, 30);
         add(searchConditionCombo);
         
         resultTable = new JTable();
@@ -96,20 +96,20 @@ public class SelectProgramDialog extends JDialog {
         add(resultPanel);
         
         cancelButton = new JButton("Cancel");
-        cancelButton.setLocation(450, 450);
-        cancelButton.setSize(100, 80);
+        cancelButton.setLocation(260, 400);
+        cancelButton.setSize(70, 30);
         cancelButton.addActionListener(close);
         add(cancelButton);
         
         okButton = new JButton("OK");
-        okButton.setLocation(500, 500);
-        okButton.setSize(100, 80);
+        okButton.setLocation(350, 400);
+        okButton.setSize(70, 30);
         okButton.addActionListener(close);
         add(okButton);
         
-        selectedStudyLabel = new JLabel("Selected study");
-        selectedStudyLabel.setLocation(20, 450);
-        selectedStudyLabel.setSize(100, 80);
+        selectedStudyLabel = new JLabel("Selected study: ");
+        selectedStudyLabel.setLocation(20, 350);
+        selectedStudyLabel.setSize(250, 50);
         add(selectedStudyLabel);
     }
     
@@ -157,8 +157,8 @@ public class SelectProgramDialog extends JDialog {
             }
             Study inst = resultModel.getStudyAt(selectedRow);
             // if the selected institute matches the required type
-            if(requiredType == null || (requiredType == SelectProgramDialog.ProgramType.Internship)
-                    || (requiredType == SelectProgramDialog.ProgramType.studyProgram)) {
+            if(requiredType == null || (requiredType == SelectStudyDialog.ProgramType.Internship)
+                    || (requiredType == SelectStudyDialog.ProgramType.studyProgram)) {
                 selectedStudy = inst;
                 selectedStudyLabel.setText(
                         "Selected study: " + selectedStudy.getCode());
