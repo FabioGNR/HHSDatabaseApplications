@@ -58,7 +58,7 @@ public class ExchangeStudent extends Student{
             PreparedStatement statement = connection.prepareStatement(
                     "INSERT INTO exchange_student "
                     + "(student_id, city, address, university) "
-                    + "VALUES (?,?, ?, ?, ?)");
+                    + "VALUES (?,?, ?, ?, ?)"); //een vraagteken te veel
             statement.setString(1, student_id);
             statement.setString(2, city);
             statement.setString(3, address);
