@@ -32,12 +32,10 @@ public class SearchStudentFrame extends JDialog{
     private JTable resultTable;
     private JScrollPane resultPanel;
     private StudentTableModel resultModel;
-    private JEditField nameField;
-    private JRadioButton genderFBox;
-    private JRadioButton genderMBox;
+    private JEditField nameField, exUniField;
+    private JRadioButton genderFBox, genderMBox, hhsICTBox, hhsCMDBox;
     private JEditField emailField;
-    private JButton saveButton;
-    private JButton deleteButton;
+    private JButton saveButton, deleteButton, selectUniButton;
     
     private JLabel selectedStudentLabel;
     private Student selectedStudent = null;
@@ -106,6 +104,29 @@ public class SearchStudentFrame extends JDialog{
         emailField.setSize(150, 30);
         add(emailField);
         
+        hhsICTBox = new JRadioButton("HBO-ICT");
+        hhsICTBox.setBounds(450, 180, 80, 30);
+        hhsICTBox.setVisible(false);
+        add(hhsICTBox);
+        hhsCMDBox = new JRadioButton("CMD");
+        hhsCMDBox.setBounds(535, 180, 80, 30);
+        hhsCMDBox.setVisible(false);
+        add(hhsCMDBox);
+        ButtonGroup localStudyGroup = new ButtonGroup();
+        localStudyGroup.add(hhsICTBox);
+        localStudyGroup.add(hhsCMDBox);
+        
+        exUniField = new JEditField("University");
+        exUniField.setBounds(450, 180, 120, 30);
+        exUniField.setVisible(false);
+        exUniField.setEnabled(false);
+        add(exUniField);
+        
+        selectUniButton = new JButton("...");
+        selectUniButton.setBounds(570, 180, 30, 30);
+        selectUniButton.setVisible(false);
+        add(selectUniButton);
+        
         genderFBox = new JRadioButton("Female");
         genderFBox.setLocation(450, 140);
         genderFBox.setSize(75, 30);
@@ -172,6 +193,16 @@ public class SearchStudentFrame extends JDialog{
             else 
                 correctGenderBox = genderMBox;
             correctGenderBox.setSelected(true);
+            boolean isExchange = selectedStudent instanceof ExchangeStudent;
+            hhsICTBox.setVisible(!isExchange);
+            hhsCMDBox.setVisible(!isExchange);
+            exUniField.setVisible(isExchange);
+            selectUniButton.setVisible(isExchange);
+            if(!isExchange) {
+                HHSStudent student = (HHSStudent) selectedStudent;
+                hhsICTBox.setSelected(student.getLocalStudy().equals("ICT"));
+                hhsCMDBox.setSelected(!hhsICTBox.isSelected());
+            }
         }       
     }
     
