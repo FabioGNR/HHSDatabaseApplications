@@ -7,7 +7,9 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JRadioButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -31,12 +33,14 @@ public class SearchInstituteFrame extends JDialog {
     private JTextField nameField;
     private JTextField countryField;
     private JTextField addressField;
+    private JTextField showProgramsCombo;
 
     private JLabel cityLabel;
     private JLabel nameLabel;
     private JLabel countryLabel;
     private JLabel addressLabel;
     private JLabel selectedInstituteLabel;
+    private JLabel isBusinessLabel;
 
     private JButton searchButton;
     private JButton addButton;
@@ -44,8 +48,10 @@ public class SearchInstituteFrame extends JDialog {
     private JButton deleteButton;
 
     private JComboBox searchConditionCombo;
-    private JComboBox showProgramsCombo;
-
+    
+    private JRadioButton yesRadio;
+    private JRadioButton noRadio;
+    
     private JTable resultTable;
     private JScrollPane resultPanel;
     private InstituteTableModel resultModel;
@@ -150,12 +156,12 @@ public class SearchInstituteFrame extends JDialog {
         add(addressField);
 
         addButton = new JButton("Add");
-        addButton.setLocation(600, 320);
+        addButton.setLocation(600, 350);
         addButton.setSize(90, 30);
         add(addButton);
 
-        showProgramsCombo = new JComboBox(programs);
-        showProgramsCombo.setLocation(440, 320);
+        showProgramsCombo = new JEditField("Programs");
+        showProgramsCombo.setLocation(440, 350);
         showProgramsCombo.setSize(150, 30);
         add(showProgramsCombo);
 
@@ -175,6 +181,28 @@ public class SearchInstituteFrame extends JDialog {
         selectedInstituteLabel.setLocation(440, 70);
         selectedInstituteLabel.setSize(150, 30);
         add(selectedInstituteLabel);
+        
+        isBusinessLabel = new JLabel();
+        isBusinessLabel.setLocation(440, 320);
+        isBusinessLabel.setSize(100, 30);
+        isBusinessLabel.setText("Business?");
+        add(isBusinessLabel);
+
+        yesRadio = new JRadioButton();
+        yesRadio.setLocation(510, 320);
+        yesRadio.setSize(50, 30);
+        yesRadio.setText("Yes");
+        add(yesRadio);
+
+        noRadio = new JRadioButton();
+        noRadio.setLocation(560, 320);
+        noRadio.setSize(50, 30);
+        noRadio.setText("No");
+        add(noRadio);
+
+        ButtonGroup group = new ButtonGroup();
+        group.add(yesRadio);
+        group.add(noRadio);
 
     }
 

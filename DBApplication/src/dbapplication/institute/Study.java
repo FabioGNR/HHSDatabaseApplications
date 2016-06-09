@@ -1,5 +1,4 @@
 package dbapplication.institute;
-
 import dbapplication.DBConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,19 +10,19 @@ import java.util.ArrayList;
  *
  * @author Sishi
  */
-public class Institute {
-    private String org_id, city, name, country, address, is_business;
+public class Study {
+    private String code, org_id, name, country, address, is_business;
     private String[] cellData;
     
-    public Institute(ResultSet result) throws SQLException
+    public Study(ResultSet result) throws SQLException
     {
-        org_id = result.getString("org_id");
-        city = result.getString("city");
+        code = result.getString("org_id");
+        org_id = result.getString("city");
         name = result.getString("name");
         country = result.getString("country");
         address = result.getString("address");
         is_business = result.getString("is_business");
-        cellData = new String[] {name, city, country, address, is_business.equals("1") ? "Yes" : "No"};
+        cellData = new String[] {name, org_id, country, address, is_business.equals("1") ? "Yes" : "No"};
     }
     
     public static ArrayList<Institute> searchInstitute(String filter, String conditionColumn) {
@@ -80,7 +79,7 @@ public class Institute {
             statement.setString(2, name);
             statement.setString(3, country);
             statement.setString(4, address);
-            statement.setString(5, org_id);
+            statement.setString(5, code);
             statement.executeUpdate();
             statement.close();
             
@@ -141,11 +140,11 @@ public class Institute {
     }
 
     public String getOrgid() {
-        return org_id;
+        return code;
     }
     
     public String getCity() {
-        return city;
+        return org_id;
     }
 
     public String getName() {
