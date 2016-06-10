@@ -3,6 +3,7 @@ package dbapplication.student;
 import dbapplication.JEditField;
 import dbapplication.JSearchField;
 import dbapplication.SearchFilter;
+import dbapplication.institute.Institute;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,7 +28,7 @@ import javax.swing.event.ListSelectionListener;
  */
 public class SearchStudentFrame extends JDialog{
     private JTextField searchField;
-    private JButton searchButton;
+    private JButton searchButton, saveButton, deleteButton;
     private JComboBox searchConditionCombo;
     private JTable resultTable;
     private JScrollPane resultPanel;
@@ -36,8 +37,9 @@ public class SearchStudentFrame extends JDialog{
     private JRadioButton genderFBox;
     private JRadioButton genderMBox;
     private JEditField emailField;
-    private JButton saveButton;
-    private JButton deleteButton;
+    private JButton selectFilterButton;
+    private Institute selectedFilterInstitute;
+    
     
     private JLabel selectedStudentLabel;
     private Student selectedStudent = null;
@@ -92,25 +94,29 @@ public class SearchStudentFrame extends JDialog{
         add(resultPanel);
         
         selectedStudentLabel = new JLabel("Selected student:");
-        selectedStudentLabel.setLocation(450, 20);
+        selectedStudentLabel.setLocation(450, 60);
         selectedStudentLabel.setSize(150, 30);
         add(selectedStudentLabel);
         
+        selectFilterButton = new JButton("Select institute filter");
+        selectFilterButton.setBounds(450, 20, 150, 30);
+        add(selectFilterButton);
+        
         nameField = new JEditField("Name");
-        nameField.setLocation(450, 60);
+        nameField.setLocation(450, 100);
         nameField.setSize(150, 30);
         add(nameField);
         
         emailField = new JEditField("Email");
-        emailField.setLocation(450, 100);
+        emailField.setLocation(450, 140);
         emailField.setSize(150, 30);
         add(emailField);
         
         genderFBox = new JRadioButton("Female");
-        genderFBox.setLocation(450, 140);
+        genderFBox.setLocation(450, 180);
         genderFBox.setSize(75, 30);
         genderMBox = new JRadioButton("Male");
-        genderMBox.setLocation(525, 140);
+        genderMBox.setLocation(525, 180);
         genderMBox.setSize(75, 30);
         ButtonGroup genderGroup = new ButtonGroup();
         genderGroup.add(genderFBox);
@@ -134,6 +140,17 @@ public class SearchStudentFrame extends JDialog{
     private void search(String filter, String conditionColumn) {
         ArrayList<Student> students = Student.searchStudents(filter, conditionColumn);
         resultModel.setResults(students);
+    }
+    
+    class SelectFilterListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            SearchFilterDialog dlg = new SearchFilterDialog();
+            dlg.setVisible(true);
+            selectedFilterInstitute = dlg.getSelectedInstitute();
+        }
+        
     }
     
     class StudentEditListener implements ActionListener {
