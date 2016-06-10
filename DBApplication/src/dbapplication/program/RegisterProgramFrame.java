@@ -4,9 +4,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 import dbapplication.JEditField;
-import static dbapplication.program.RegisterProgramFrame.ButtonAction.Internship;
-import java.awt.CardLayout;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
@@ -17,13 +14,14 @@ import javax.swing.*;
  */
 public class RegisterProgramFrame extends JDialog {
 
-    private JTextField orgIDField, nameField, studyField;
-    private JButton registerButton;
+    private JTextField orgIDField, nameField, studyCode;
+    private JButton registerButton, orgIdButton;
     private JRadioButton internshipButton, studyButton;
-    private JRadioButton term1, term2, term3, term4, term5;
     private JRadioButton minor, eps, summerSchool;
     private ButtonGroup buttonGroup;
-    private JCheckBox[] termBoxes = new JCheckBox[6];
+    private JCheckBox[] termBoxes = new JCheckBox[5];
+    private JComboBox maxCreditBox;
+    private String[] maxCredit = {"", "15 EC", "30 EC"};
 
     enum ButtonAction {
         Internship, StudyProgram
@@ -33,7 +31,6 @@ public class RegisterProgramFrame extends JDialog {
         super(owner, true);
         setupFrame();
         createInternshipComponents();
-        createStudyProgram();
     }
 
     private void setupFrame() {
@@ -46,13 +43,28 @@ public class RegisterProgramFrame extends JDialog {
 
     private void createInternshipComponents() {
 
+        nameField = new JEditField("Name");
+        nameField.setBounds(20, 50, 100, 25);
+        add(nameField);
+
         orgIDField = new JEditField("Institute code");
-        orgIDField.setBounds(20, 50, 100, 25);
+        orgIDField.setBounds(20, 100, 100, 25);
         add(orgIDField);
 
-        nameField = new JEditField("Name");
-        nameField.setBounds(20, 100, 100, 25);
-        add(nameField);
+        //add a button to select org
+        orgIdButton = new JButton("...");
+        orgIdButton.setBounds(130, 100, 40, 25);
+        add(orgIdButton);
+
+        maxCreditBox = new JComboBox(maxCredit);
+        maxCreditBox.setBounds(20, 150, 75, 25);
+        add(maxCreditBox);
+
+        for (int i = 0; i < termBoxes.length; i++) {
+            termBoxes[i] = new JCheckBox("Term " + (i + 1));
+            termBoxes[i].setBounds(400, 50 + (i * 25), 100, 25);
+            add(termBoxes[i]);
+        }
 
 //        ActionListener registerListener = new 
         registerButton = new JButton("Register");
@@ -60,7 +72,10 @@ public class RegisterProgramFrame extends JDialog {
 //        registerButton.addActionListener();
         add(registerButton);
 
-        ActionListener switchButton = new ButtonListener();
+        buttonGroup = new ButtonGroup();
+        buttonGroup.add(studyButton);
+        buttonGroup.add(internshipButton);
+        ActionListener switchButton = new SwitchProgram();
         internshipButton = new JRadioButton("Internship");
         internshipButton.setBounds(130, 50, 95, 25);
         internshipButton.addActionListener(switchButton);
@@ -71,17 +86,12 @@ public class RegisterProgramFrame extends JDialog {
         studyButton.setBounds(130, 75, 95, 25);
         studyButton.addActionListener(switchButton);
         add(studyButton);
-        buttonGroup = new ButtonGroup();
-        buttonGroup.add(studyButton);
-        buttonGroup.add(internshipButton);
-        for (int i = 0; i < termBoxes.length; i++) {
-            termBoxes[i] = new JCheckBox("Term "+(i+1));
-            termBoxes[i].setBounds(400, 50+(i*25), 100, 25);
-            add(termBoxes[i]);
-        }
-    }
 
-    private void createStudyProgram() {
+        //listener toevoegen
+        //studyCode ontbreekt in database 
+        
+        
+        // studyType
         minor = new JRadioButton("Minor");
         minor.setBounds(225, 50, 170, 25);
         minor.setVisible(false);
@@ -96,34 +106,45 @@ public class RegisterProgramFrame extends JDialog {
         summerSchool.setBounds(225, 150, 170, 25);
         summerSchool.setVisible(false);
         add(summerSchool);
-
     }
 
-    class ButtonListener implements ActionListener {
+    class SwitchProgram implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            String name, org_id,study;
-            if (e.getSource() == registerButton) {
-                name = nameField.getText();
-                if (name.isEmpty()) {
-                    name = null;
-                }
-                org_id = orgIDField.getText();
-                if (org_id.isEmpty()) {
-                    org_id = null;
-                }
-                study = studyField.getText();
-                if (study.isEmpty()) {
-                    study = null;
-                }
-            }
-            else {
+            if (e.getSource() == internshipButton) {
+                boolean internshipSelected = internshipButton.isSelected();
+                eps.setVisible(!internshipSelected);
+                summerSchool.setVisible(!internshipSelected);
+                minor.setVisible(!internshipSelected);
+            } else {
                 boolean studyProgramSelected = studyButton.isSelected();
                 eps.setVisible(studyProgramSelected);
                 summerSchool.setVisible(studyProgramSelected);
                 minor.setVisible(studyProgramSelected);
             }
         }
+    }
+
+    class RegisterProgram implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String name, org_id, term, maxCredit, studyType, studyCode;
+            name = nameField.getText();
+            if (name.isEmpty()) {
+                name = null;
+            }
+            org_id = orgIDField.getText();
+            if (org_id.isEmpty()) {
+                org_id = null;
+            }
+            
+            
+            if(internshipButton.isSelected()){
+//                Internship.insertNewInternship(org_id, name, term);
+            }
+        }
+
     }
 }

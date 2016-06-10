@@ -1,13 +1,16 @@
 package dbapplication.institute;
 
 import dbapplication.JEditField;
+import dbapplication.program.SelectStudyDialog;
+//import dbapplication.program.SelectStudyDialog;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
+import javax.swing.JRadioButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -23,11 +26,17 @@ public class RegisterInstituteFrame extends JDialog {
     private JTextField cityField;
     private JTextField countryField;
     private JTextField addressField;
+    private JTextField studyField;
 
+    private JButton registerButton;
     private JButton addButton;
-    private JCheckBox yesBox;
-    private JCheckBox noBox;
+    private JButton showButton;
+    
+    private JRadioButton yesRadio;
+    private JRadioButton noRadio;
     private JLabel isBusinessLabel;
+    
+    private String selectedStudy;
 
     public RegisterInstituteFrame(JFrame owner) {
         super(owner, true);
@@ -36,7 +45,7 @@ public class RegisterInstituteFrame extends JDialog {
     }
 
     private void setupFrame() {
-        setSize(510, 290);
+        setSize(510, 300);
         setResizable(false);
         setLayout(null);
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -44,6 +53,9 @@ public class RegisterInstituteFrame extends JDialog {
     }
 
     private void createComponents() {
+        SwitchInstituteListener switchLis = new SwitchInstituteListener();
+        SelectStudyListener studyLis = new SelectStudyListener();
+        
         nameField = new JEditField("Name");
         nameField.setLocation(20, 20);
         nameField.setSize(180, 30);
@@ -66,11 +78,11 @@ public class RegisterInstituteFrame extends JDialog {
 
         // de buttons:
         AddButtonListener lis = new AddButtonListener();
-        addButton = new JButton("Register");
-        addButton.setLocation(400, 180);
-        addButton.setSize(90, 60);
-        addButton.addActionListener(lis);
-        add(addButton);
+        registerButton = new JButton("Register");
+        registerButton.setLocation(400, 180);
+        registerButton.setSize(90, 60);
+        registerButton.addActionListener(lis);
+        add(registerButton);
 
         isBusinessLabel = new JLabel();
         isBusinessLabel.setLocation(230, 20);
@@ -78,23 +90,66 @@ public class RegisterInstituteFrame extends JDialog {
         isBusinessLabel.setText("Business?");
         add(isBusinessLabel);
 
-        yesBox = new JCheckBox();
-        yesBox.setLocation(300, 20);
-        yesBox.setSize(100, 30);
-        yesBox.setText("Yes");
-        add(yesBox);
+        yesRadio = new JRadioButton();
+        yesRadio.setLocation(300, 20);
+        yesRadio.setSize(100, 30);
+        yesRadio.setText("Yes");
+        yesRadio.addActionListener(switchLis);
+        add(yesRadio);
 
-        noBox = new JCheckBox();
-        noBox.setLocation(300, 50);
-        noBox.setSize(100, 30);
-        noBox.setText("No");
-        add(noBox);
+        noRadio = new JRadioButton();
+        noRadio.setLocation(300, 50);
+        noRadio.setSize(100, 30);
+        noRadio.setText("No");
+        noRadio.addActionListener(switchLis);
+        add(noRadio);
 
         ButtonGroup group = new ButtonGroup();
-        group.add(yesBox);
-        group.add(noBox);
+        group.add(yesRadio);
+        group.add(noRadio);
+        
+        studyField = new JEditField("Studies");
+        studyField.setLocation(20, 220);
+        studyField.setSize(70, 30);
+        studyField.setEnabled(false);
+        add(studyField);
+        studyField.setVisible(false);
+        
+        showButton = new JButton("Show studies");
+        showButton.setLocation(100, 220);
+        showButton.setSize(120, 30);
+        add(showButton);
+        showButton.addActionListener(studyLis);
+        showButton.setVisible(false); 
 
     }
+    
+    private class SelectStudyListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+         
+            SelectStudyDialog dlg = new SelectStudyDialog((JFrame)getOwner(), SelectStudyDialog.ProgramType.studyProgram);
+            dlg.setVisible(true);
+            // pauses until dialog is closed
+            Study study = dlg.getSelectedStudy();
+            if(study != null)
+            {
+                //uniField.setText(getName());
+                selectedStudy = study.getCode();
+            }
+        }  
+    }
+        
+    
+    private class SwitchInstituteListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            boolean showExchangeFields = noRadio.isSelected();
+            studyField.setVisible(showExchangeFields);
+            showButton.setVisible(showExchangeFields);
+        }       
+    }
+    
 
     private class AddButtonListener implements ActionListener {
 
@@ -118,8 +173,11 @@ public class RegisterInstituteFrame extends JDialog {
             if (address.isEmpty()) {
                 address = null;
             }
+            if (event.getSource()==addButton){
+                
+            }
             // is_business is 1 als yes is geselecteerd, anders 0
-            is_business = yesBox.isSelected() ? 1 : 0;
+            is_business = yesRadio.isSelected() ? 1 : 0;
 
             Institute.insertInstitute(city, name, country, address, is_business);
         }

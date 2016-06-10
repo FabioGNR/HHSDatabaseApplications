@@ -118,7 +118,24 @@ public class Institute {
         
     }
     
-    
+    public static void insertInternship(String code, String org_id ) {
+        Connection connection = DBConnection.getConnection();
+        try {
+            PreparedStatement statement = connection.prepareStatement(
+                    "INSERT INTO internship "
+                        + "(org_id, code) "
+                        + "VALUES (?,?)");
+            statement.setString(1, code);
+            statement.setString(2, org_id);
+            
+            statement.executeUpdate();
+            statement.close();
+            System.out.println("preparedstatement werkt");
+        } catch (SQLException error) {
+            System.out.println("Error: " + error.getMessage());
+            System.out.println("preparedstatement werkt niet");
+        }
+    }
     public String getDataAt(int cell) {
         return cellData[cell];
     }

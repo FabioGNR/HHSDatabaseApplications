@@ -46,8 +46,6 @@ public class RegisterStudentFrame extends JDialog {
 
         studentidField = new JEditField("Student ID");
         studentidField.setBounds(20, 70, 180, 30);
-        studentidField.setLocation(20, 70);
-        studentidField.setSize(180, 30);
         add(studentidField);
 
         nameField = new JEditField("Name");
