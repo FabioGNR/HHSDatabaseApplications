@@ -54,7 +54,7 @@ public class RegisterInstituteFrame extends JDialog {
 
     private void createComponents() {
         SwitchInstituteListener switchLis = new SwitchInstituteListener();
-        SelectStudyListener studyLis = new SelectStudyListener();
+        RegisterStudyListener studyLis = new RegisterStudyListener();
         
         nameField = new JEditField("Name");
         nameField.setLocation(20, 20);
@@ -108,23 +108,23 @@ public class RegisterInstituteFrame extends JDialog {
         group.add(yesRadio);
         group.add(noRadio);
         
-        studyField = new JEditField("Studies");
+        studyField = new JEditField("Register studies");
         studyField.setLocation(20, 220);
-        studyField.setSize(70, 30);
+        studyField.setSize(100, 30);
         studyField.setEnabled(false);
         add(studyField);
         studyField.setVisible(false);
         
-        showButton = new JButton("Show studies");
-        showButton.setLocation(100, 220);
-        showButton.setSize(120, 30);
+        showButton = new JButton("...");
+        showButton.setLocation(120, 220);
+        showButton.setSize(40, 30);
         add(showButton);
         showButton.addActionListener(studyLis);
         showButton.setVisible(false); 
 
     }
     
-    private class SelectStudyListener implements ActionListener {
+    private class RegisterStudyListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
          
