@@ -59,9 +59,9 @@ public class StudyProgram extends ExProgram {
     public static boolean insertNewStudyProgram(String name, String term,
             String org_id, String studyType, String maxCredits, String studyCode) {
         Connection connect = DBConnection.getConnection();
-        if (!ExProgram.insertExProgram(name, term)) {
-            return false;
-        }
+//        if (!ExProgram.insertExProgram(name, term)) {
+//            return false;
+//        }
         String sql = "INSERT INTO study_program (org_id, type, max_credits, study_code) VALUES (?,?,?,?,)";
         try {
             PreparedStatement statement = connect.prepareStatement(sql);

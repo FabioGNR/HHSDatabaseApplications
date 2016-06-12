@@ -35,6 +35,10 @@ public class ProgramTableModel extends AbstractTableModel{
     public String getColumnName(int column){
         return columnNames[column];
     }
+    
+    public ExProgram getProgramAt(int rowIndex){
+        return searchProgram.get(rowIndex);
+    }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {

@@ -40,17 +40,16 @@ public class Internship extends ExProgram {
     }
     
     // array of terms and why static?
-    public static boolean insertNewInternship(String orgID, String name, String term){
+    public static boolean insertNewInternship(String orgID, String name, boolean[] terms){
         Connection connect = DBConnection.getConnection();
-        if(!ExProgram.insertExProgram(name, term)){
+        if(!ExProgram.insertExProgram(name, terms)){
             return false;
         }
-        String sql = "INSERT INTO internship (org_id, name, term) VALUES (?,?,?)";
+        String sql = "INSERT INTO internship (org_id, name) VALUES (?,?)";
         try{
             PreparedStatement statement = connect.prepareStatement(sql);
             statement.setString(1, orgID);
             statement.setString(2, name);
-            statement.setString(3, term);
             statement.executeUpdate();
             System.out.println("Inserting new Internship was succesful");
         }catch(SQLException e){
