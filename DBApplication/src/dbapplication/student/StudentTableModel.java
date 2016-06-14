@@ -18,6 +18,11 @@ public class StudentTableModel extends AbstractTableModel{
         this.fireTableDataChanged();
     }
     
+    public void clear() {
+        searchResults = new ArrayList<>();
+        this.fireTableDataChanged();
+    }
+    
     @Override
     public int getRowCount() {
         return searchResults.size();

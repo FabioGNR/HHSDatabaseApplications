@@ -27,42 +27,7 @@ public class Student {
         email = result.getString("email");
         cellData = new String[]{studentid, name, gender, email};
     }
-
-    public static ArrayList<Student> searchStudents(String filter, String conditionColumn) {
-        ArrayList<Student> students = new ArrayList<>();
-        try {
-            // column names can't be set dynamically with preparedstatement
-            // luckily conditionColumn isn't user input
-            String query =  "SELECT `name`, gender, email, student.student_id, city, address, university, NULL as `hhs_study`, 'ex' as `type` \n" +
-                            "FROM student JOIN exchange_student E ON student.student_id=E.student_id " +
-                            "WHERE `"+conditionColumn+"` LIKE ?\n" +
-                            "UNION\n" +
-                            "SELECT `name`, gender, email, student.student_id, NULL, NULL, NULL as university, hhs_study, 'hhs' \n" +
-                            "FROM student JOIN \n" +
-                            "hhs_student H ON student.student_id=H.student_id "+
-                            "WHERE `"+conditionColumn+"` LIKE ? ORDER BY `name` asc";
-            
-            PreparedStatement stat = DBConnection.getConnection().prepareStatement(
-                query);
-            stat.setString(1, "%" + filter + "%");
-            stat.setString(2, "%" + filter + "%");
-            ResultSet results = stat.executeQuery();
-            while (results.next()) {
-                if(results.getString("type").equals("ex")) {
-                    students.add(new ExchangeStudent(results));
-                }
-                else {
-                    students.add(new HHSStudent(results));
-                }
-            }
-            results.close();
-            stat.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return students;
-    }
-
+    
     protected static boolean insertNewStudent(String student_id, String name, String gender, String email) {
         Connection connection = DBConnection.getConnection();
 

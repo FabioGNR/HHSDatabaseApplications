@@ -101,6 +101,7 @@ public class SelectInstituteDialog extends JDialog{
         okButton.setBounds(350, 390, 70, 30);
         okButton.addActionListener(closeLis);
         add(okButton);
+        okButton.setEnabled(false);
         
         selectedInstituteLabel = new JLabel("Selected institute:");
         selectedInstituteLabel.setLocation(20, 365);
@@ -157,6 +158,7 @@ public class SelectInstituteDialog extends JDialog{
                 selectedInstitute = inst;
                 selectedInstituteLabel.setText(
                         "Selected institute: " + selectedInstitute.getName());
+                okButton.setEnabled(true);
             }
         }
     }

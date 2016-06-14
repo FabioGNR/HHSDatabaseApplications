@@ -4,6 +4,7 @@ import dbapplication.JEditField;
 import dbapplication.JSearchField;
 import dbapplication.SearchFilter;
 import dbapplication.institute.Institute;
+import dbapplication.institute.SelectInstituteDialog;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,15 +17,16 @@ import javax.swing.event.ListSelectionListener;
  * @author omari_000
  */
 public class SearchStudentFrame extends JDialog{
-    private JTextField searchField;
-    private JComboBox searchConditionCombo;
+    private JTextField searchField, uniField;
+    private JComboBox searchConditionCombo, searchTypeCombo, hhsStudyCombo;
     private JTable resultTable;
     private JScrollPane resultPanel;
     private StudentTableModel resultModel;
-    private JButton selectFilterButton;
+    private JButton selectFilterButton, selectUniButton;
     private Institute selectedFilterInstitute;
+    private String exchangeUniID;
     
-    private JEditField nameField, emailField;
+    private JEditField nameField, emailField, cityField, addressField;
     private JRadioButton genderFBox, genderMBox;
     private JButton saveButton, deleteButton, searchButton;
     
@@ -35,8 +37,6 @@ public class SearchStudentFrame extends JDialog{
         super(owner, true);
         setupFrame();     
         createComponents();
-        // fill JTable searching on empty filter
-        search("", "name");
     }
     
     private void setupFrame() {
@@ -52,15 +52,22 @@ public class SearchStudentFrame extends JDialog{
         add(searchField);
         
         searchButton = new JButton("Search");
-        searchButton.setBounds(220, 20, 90, 30);
+        searchButton.setBounds(210, 20, 70, 30);
         searchButton.addActionListener(new SearchListener());
         add(searchButton);
+        
+        searchTypeCombo = new JComboBox(new Student.StudentType[] {
+            Student.StudentType.Exchange,  Student.StudentType.HHS
+        });
+        searchTypeCombo.setBounds(290, 20, 100, 30);
+        searchTypeCombo.addActionListener(new SelectTypeListener());
+        add(searchTypeCombo);
         
         searchConditionCombo = new JComboBox(new SearchFilter[]{
             new SearchFilter("Student ID", "student_id"), 
             new SearchFilter("Name", "name"), 
             new SearchFilter("Email", "email")});
-        searchConditionCombo.setBounds(340, 20, 100, 30);
+        searchConditionCombo.setBounds(400, 20, 100, 30);
         add(searchConditionCombo);
         
         resultTable = new JTable();
@@ -80,7 +87,7 @@ public class SearchStudentFrame extends JDialog{
         add(selectedStudentLabel);
         
         selectFilterButton = new JButton("Select institute filter");
-        selectFilterButton.setBounds(450, 20, 150, 30);
+        selectFilterButton.setBounds(510, 20, 150, 30);
         add(selectFilterButton);
         
         nameField = new JEditField("Name");
@@ -101,6 +108,34 @@ public class SearchStudentFrame extends JDialog{
         add(genderFBox);
         add(genderMBox);
         
+        hhsStudyCombo = new JComboBox(HHSStudent.LocalStudy.values());
+        hhsStudyCombo.setBounds(450, 220, 130, 30);
+        add(hhsStudyCombo);
+        hhsStudyCombo.setVisible(false);
+        
+        cityField = new JEditField("City");
+        cityField.setBounds(450, 220, 150, 30);
+        add(cityField);
+        cityField.setVisible(false);
+        
+        addressField = new JEditField("Address");
+        addressField.setBounds(450, 260, 150, 30);
+        add(addressField);
+        addressField.setVisible(false);
+        
+        uniField = new JEditField("University");
+        uniField.setBounds(450, 300, 120, 30);
+        add(uniField);
+        uniField.setEnabled(false);
+        uniField.setVisible(false);
+        
+        selectUniButton = new JButton("...");
+        selectUniButton.setBounds(570, 300, 30, 30);
+        add(selectUniButton);
+        selectUniButton.addActionListener(new SelectUniversityListener());
+        selectUniButton.setVisible(false);
+        
+        
         saveButton = new JButton("Save");
         saveButton.setBounds(450, 490, 75, 30);
         saveButton.addActionListener(new StudentEditListener());
@@ -110,11 +145,40 @@ public class SearchStudentFrame extends JDialog{
         deleteButton.setBounds(525, 490, 75, 30);
         deleteButton.addActionListener(new StudentEditListener());
         add(deleteButton);
+        
+        toggleFields();
     }
     
-    private void search(String filter, String conditionColumn) {
-        ArrayList<Student> students = Student.searchStudents(filter, conditionColumn);
+    private void toggleFields() {
+            int selectedTypeIndex = searchTypeCombo.getSelectedIndex();
+            Student.StudentType type = (Student.StudentType)searchTypeCombo.getItemAt(selectedTypeIndex);
+            boolean exchangeSelected = type == Student.StudentType.Exchange;
+            cityField.setVisible(exchangeSelected);
+            addressField.setVisible(exchangeSelected);
+            uniField.setVisible(exchangeSelected);
+            selectUniButton.setVisible(exchangeSelected);
+            hhsStudyCombo.setVisible(!exchangeSelected);        
+    }
+    
+    private void search(String filter, String conditionColumn, Student.StudentType type) {
+        ArrayList<Student> students;
+        if(type == Student.StudentType.Exchange) {
+            students = ExchangeStudent.searchStudents(filter, conditionColumn);
+        }
+        else {
+            students = HHSStudent.searchStudents(filter, conditionColumn);
+        }
         resultModel.setResults(students);
+        selectedStudent = null;
+    }
+    
+    class SelectTypeListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            toggleFields();
+            selectedStudent = null;
+            resultModel.clear();
+        }     
     }
     
     class SelectFilterListener implements ActionListener {
@@ -141,9 +205,26 @@ public class SearchStudentFrame extends JDialog{
                     "Delete student", JOptionPane.OK_CANCEL_OPTION);
                 if(choice == JOptionPane.OK_OPTION) {
                     selectedStudent.delete();
+                    resultModel.clear();
+                    selectedStudent = null;
                 }
             }
         }    
+    }
+    
+    private class SelectUniversityListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            SelectInstituteDialog dlg = new SelectInstituteDialog((JFrame)getOwner(), SelectInstituteDialog.InstituteType.University);
+            dlg.setVisible(true);
+            // pauses until dialog is closed
+            Institute institute = dlg.getSelectedInstitute();
+            if(institute != null)
+            {
+                uniField.setText(institute.getName());
+                exchangeUniID = institute.getOrgid();
+            }
+        }     
     }
     
     class SelectionListener implements ListSelectionListener {
@@ -164,15 +245,27 @@ public class SearchStudentFrame extends JDialog{
             else 
                 correctGenderBox = genderMBox;
             correctGenderBox.setSelected(true);
+            int selectedTypeIndex = searchTypeCombo.getSelectedIndex();
+            Student.StudentType type = (Student.StudentType)searchTypeCombo.getItemAt(selectedTypeIndex);
+            if(type == Student.StudentType.Exchange) {
+                cityField.setText(((ExchangeStudent)selectedStudent).getCity());
+                addressField.setText(((ExchangeStudent)selectedStudent).getAddress());
+                uniField.setText(((ExchangeStudent)selectedStudent).getUniName());
+            }
+            else {
+                hhsStudyCombo.setSelectedItem(((HHSStudent)selectedStudent).getLocalStudy());
+            }
         }       
     }
     
     class SearchListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            int selectedIndex = searchConditionCombo.getSelectedIndex();
-            SearchFilter selectedFilter = (SearchFilter)searchConditionCombo.getItemAt(selectedIndex);
-            search(searchField.getText(), selectedFilter.getColumnName());
+            int selectedTypeIndex = searchTypeCombo.getSelectedIndex();
+            Student.StudentType type = (Student.StudentType)searchTypeCombo.getItemAt(selectedTypeIndex);
+            int selectedConditionIndex = searchConditionCombo.getSelectedIndex();
+            SearchFilter selectedFilter = (SearchFilter)searchConditionCombo.getItemAt(selectedConditionIndex);
+            search(searchField.getText(), selectedFilter.getColumnName(), type);
         }      
     }
 }

@@ -85,7 +85,7 @@ public class RegisterStudentFrame extends JDialog {
         selectUniButton.addActionListener(new SelectUniversityListener());
         selectUniButton.setVisible(false);
 
-        studyBox = new JComboBox(new String[] {"HBO-ICT", "Communication Media Design"});
+        studyBox = new JComboBox(HHSStudent.LocalStudy.values());
         studyBox.setBounds(20, 270, 180, 30);
         add(studyBox);
         studyBox.setVisible(false);
@@ -168,7 +168,7 @@ public class RegisterStudentFrame extends JDialog {
             }
             boolean result;
             if(hhs_studentButton.isSelected()) {
-                String hhs_study = (String)studyBox.getSelectedItem();
+                HHSStudent.LocalStudy hhs_study = (HHSStudent.LocalStudy)studyBox.getSelectedItem();
                 result = HHSStudent.insertNewHHSStudent(student_id, name, gender, email, hhs_study);
             }
             else {               

@@ -5,19 +5,43 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  *
  * @author fabio
  */
 public class HHSStudent extends Student {
-    private String localStudy;
+    public enum LocalStudy { 
+        ICT { 
+            @Override
+            public String toString() {
+                return "HBO-ICT";
+            }        
+        }, CMD {
+            @Override
+            public String toString() {
+                return "Communication Media Design";
+            }         
+        };
+        @Override
+        public abstract String toString(); 
+    }
+    
+    private LocalStudy localStudy;
     public HHSStudent(ResultSet result) throws SQLException {
         super(result);
-        localStudy = result.getString("hhs_study");
+        String lStudy = result.getString("hhs_study");
+        LocalStudy[] localStudies = LocalStudy.values();
+        for(int i = 0; i < localStudies.length; i++) {
+            if(localStudies[i].toString().equals(lStudy)) {
+                localStudy = localStudies[i];
+                break;
+            }
+        }    
     }
 
-    public String getLocalStudy() {
+    public LocalStudy getLocalStudy() {
         return localStudy;
     }
     
@@ -40,7 +64,7 @@ public class HHSStudent extends Student {
     }
     
     public static boolean insertNewHHSStudent(String student_id, String name, 
-            String gender, String email, String hhs_study) {
+            String gender, String email, LocalStudy hhs_study) {
         if(!Student.insertNewStudent(student_id, name, gender, email))
             return false;
         Connection connection = DBConnection.getConnection();
@@ -50,7 +74,7 @@ public class HHSStudent extends Student {
                     + "(student_id, hhs_study) "
                     + "VALUES (?,?)");
             statement.setString(1, student_id);
-            statement.setString(2, hhs_study);
+            statement.setString(2, hhs_study.toString());
 
             statement.executeUpdate();
             statement.close();
@@ -63,4 +87,28 @@ public class HHSStudent extends Student {
         return true;
     }
     
+    public static ArrayList<Student> searchStudents(String filter, String conditionColumn) {
+        ArrayList<Student> students = new ArrayList<>();
+        try {
+            // column names can't be set dynamically with preparedstatement
+            // luckily conditionColumn isn't user input
+            String query = "SELECT `name`, gender, email, student.student_id, hhs_study \n" +
+                            "FROM student JOIN \n" +
+                            "hhs_student H ON student.student_id=H.student_id "+
+                            "WHERE student.`"+conditionColumn+"` LIKE ? ORDER BY `name` asc";
+
+            PreparedStatement stat = DBConnection.getConnection().prepareStatement(
+                    query);
+            stat.setString(1, "%" + filter + "%");
+            ResultSet results = stat.executeQuery();
+            while (results.next()) {
+                students.add(new HHSStudent(results));
+            }
+            results.close();
+            stat.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return students;
+    }
 }
