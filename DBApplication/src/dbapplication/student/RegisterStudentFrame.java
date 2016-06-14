@@ -9,9 +9,11 @@ import java.awt.event.ActionListener;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JRadioButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 /**
@@ -21,7 +23,8 @@ import javax.swing.JTextField;
 public class RegisterStudentFrame extends JDialog {
 
     private JTextField nameField, genderField, emailField, cityField;
-    private JTextField addressField, studyField, uniField, studentidField;
+    private JTextField addressField,  uniField, studentidField;
+    private JComboBox studyBox;
 
     private JButton addButton, selectUniButton;
     private String selectedInstCode = null;
@@ -82,10 +85,10 @@ public class RegisterStudentFrame extends JDialog {
         selectUniButton.addActionListener(new SelectUniversityListener());
         selectUniButton.setVisible(false);
 
-        studyField = new JEditField("Study");
-        studyField.setBounds(20, 270, 180, 30);
-        add(studyField);
-        studyField.setVisible(false);
+        studyBox = new JComboBox(new String[] {"HBO-ICT", "Communication Media Design"});
+        studyBox.setBounds(20, 270, 180, 30);
+        add(studyBox);
+        studyBox.setVisible(false);
 
         // de buttons:
         AddButtonListener addLis = new AddButtonListener();
@@ -133,7 +136,7 @@ public class RegisterStudentFrame extends JDialog {
             boolean showExchangeFields = ex_studentButton.isSelected();
             cityField.setVisible(showExchangeFields);
             addressField.setVisible(showExchangeFields);
-            studyField.setVisible(!showExchangeFields);
+            studyBox.setVisible(!showExchangeFields);
             uniField.setVisible(showExchangeFields);
             selectUniButton.setVisible(showExchangeFields);
         }       
@@ -151,19 +154,22 @@ public class RegisterStudentFrame extends JDialog {
                 gender = null;
             }
             String email = emailField.getText();
-            if (email.isEmpty()) {
+            if (email.isEmpty() || !email.contains("@")) {
+                JOptionPane.showMessageDialog(RegisterStudentFrame.this, 
+                        "Email must be in format of a@b.ccc", "Incorrect input", JOptionPane.WARNING_MESSAGE);
                 email = null;
             }
             String student_id = studentidField.getText();
-            if (student_id.isEmpty()) {
-                student_id = null;
+            // if student id is not 8 digits
+            if (student_id.length() != 8 || !student_id.matches("\\d?")) {
+                JOptionPane.showMessageDialog(RegisterStudentFrame.this, 
+                        "Student ID must consist of 8 digits", "Incorrect input", JOptionPane.WARNING_MESSAGE);
+                return;
             }
+            boolean result;
             if(hhs_studentButton.isSelected()) {
-                String hhs_study = studyField.getText();
-                if (hhs_study.isEmpty()) {
-                    hhs_study = null;
-                }
-                HHSStudent.insertNewHHSStudent(student_id, name, gender, email, hhs_study);
+                String hhs_study = (String)studyBox.getSelectedItem();
+                result = HHSStudent.insertNewHHSStudent(student_id, name, gender, email, hhs_study);
             }
             else {               
                 String city = cityField.getText();
@@ -174,8 +180,16 @@ public class RegisterStudentFrame extends JDialog {
                 if (address.isEmpty()) {
                     address = null;
                 }
-                ExchangeStudent.insertNewExchangeStudent(student_id, name, gender, email, city, address, selectedInstCode);
+                result = ExchangeStudent.insertNewExchangeStudent(student_id, name, gender, email, city, address, selectedInstCode);
             }      
+            if(!result) {
+                JOptionPane.showMessageDialog(RegisterStudentFrame.this, 
+                    "Registering of student failed", "Error", JOptionPane.WARNING_MESSAGE);
+            }
+            else {
+                JOptionPane.showMessageDialog(RegisterStudentFrame.this, 
+                    "Registering of student succeeded", "Success", JOptionPane.PLAIN_MESSAGE);
+            }
         }
     }
 }
