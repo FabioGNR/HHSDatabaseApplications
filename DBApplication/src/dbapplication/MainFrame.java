@@ -1,18 +1,18 @@
 package dbapplication;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.JButton;
-import javax.swing.JFrame;
 import dbapplication.institute.*;
 import dbapplication.overzicht.*;
-import dbapplication.student.*;
 import dbapplication.program.*;
+import dbapplication.student.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 
 /**
  *

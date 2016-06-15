@@ -6,8 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -25,7 +23,7 @@ public class StudyProgram extends ExProgram {
         maxCredit = result.getString("max_credit");
     }
 
-    public static ArrayList<ExProgram> searchStudents(String filter, String conditionColumn){
+    public static ArrayList<ExProgram> searchStudyProgram(String filter, String conditionColumn){
         ArrayList<ExProgram> programs = new ArrayList<>();
         String sql = "SELECT EX.code, EX.name, SP.org_id, I.org_id \n"
                 + "FROM ex_program EX JOIN studyProgram SP ON EX.code = SP.code " 
@@ -65,7 +63,7 @@ public class StudyProgram extends ExProgram {
     }
 
     public static boolean insertNewStudyProgram(String name, boolean[] terms,
-            String org_id, String studyType, String maxCredits, String studyCode) {
+            String org_id, String studyType, int maxCredits, String studyCode) {
         Connection connect = DBConnection.getConnection();
         int code = ExProgram.insertExProgram(name, terms, maxCredits);
         if (code <= -1) {

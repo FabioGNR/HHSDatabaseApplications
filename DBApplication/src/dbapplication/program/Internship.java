@@ -21,8 +21,8 @@ public class Internship extends ExProgram {
         org_id = result.getString("org_id");
     }
     
-    public static ArrayList<ExProgram> searchStudents(String filter, String conditionColumn){
-        ArrayList<ExProgram> programs = new ArrayList<>();
+    public static ArrayList<ExProgram> searchProgram(String filter, String conditionColumn){
+        ArrayList<ExProgram> programs = new ArrayList<>();//wat er moet er gebeuren?
         String sql = "SELECT EX.code, EX.name, I.org_id, IN.org_id \n"
                 + "FROM ex_program EX JOIN internship I ON EX.code = I.code " 
                 + "JOIN institute IN ON I.org_id = IN.org_id"
@@ -66,7 +66,7 @@ public class Internship extends ExProgram {
         return super.delete();
     }
 
-    public static boolean insertNewInternship(String orgID, String name, boolean[] terms, String maxCredit) {
+    public static boolean insertNewInternship(String orgID, String name, boolean[] terms, int maxCredit) {
         Connection connect = DBConnection.getConnection();
         int code = ExProgram.insertExProgram(name, terms, maxCredit);
         if (code <= -1) {
