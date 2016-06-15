@@ -32,7 +32,7 @@ public class Institute {
             // column names can't be set dynamically with preparedstatement
             // luckily conditionColumn isn't user input
             PreparedStatement stat = DBConnection.getConnection().prepareStatement(
-                    "SELECT * FROM institute WHERE `"+conditionColumn+"` LIKE ?");
+                    "SELECT * FROM institute WHERE `"+conditionColumn+"` LIKE ? AND is_business = 1");
             stat.setString(1, "%"+filter+"%");
             ResultSet results = stat.executeQuery();
             while(results.next()) {
@@ -46,6 +46,27 @@ public class Institute {
         }
         return institute;
     }
+    public static ArrayList<Institute> searchInstituteC(String filter, String conditionColumn) {
+        ArrayList<Institute> institute = new ArrayList<>();
+        try {
+            // column names can't be set dynamically with preparedstatement
+            // luckily conditionColumn isn't user input
+            PreparedStatement stat = DBConnection.getConnection().prepareStatement(
+                    "SELECT * FROM institute WHERE `"+conditionColumn+"` LIKE ? AND is_business = 0");
+            stat.setString(1, "%"+filter+"%");
+            ResultSet results = stat.executeQuery();
+            while(results.next()) {
+                institute.add(new Institute(results));
+            }
+            results.close();
+            stat.close();
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return institute;
+    }
+    
     
     public static void insertInstitute(String city, 
                 String name, String country, String address, int is_business) {
