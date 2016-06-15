@@ -113,13 +113,8 @@ public class RegisterInstituteFrame extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-<<<<<<< HEAD
             
             RegisterStudyDialog dlg = new RegisterStudyDialog((JFrame)getOwner(), RegisterStudyDialog.StudyType.Study);
-=======
-
-            SelectStudyDialog dlg = new SelectStudyDialog((JFrame) getOwner());
->>>>>>> f9cb77ffa7527362a47ed031f97fcdc12eabde19
             dlg.setVisible(true);
 
             }

@@ -233,7 +233,7 @@ public class SearchProgramFrame extends JDialog {
             Institute institute = instituteDlg.getSelectedInstitute();
             if (institute != null) {
                 instituteField.setText(institute.getName());
-                selectedInstitute = institute.getOrgid();
+                selectedInstitute = institute.getOrgid()+"";
             }
         }
 

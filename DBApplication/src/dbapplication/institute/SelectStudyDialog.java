@@ -158,54 +158,10 @@ public class SelectStudyDialog extends JDialog {
             selectedStudy = resultModel.getStudyAt(selectedRow);
             selectedStudyLabel.setText(
                     "Selected study: " + selectedStudy.getCode());
-<<<<<<< HEAD
-
-            //contactpersonField.setText(selectedStudy.getContactperson());
-
-            codeField.setText(selectedStudy.getCode());
-
-            //org_idField.setText(selectedStudy.getOrg_id());
-
-=======
->>>>>>> f9cb77ffa7527362a47ed031f97fcdc12eabde19
         }
 
     }
-
-<<<<<<< HEAD
-    class StudyEditListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (selectedStudy == null) {
-                return;
-            }
-            if (e.getSource() == updateButton) {
-                int update = JOptionPane.showOptionDialog(SelectStudyDialog.this, "Study has been updated", "Updated", JOptionPane.PLAIN_MESSAGE,
-                        JOptionPane.INFORMATION_MESSAGE, null, null, null);
-                if (update == JOptionPane.OK_OPTION) {
-                    //selectedStudy.updateStudy(codeField.getText(), org_idField.getText(), contactpersonField.getText());
-
-                    int selectedIndex = searchConditionCombo.getSelectedIndex();
-                    SearchFilter selectedFilter = (SearchFilter) searchConditionCombo.getItemAt(selectedIndex);
-                    search(searchField.getText(), selectedFilter.getColumnName());
-                }
-            }
-            if (e.getSource() == deleteButton) {
-                // show confirm dialog and confirm that the user choose "OK"
-                int choice = JOptionPane.showConfirmDialog(SelectStudyDialog.this, "Are you sure you want to delete this Study?",
-                        "Delete Study", JOptionPane.OK_CANCEL_OPTION);
-                if (choice == JOptionPane.OK_OPTION) {
-                    selectedStudy.deleteStudy();
-                    
-                    int selectedIndex = searchConditionCombo.getSelectedIndex();
-                    SearchFilter selectedFilter = (SearchFilter) searchConditionCombo.getItemAt(selectedIndex);
-                    search(searchField.getText(), selectedFilter.getColumnName());
-                }
-            }
-        }
-    }
-        
+    
         private class RegisterStudyListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -214,6 +170,3 @@ public class SelectStudyDialog extends JDialog {
     }
         }
     }
-=======
-}
->>>>>>> f9cb77ffa7527362a47ed031f97fcdc12eabde19
