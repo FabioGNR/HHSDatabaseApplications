@@ -1,12 +1,9 @@
 package dbapplication.program;
 
-import dbapplication.institute.SelectStudyDialog;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-
 import dbapplication.JEditField;
 import dbapplication.institute.Institute;
 import dbapplication.institute.SelectInstituteDialog;
+import dbapplication.institute.SelectStudyDialog;
 import dbapplication.institute.Study;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
