@@ -17,14 +17,15 @@ public class ExProgram {
     enum ProgramType {
         Internship, StudyProgram
     }
-    protected String name, exPcode;
+    protected String name, exPcode, maxCredit;
     protected String[] cellData;
     protected boolean[] terms = new boolean[5];
 
     public ExProgram(ResultSet result) throws SQLException {
         name = result.getString("name");
         exPcode = result.getString("code");
-        cellData = new String[]{exPcode, name};
+
+        cellData = new String[]{exPcode, name, maxCredit};
     }
 
     public static ArrayList<ExProgram> searchExProgram(String searchFilter, String conditionColumn) {
@@ -45,31 +46,50 @@ public class ExProgram {
         return program;
     }
 
-    protected static boolean insertExProgram(String name, boolean[] terms) {
+    protected static int insertExProgram(String name, boolean[] terms, String maxCredit) {
         Connection connection = DBConnection.getConnection();
-        String sql = "INSERT INTO ex_program (name) VALUES (?)";
-        String sql2 = "INSERT INTO ex_program_term (code, term) VALUES (?,?)";
+        String insertExProgram = "INSERT INTO ex_program (name, max_credit) VALUES (?,?)";
+        String insertTerm = "INSERT INTO ex_program_term (code, term) VALUES (?,?)";
+        int code = -1;
+
         try {
-            PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            statement.setString(1, name);
-            statement.executeUpdate();
+            PreparedStatement exProgramStatement = connection.prepareStatement(insertExProgram, Statement.RETURN_GENERATED_KEYS);
+            exProgramStatement.setString(1, name);
+            exProgramStatement.setString(2, maxCredit);
+            exProgramStatement.executeUpdate();
             System.out.println("Preparedstatement passed ");
-            ResultSet set = statement.getGeneratedKeys();
+            ResultSet set = exProgramStatement.getGeneratedKeys();
             set.next();
-            int code = set.getInt(1);
-            statement.close();
-            for(int i = 0; i < terms.length; i++){
-                if(terms[i]){
-            PreparedStatement statement2 = connection.prepareStatement(sql2);
-            statement2.setInt(1, code);
-            statement2.setString(2, (i+1) + "");
-            statement2.executeUpdate();
-            statement2.close();;
+            code = set.getInt(1);
+            exProgramStatement.close();
+
+            for (int i = 0; i < terms.length; i++) {
+                if (terms[i]) {
+                    PreparedStatement termStatement = connection.prepareStatement(insertTerm);
+                    termStatement.setInt(1, code);
+                    termStatement.setString(2, (i + 1) + "");
+                    termStatement.executeUpdate();
+                    termStatement.close();
                 }
             }
         } catch (SQLException error) {
             System.out.println("Error: " + error.getMessage());
             System.out.println("preparedstatement was not succesful");
+        }
+        return code;
+    }
+
+    public boolean update(String name, String maxCredit) {
+        Connection connect = DBConnection.getConnection();
+        String sql = "UPDATE ex_program SET name = ?, max_credit = ?";
+        try {
+            PreparedStatement updateStatement = connect.prepareStatement(sql);
+            updateStatement.setString(1, name);
+            updateStatement.setString(2, maxCredit);
+            updateStatement.executeUpdate();
+            updateStatement.close();
+        } catch (SQLException e) {
+            e.getMessage();
             return false;
         }
         return true;

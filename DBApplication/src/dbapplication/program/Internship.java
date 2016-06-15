@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  *
@@ -12,50 +13,84 @@ import java.sql.SQLException;
  */
 public class Internship extends ExProgram {
 
-    private String exProgram;
+    private String exProgram, org_id; //moeten maxCredit en name erbij? en term?
 
     public Internship(ResultSet result) throws SQLException {
         super(result);
         exProgram = result.getString("code");
-    }
-
-    public String getProgram() {
-        return exProgram;
+        org_id = result.getString("org_id");
     }
     
+    public static ArrayList<ExProgram> searchStudents(String filter, String conditionColumn){
+        ArrayList<ExProgram> programs = new ArrayList<>();
+        String sql = "SELECT EX.code, EX.name, I.org_id, IN.org_id \n"
+                + "FROM ex_program EX JOIN internship I ON EX.code = I.code " 
+                + "JOIN institute IN ON I.org_id = IN.org_id"
+                + "WHERE ex_program. `" + conditionColumn + "` LIKE ?\n"
+                + "ORDER BY ex_program. `name` asc";
+        try{
+            PreparedStatement statement = DBConnection.getConnection().prepareStatement(
+                    sql);
+            statement.setString(1, "%" + filter + "%");
+            ResultSet results = statement.executeQuery();
+            while (results.next()) {
+                programs.add(new Internship(results));
+            }
+            results.close();
+            statement.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return programs;
+        }
+    
+
+//    @Override
+//    public boolean update(){
+//        
+//    }
+    
     @Override
-    public boolean delete(){
+    public boolean delete() {
         Connection connect = DBConnection.getConnection();
         String sql = "DELETE FROM internship WHERE code = ?";
-        try{
+        try {
             PreparedStatement statement = connect.prepareStatement(sql);
             statement.setString(1, exPcode);
             statement.executeUpdate();
             System.out.println("PreparedStatement was succesful");
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
             return false;
         }
         return super.delete();
     }
-    
-    // array of terms and why static?
-    public static boolean insertNewInternship(String orgID, String name, boolean[] terms){
+
+    public static boolean insertNewInternship(String orgID, String name, boolean[] terms, String maxCredit) {
         Connection connect = DBConnection.getConnection();
-        if(!ExProgram.insertExProgram(name, terms)){
+        int code = ExProgram.insertExProgram(name, terms, maxCredit);
+        if (code <= -1) {
             return false;
         }
-        String sql = "INSERT INTO internship (org_id, name) VALUES (?,?)";
-        try{
+        String sql = "INSERT INTO internship (code, org_id) VALUES (?,?)";
+        try {
             PreparedStatement statement = connect.prepareStatement(sql);
-            statement.setString(1, orgID);
-            statement.setString(2, name);
+            statement.setInt(1, code);
+            statement.setString(2, orgID);
             statement.executeUpdate();
             System.out.println("Inserting new Internship was succesful");
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
             return false;
         }
         return true;
+    }
+
+    public String getProgram() {
+        return exProgram;
+    }
+
+    public String getOrg_id() {
+        return org_id;
     }
 }
