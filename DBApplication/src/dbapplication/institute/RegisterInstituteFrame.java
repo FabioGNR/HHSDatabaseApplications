@@ -120,7 +120,7 @@ public class RegisterInstituteFrame extends JDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
 
-            SelectStudyDialog dlg = new SelectStudyDialog((JFrame) getOwner(), SelectStudyDialog.ProgramType.studyProgram);
+            SelectStudyDialog dlg = new SelectStudyDialog((JFrame) getOwner());
             dlg.setVisible(true);
             // pauses until dialog is closed
             Study study = dlg.getSelectedStudy();

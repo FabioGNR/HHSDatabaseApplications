@@ -17,15 +17,16 @@ public class ExProgram {
     enum ProgramType {
         Internship, StudyProgram
     }
-    protected String name, exPcode, maxCredit;
+    protected String name, exPcode;
+    protected int maxCredits;
     protected String[] cellData;
     protected boolean[] terms = new boolean[5];
 
     public ExProgram(ResultSet result) throws SQLException {
         name = result.getString("name");
         exPcode = result.getString("code");
-
-        cellData = new String[]{exPcode, name, maxCredit};
+//        maxCredits = result.getInt("max_credits"); // dit zorgt voor problemen bij het tonen van de tabel
+        cellData = new String[]{exPcode, name, maxCredits+ " ECS"};
     }
 
     public static ArrayList<ExProgram> searchExProgram(String searchFilter, String conditionColumn) {
@@ -46,16 +47,16 @@ public class ExProgram {
         return program;
     }
 
-    protected static int insertExProgram(String name, boolean[] terms, String maxCredit) {
+    protected static int insertExProgram(String name, boolean[] terms, int maxCredits) {
         Connection connection = DBConnection.getConnection();
-        String insertExProgram = "INSERT INTO ex_program (name, max_credit) VALUES (?,?)";
+        String insertExProgram = "INSERT INTO ex_program (name, max_credits) VALUES (?,?)";
         String insertTerm = "INSERT INTO ex_program_term (code, term) VALUES (?,?)";
         int code = -1;
 
         try {
             PreparedStatement exProgramStatement = connection.prepareStatement(insertExProgram, Statement.RETURN_GENERATED_KEYS);
             exProgramStatement.setString(1, name);
-            exProgramStatement.setString(2, maxCredit);
+            exProgramStatement.setInt(2, maxCredits);
             exProgramStatement.executeUpdate();
             System.out.println("Preparedstatement passed ");
             ResultSet set = exProgramStatement.getGeneratedKeys();
@@ -79,13 +80,13 @@ public class ExProgram {
         return code;
     }
 
-    public boolean update(String name, String maxCredit) {
+    public boolean update(String name, String maxCredits) {
         Connection connect = DBConnection.getConnection();
-        String sql = "UPDATE ex_program SET name = ?, max_credit = ?";
+        String sql = "UPDATE ex_program SET name = ?, max_credits = ?";
         try {
             PreparedStatement updateStatement = connect.prepareStatement(sql);
             updateStatement.setString(1, name);
-            updateStatement.setString(2, maxCredit);
+            updateStatement.setString(2, maxCredits);
             updateStatement.executeUpdate();
             updateStatement.close();
         } catch (SQLException e) {
