@@ -132,7 +132,7 @@ public class RegisterProgramFrame extends JDialog {
     class SelectStudy implements ActionListener {
 
         @Override
-        public void actionPerformed(ActionEvent e) { 
+        public void actionPerformed(ActionEvent e) {
             SelectStudyDialog dlg = new SelectStudyDialog((JFrame) getOwner());
             Study study = dlg.getSelectedStudy();
             dlg.setVisible(true);
@@ -140,15 +140,15 @@ public class RegisterProgramFrame extends JDialog {
             if (studyProgramButton.isSelected() && study != null) {
                 instituteField.setText(study.getCode());
                 selectedStudy = study.getCode();
+            }
         }
-    }
     }
 
     class RegisterProgram implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            int maxCredits = 0; 
+            int maxCredits = 0;
             boolean[] terms = new boolean[5];
             String studyType = "";
 
@@ -158,21 +158,28 @@ public class RegisterProgramFrame extends JDialog {
             }
             String org_id = instituteField.getText();
             if (org_id.isEmpty()) {
+                JOptionPane.showMessageDialog(RegisterProgramFrame.this,
+                        "Please choose an institute.",
+                        "Institute not selected.", JOptionPane.WARNING_MESSAGE);
                 org_id = null;
             }
-                maxCredits = (maxCreditBox.getSelectedIndex()+1)*15;
-            
+            maxCredits = (maxCreditBox.getSelectedIndex() + 1) * 15;
+
             for (int i = 0; i < 5; i++) {
                 terms[i] = termBoxes[i].isSelected();
             }
+
             if (internshipButton.isSelected()) {
                 Internship.insertNewInternship(org_id, name, terms, maxCredits);
             } else {
                 String study = studyField.getText();
                 if (study.isEmpty()) {
+                    JOptionPane.showMessageDialog(RegisterProgramFrame.this,
+                            "Please choose a study.",
+                            "Study not selected.", JOptionPane.WARNING_MESSAGE);
                     study = null;
                 }
-                    studyType = (String) studyTypeBox.getSelectedItem();
+                studyType = (String) studyTypeBox.getSelectedItem();
                 StudyProgram.insertNewStudyProgram(name, terms, org_id, studyType, maxCredits, selectedStudy);
             }
         }
@@ -181,12 +188,12 @@ public class RegisterProgramFrame extends JDialog {
     class Selectinstitute implements ActionListener {
 
         @Override
-        public void actionPerformed(ActionEvent e) { 
-            
+        public void actionPerformed(ActionEvent e) {
+
             SelectInstituteDialog.InstituteType type = internshipButton.isSelected()
-                    ? SelectInstituteDialog.InstituteType.Company 
+                    ? SelectInstituteDialog.InstituteType.Company
                     : SelectInstituteDialog.InstituteType.University;
-                    
+
             SelectInstituteDialog instDlg = new SelectInstituteDialog((JFrame) getOwner(), type);
             instDlg.setVisible(true);
             Institute institute = instDlg.getSelectedInstitute();
