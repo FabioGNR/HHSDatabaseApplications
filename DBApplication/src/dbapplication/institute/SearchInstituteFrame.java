@@ -49,17 +49,16 @@ public class SearchInstituteFrame extends JDialog {
     private JButton deleteButton;
 
     private JComboBox searchConditionCombo;
-    
+
     private JRadioButton yesRadio;
     private JRadioButton noRadio;
-    
+
     private JTable resultTable;
     private JScrollPane resultPanel;
     private InstituteTableModel resultModel;
 
     private String selectedStudy;
     private Institute selectedInstitute = null;
-    private static String[] programs = {"Building process", "Business intelligence", "Database design", "Financial accounting", "Marketing", "Mechanica", "Programming"};
 
     public SearchInstituteFrame(JFrame owner) {
         super(owner, true);
@@ -118,7 +117,7 @@ public class SearchInstituteFrame extends JDialog {
         resultPanel.setLocation(20, 60);
         resultPanel.setSize(400, 300);
         add(resultPanel);
-        
+
         selectedInstituteLabel = new JLabel("Selected institute:");
         selectedInstituteLabel.setLocation(440, 20);
         selectedInstituteLabel.setSize(200, 30);
@@ -184,88 +183,133 @@ public class SearchInstituteFrame extends JDialog {
         ButtonGroup group = new ButtonGroup();
         group.add(yesRadio);
         group.add(noRadio);
-        
+
         studyField = new JEditField("Studies");
         studyField.setLocation(440, 320);
         studyField.setSize(70, 30);
         studyField.setEnabled(false);
         add(studyField);
         studyField.setVisible(false);
-        
+
         showButton = new JButton("Show studies");
         showButton.setLocation(520, 320);
         showButton.setSize(120, 30);
         add(showButton);
         showButton.addActionListener(studyLis);
-        showButton.setVisible(false); 
+        showButton.setVisible(false);
 
         updateButton = new JButton("Update");
         updateButton.setLocation(440, 370);
         updateButton.setSize(90, 30);
         updateButton.addActionListener(edit);
+
         add(updateButton);
 
         deleteButton = new JButton("Delete");
         deleteButton.setLocation(540, 370);
         deleteButton.setSize(90, 30);
         deleteButton.addActionListener(edit);
+
         add(deleteButton);
 
     }
-    
+
     private class SelectStudyListener implements ActionListener {
+
         @Override
         public void actionPerformed(ActionEvent e) {
-         
-            SelectStudyDialog dlg = new SelectStudyDialog((JFrame)getOwner(), SelectStudyDialog.ProgramType.studyProgram);
+
+            SelectStudyDialog dlg = new SelectStudyDialog((JFrame) getOwner(), SelectStudyDialog.ProgramType.studyProgram);
             dlg.setVisible(true);
             // pauses until dialog is closed
             Study study = dlg.getSelectedStudy();
-            if(study != null)
-            {
+            if (study != null) {
                 //uniField.setText(getName());
                 selectedStudy = study.getCode();
             }
-        }  
+        }
     }
-    
+
     private class SwitchInstituteListener implements ActionListener {
+
         @Override
         public void actionPerformed(ActionEvent e) {
             boolean showExchangeFields = noRadio.isSelected();
             studyField.setVisible(showExchangeFields);
             showButton.setVisible(showExchangeFields);
-        }       
+        }
     }
 
     class InstituteEditListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            String city, name, country, address;
             if (selectedInstitute == null) {
                 return;
             }
+            city = cityField.getText();
+            if (city.isEmpty() || city.matches(".*\\d+.*")) {
+                JOptionPane.showMessageDialog(SearchInstituteFrame.this,
+                        "city cannot be a number", "Incorrect input", JOptionPane.WARNING_MESSAGE);
+                city = null;
+            }
+            name = nameField.getText();
+            if (name.isEmpty() || name.matches(".*\\d+.*")) {
+                JOptionPane.showMessageDialog(SearchInstituteFrame.this,
+                        "name cannot be a number", "Incorrect input", JOptionPane.WARNING_MESSAGE);
+                name = null;
+            }
+            country = countryField.getText();
+            if (country.isEmpty() || country.matches(".*\\d+.*")) {
+                JOptionPane.showMessageDialog(SearchInstituteFrame.this,
+                        "country cannot be a number", "Incorrect input", JOptionPane.WARNING_MESSAGE);
+                country = null;
+            }
+            address = addressField.getText();
+            if (address.isEmpty() || address.matches(".*\\d+.*")) {
+                JOptionPane.showMessageDialog(SearchInstituteFrame.this,
+                        "addres cannot be a number", "Incorrect input", JOptionPane.WARNING_MESSAGE);
+                address = null;
+            }
             if (e.getSource() == updateButton) {
-                int update = JOptionPane.showOptionDialog(SearchInstituteFrame.this, "Institute has been updated", "Updated", JOptionPane.PLAIN_MESSAGE, 
-                         JOptionPane.INFORMATION_MESSAGE, null, null, null);
-                if (update == JOptionPane.OK_OPTION) {
-                selectedInstitute.updateInstitute(cityField.getText(), nameField.getText(), countryField.getText(), addressField.getText());
+                if (city == null || address == null || name == null || country == null) {
+
+                    JOptionPane.showMessageDialog(SearchInstituteFrame.this, "Update of institute failed", "Error", JOptionPane.WARNING_MESSAGE);
+                } else {
+                    int update = JOptionPane.showOptionDialog(SearchInstituteFrame.this, "Institute has been updated", "Updated", JOptionPane.PLAIN_MESSAGE,
+                            JOptionPane.INFORMATION_MESSAGE, null, null, null);
+                    if (update == JOptionPane.OK_OPTION) {
+                        selectedInstitute.updateInstitute(cityField.getText(), nameField.getText(), countryField.getText(), addressField.getText());
+                        //refresh
+                        int selectedIndex = searchConditionCombo.getSelectedIndex();
+                        SearchFilter selectedFilter = (SearchFilter) searchConditionCombo.getItemAt(selectedIndex);
+                        search(searchField.getText(), selectedFilter.getColumnName());
+                    }
                 }
             }
-                if (e.getSource() == deleteButton) {
+            if (e.getSource() == deleteButton) {
                 // show confirm dialog and confirm that the user choose "OK"
-                int choice = JOptionPane.showConfirmDialog(SearchInstituteFrame.this, "Are you sure you want to delete this institute?",
-                        "Delete institute", JOptionPane.OK_CANCEL_OPTION);
-                if (choice == JOptionPane.OK_OPTION) {
-                    selectedInstitute.deleteInstitute();
-                    
+                if (city == null || address == null || name == null || country == null) {
+
+                    JOptionPane.showMessageDialog(SearchInstituteFrame.this, "Update of institute failed", "Error", JOptionPane.WARNING_MESSAGE);
+                } else {
+                    int choice = JOptionPane.showConfirmDialog(SearchInstituteFrame.this, "Are you sure you want to delete this institute?",
+                            "Delete institute", JOptionPane.OK_CANCEL_OPTION);
+                    if (choice == JOptionPane.OK_OPTION) {
+                        selectedInstitute.deleteInstitute();
+                        //refresh
+                        int selectedIndex = searchConditionCombo.getSelectedIndex();
+                        SearchFilter selectedFilter = (SearchFilter) searchConditionCombo.getItemAt(selectedIndex);
+                        search(searchField.getText(), selectedFilter.getColumnName());
+
+                    }
+
                 }
             }
         }
     }
-        
-    
-    
+
     private void search(String filter, String conditionColumn) {
         ArrayList<dbapplication.institute.Institute> institute = dbapplication.institute.Institute.searchInstitute(filter, conditionColumn);
         resultModel.setResults(institute);
