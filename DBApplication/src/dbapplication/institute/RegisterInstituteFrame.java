@@ -106,24 +106,10 @@ public class RegisterInstituteFrame extends JDialog {
         ButtonGroup group = new ButtonGroup();
         group.add(yesRadio);
         group.add(noRadio);
-<<<<<<< HEAD
-
-        studyField = new JEditField("Register studies");
-        studyField.setLocation(20, 220);
-        studyField.setSize(100, 30);
-        studyField.setEnabled(false);
-        add(studyField);
-        studyField.setVisible(false);
-
-        showButton = new JButton("...");
-        showButton.setLocation(120, 220);
-        showButton.setSize(40, 30);
-=======
         
         showButton = new JButton("Show studies");
         showButton.setLocation(20, 220);
         showButton.setSize(150, 30);
->>>>>>> cbbf5599b18221de1fa01074dc12cbf6c222413b
         add(showButton);
         showButton.addActionListener(studyLis);
         showButton.setVisible(false);

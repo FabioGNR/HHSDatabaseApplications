@@ -222,18 +222,6 @@ public class SearchInstituteFrame extends JDialog {
             SelectStudyDialog dlg = new SelectStudyDialog((JFrame) getOwner(), SelectStudyDialog.ProgramType.studyProgram);
             dlg.setVisible(true);
             // pauses until dialog is closed
-            Study study = dlg.getSelectedStudy();
-<<<<<<< HEAD
-            if (study != null) {
-                //uniField.setText(getName());
-                selectedStudy = study.getCode();
-=======
-            if(study != null)
-            {
-                studyField.setText(study.getCode());
-                selectedStudy = study.getOrg_id();
->>>>>>> cbbf5599b18221de1fa01074dc12cbf6c222413b
-            }
         }
     }
 
@@ -318,7 +306,8 @@ public class SearchInstituteFrame extends JDialog {
     }
 
     private void search(String filter, String conditionColumn) {
-        ArrayList<dbapplication.institute.Institute> institute = dbapplication.institute.Institute.searchInstitute(filter, conditionColumn);
+        ArrayList<dbapplication.institute.Institute> institute = 
+                dbapplication.institute.Institute.searchInstitute(filter, conditionColumn);
         resultModel.setResults(institute);
     }
 
