@@ -26,7 +26,7 @@ public class SearchStudentFrame extends JDialog {
     private StudentTableModel resultModel;
     private JButton selectFilterButton, selectUniButton;
     private Institute selectedFilterInstitute;
-    private String exchangeUniID;
+    private int exchangeUniID = -1;
 
     private JEditField nameField, emailField, cityField, addressField;
     private JRadioButton genderFBox, genderMBox;
@@ -151,6 +151,7 @@ public class SearchStudentFrame extends JDialog {
     }
 
     private void toggleFields() {
+        // show the right fields depending on the selected student type
         int selectedTypeIndex = searchTypeCombo.getSelectedIndex();
         Student.StudentType type = (Student.StudentType) searchTypeCombo.getItemAt(selectedTypeIndex);
         boolean exchangeSelected = type == Student.StudentType.Exchange;
@@ -162,6 +163,7 @@ public class SearchStudentFrame extends JDialog {
     }
 
     private void search(String filter, String conditionColumn, Student.StudentType type) {
+        // execute search based on user input
         ArrayList<Student> students;
         if (type == Student.StudentType.Exchange) {
             students = ExchangeStudent.searchStudents(filter, conditionColumn);
@@ -185,8 +187,9 @@ public class SearchStudentFrame extends JDialog {
         if(selectedStudent == null) return;
         int selectedTypeIndex = searchTypeCombo.getSelectedIndex();
         Student.StudentType type = (Student.StudentType) searchTypeCombo.getItemAt(selectedTypeIndex);
+        // set new student properties
         if(type == Student.StudentType.Exchange) {
-            if(exchangeUniID == null) {
+            if(exchangeUniID == -1) {
                 JOptionPane.showMessageDialog(this, "Select a university", 
                         "Missing university", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -202,12 +205,15 @@ public class SearchStudentFrame extends JDialog {
             student.setLocalStudy((HHSStudent.LocalStudy)hhsStudyCombo.getSelectedItem());
         }
         selectedStudent.setEmail(emailField.getText());
-        selectedStudent.setGender(genderFBox.isSelected() ? "f" : "m");
+        selectedStudent.setGender(genderFBox.isSelected() 
+                ? Student.Gender.Female : Student.Gender.Male);
         selectedStudent.setName(nameField.getText());
+        // attempt to save
         if(!selectedStudent.save()) {
             JOptionPane.showMessageDialog(this, "Error saving student", 
                     "Could not save student", JOptionPane.ERROR_MESSAGE);
         }
+        // refresh result table
         selectedStudent.refreshCellData();
         resultModel.fireTableDataChanged();
     }
@@ -280,7 +286,7 @@ public class SearchStudentFrame extends JDialog {
             nameField.setText(selectedStudent.getName());
             emailField.setText(selectedStudent.getEmail());
             JRadioButton correctGenderBox;
-            if (selectedStudent.getGender().equals("f")) {
+            if (selectedStudent.getGender() == Student.Gender.Female) {
                 correctGenderBox = genderFBox;
             } else {
                 correctGenderBox = genderMBox;

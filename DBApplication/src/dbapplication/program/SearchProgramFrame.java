@@ -33,7 +33,7 @@ public class SearchProgramFrame extends JDialog {
     private ExProgram selectedProgram = null;
     private Internship internshipSelected = null;
     private StudyProgram studyProgramSelected = null;
-    private String selectedInstitute;
+    private int selectedInstitute = -1;
 
     public SearchProgramFrame(JFrame owner) {
         super(owner, true);
@@ -66,7 +66,7 @@ public class SearchProgramFrame extends JDialog {
         add(programBox);
 
         internshipConditionBox = new JComboBox(new SearchFilter[]{
-            new SearchFilter("Name", "name")}); 
+            new SearchFilter("Name", "name")});
         //misschien zoeken op credits}
         internshipConditionBox.setBounds(450, 20, 125, 30);
         add(internshipConditionBox);
@@ -102,7 +102,7 @@ public class SearchProgramFrame extends JDialog {
         add(nameField);
 
         //maak een button om org name te zoeken
-        ActionListener instituteButtonListener = new SelectInstitute(); 
+        ActionListener instituteButtonListener = new SelectInstitute();
         instituteField = new JEditField("Organisation");
         instituteField.setBounds(600, 100, 100, 30);
         add(instituteField);
@@ -207,31 +207,29 @@ public class SearchProgramFrame extends JDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             boolean internshipSelected = programBox.getSelectedIndex() == 0;
-                internshipConditionBox.setVisible(internshipSelected);
-                studyProgramBox.setVisible(!internshipSelected);
-                instituteField.setVisible(!internshipSelected);
-                instituteButton.setVisible(!internshipSelected);
-                studyTypeField.setVisible(!internshipSelected);
-                studyField.setVisible(!internshipSelected);
-                studyTypeButton.setVisible(!internshipSelected);
-            }
+            internshipConditionBox.setVisible(internshipSelected);
+            studyProgramBox.setVisible(!internshipSelected);
+            instituteField.setVisible(!internshipSelected);
+            instituteButton.setVisible(!internshipSelected);
+            studyTypeField.setVisible(!internshipSelected);
+            studyField.setVisible(!internshipSelected);
+            studyTypeButton.setVisible(!internshipSelected);
         }
+    }
 
-    
-    class SelectInstitute implements ActionListener{
+    class SelectInstitute implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {  //hoe maak je het null? Nu alleen Uni/Comp te selecteren
-            SelectInstituteDialog instituteDlg = new SelectInstituteDialog((JFrame)getOwner(), SelectInstituteDialog.InstituteType.University);
+            SelectInstituteDialog instituteDlg = new SelectInstituteDialog((JFrame) getOwner(), SelectInstituteDialog.InstituteType.University);
             instituteDlg.setVisible(true);
-            
+
             Institute institute = instituteDlg.getSelectedInstitute();
-            if(institute != null){
+            if (institute != null) {
                 instituteField.setText(institute.getName());
                 selectedInstitute = institute.getOrgid();
             }
         }
-        
-    }
-    }
 
+    }
+}

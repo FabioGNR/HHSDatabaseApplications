@@ -13,17 +13,19 @@ import java.util.ArrayList;
  */
 public class Institute {
 
-    private String org_id, city, name, country, address, is_business;
+    private int org_id;
+    private boolean is_business;
+    private String  city, name, country, address;
     private String[] cellData;
 
     public Institute(ResultSet result) throws SQLException {
-        org_id = result.getString("org_id");
+        org_id = result.getInt("org_id");
         city = result.getString("city");
         name = result.getString("name");
         country = result.getString("country");
         address = result.getString("address");
-        is_business = result.getString("is_business");
-        cellData = new String[]{name, city, country, address, is_business.equals("1") ? "Yes" : "No"};
+        is_business = result.getBoolean("is_business");
+        cellData = new String[]{name, city, country, address, is_business ? "Yes" : "No"};
     }
 
     public static ArrayList<Institute> searchInstitute(String filter, String conditionColumn) {
@@ -100,7 +102,7 @@ public class Institute {
             statement.setString(2, name);
             statement.setString(3, country);
             statement.setString(4, address);
-            statement.setString(5, org_id);
+            statement.setInt(5, org_id);
             statement.executeUpdate();
             statement.close();
 
@@ -159,7 +161,7 @@ public class Institute {
         return cellData[cell];
     }
 
-    public String getOrgid() {
+    public int getOrgid() {
         return org_id;
     }
 
@@ -179,7 +181,7 @@ public class Institute {
         return address;
     }
 
-    public String getIsbusiness() {
+    public boolean isBusiness() {
         return is_business;
     }
 

@@ -6,6 +6,8 @@ import dbapplication.institute.SelectInstituteDialog;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -22,13 +24,13 @@ import javax.swing.JTextField;
  */
 public class RegisterStudentFrame extends JDialog {
 
-    private JTextField nameField, genderField, emailField, cityField;
+    private JTextField nameField, emailField, cityField;
     private JTextField addressField,  uniField, studentidField;
     private JComboBox studyBox;
 
     private JButton addButton, selectUniButton;
-    private String selectedInstCode = null;
-    private JRadioButton hhs_studentButton;
+    private int selectedInstCode = -1;
+    private JRadioButton hhs_studentButton, genderFBox, genderMBox;
     private JRadioButton ex_studentButton;
 
     public RegisterStudentFrame(JFrame owner) {
@@ -54,10 +56,17 @@ public class RegisterStudentFrame extends JDialog {
         nameField = new JEditField("Name");
         nameField.setBounds(20, 120, 180, 30);
         add(nameField);
-
-        genderField = new JEditField("Gender");
-        genderField.setBounds(20, 170, 180, 30);
-        add(genderField);
+        
+        genderFBox = new JRadioButton("Female");
+        genderFBox.setBounds(20, 170, 75, 30);
+        genderMBox = new JRadioButton("Male");
+        genderMBox.setBounds(95, 170, 75, 30);
+        genderMBox.setSelected(true);
+        ButtonGroup genderGroup = new ButtonGroup();
+        genderGroup.add(genderFBox);
+        genderGroup.add(genderMBox);
+        add(genderFBox);
+        add(genderMBox);
 
         emailField = new JEditField("Email");
         emailField.setBounds(20, 220, 180, 30);
@@ -101,14 +110,15 @@ public class RegisterStudentFrame extends JDialog {
         hhs_studentButton = new JRadioButton();
         hhs_studentButton.setBounds(300, 20, 100, 30);
         hhs_studentButton.setText("hhs student");
-        hhs_studentButton.addActionListener(switchLis);
+        hhs_studentButton.addItemListener(switchLis);      
         add(hhs_studentButton);
 
         ex_studentButton = new JRadioButton();
         ex_studentButton.setBounds(300, 50, 100, 30);
         ex_studentButton.setText("exchange student");
-        ex_studentButton.addActionListener(switchLis);
+        ex_studentButton.addItemListener(switchLis);
         add(ex_studentButton);
+        hhs_studentButton.setSelected(true);
 
         ButtonGroup group = new ButtonGroup();
         group.add(hhs_studentButton);
@@ -130,16 +140,16 @@ public class RegisterStudentFrame extends JDialog {
         }     
     }
     
-    private class SwitchStudentListener implements ActionListener {
+    private class SwitchStudentListener implements ItemListener {    
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void itemStateChanged(ItemEvent e) {
             boolean showExchangeFields = ex_studentButton.isSelected();
             cityField.setVisible(showExchangeFields);
             addressField.setVisible(showExchangeFields);
             studyBox.setVisible(!showExchangeFields);
             uniField.setVisible(showExchangeFields);
             selectUniButton.setVisible(showExchangeFields);
-        }       
+        }
     }
 
     private class AddButtonListener implements ActionListener {
@@ -149,23 +159,22 @@ public class RegisterStudentFrame extends JDialog {
             if (name.isEmpty()) {
                 name = null;
             }
-            String gender = genderField.getText();
-            if (gender.isEmpty()) {
-                gender = null;
-            }
+            Student.Gender gender = genderFBox.isSelected() 
+                    ? Student.Gender.Female : Student.Gender.Male;
             String email = emailField.getText();
             if (email.isEmpty() || !email.contains("@")) {
                 JOptionPane.showMessageDialog(RegisterStudentFrame.this, 
                         "Email must be in format of a@b.ccc", "Incorrect input", JOptionPane.WARNING_MESSAGE);
-                email = null;
-            }
-            String student_id = studentidField.getText();
-            // if student id is not 8 digits
-            if (student_id.length() != 8 || !student_id.matches("\\d?")) {
+                return;
+            }           
+            String sID = studentidField.getText();
+            // if student id is not 8 digits show error message
+            if (!sID.matches("^\\d{8,8}$")) {
                 JOptionPane.showMessageDialog(RegisterStudentFrame.this, 
                         "Student ID must consist of 8 digits", "Incorrect input", JOptionPane.WARNING_MESSAGE);
                 return;
             }
+            int student_id = Integer.parseInt(sID);
             boolean result;
             if(hhs_studentButton.isSelected()) {
                 HHSStudent.LocalStudy hhs_study = (HHSStudent.LocalStudy)studyBox.getSelectedItem();
@@ -179,6 +188,11 @@ public class RegisterStudentFrame extends JDialog {
                 String address = addressField.getText();
                 if (address.isEmpty()) {
                     address = null;
+                }
+                if(selectedInstCode == -1) {
+                    JOptionPane.showMessageDialog(RegisterStudentFrame.this, 
+                        "Please select the student's university", "Missing university", JOptionPane.WARNING_MESSAGE);
+                    return;
                 }
                 result = ExchangeStudent.insertNewExchangeStudent(student_id, name, gender, email, city, address, selectedInstCode);
             }      

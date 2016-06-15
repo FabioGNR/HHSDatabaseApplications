@@ -17,18 +17,44 @@ public class Student {
         Exchange, HHS
     }
     
-    protected String name, studentid, gender, email;
+    enum Gender {
+        Female {
+            @Override
+            public String getValue() {
+                return "f";
+            }
+        }, Male {
+            @Override
+            public String getValue() {
+                return "m";
+            }
+        };
+        
+        public abstract String getValue();
+    }
+    
+    protected int studentid;
+    protected Gender gender;
+    protected String name, email;
     protected String[] cellData;
 
     public Student(ResultSet result) throws SQLException {
-        studentid = result.getString("student_id");
+        studentid = result.getInt("student_id");
         name = result.getString("name");
-        gender = result.getString("gender");
         email = result.getString("email");
+        // cast gender string to enum
+        String sGender = result.getString("gender");
+        Gender[] genders = Gender.values();
+        for (int i = 0; i < genders.length; i++) {
+            if (genders[i].getValue().equals(sGender)) {
+                gender = genders[i];
+                break;
+            }
+        } 
         refreshCellData();
     }
     
-    protected static boolean insertNewStudent(String student_id, String name, String gender, String email) {
+    protected static boolean insertNewStudent(int student_id, String name, Gender gender, String email) {
         Connection connection = DBConnection.getConnection();
 
         try {
@@ -37,9 +63,9 @@ public class Student {
                     + "(student_id,name, gender, email) "
                     + "VALUES (?,?,?,?)");
 
-            statement.setString(1, student_id);
+            statement.setInt(1, student_id);
             statement.setString(2, name);
-            statement.setString(3, gender);
+            statement.setString(3, gender.getValue());
             statement.setString(4, email);
             statement.executeUpdate();
             System.out.println("Preparedstatement werkt ");
@@ -58,10 +84,11 @@ public class Student {
             PreparedStatement statement = connection.prepareStatement(
                     "UPDATE student SET name=?, gender=?, email=? WHERE student_id=?");
             statement.setString(1, name);
-            statement.setString(2, gender);
+            statement.setString(2, gender.getValue());
             statement.setString(3, email);
-            statement.setString(4, studentid);
+            statement.setInt(4, studentid);
             statement.executeUpdate();
+            statement.close();
         } catch (Exception error) {
             System.out.println("Error: " + error.getMessage());
             System.out.println("preparedstatement werkt niet :(");
@@ -75,9 +102,9 @@ public class Student {
         try {
             PreparedStatement statement = connection.prepareStatement(
                     "DELETE FROM student WHERE student_id=?");
-            statement.setString(1, studentid);
+            statement.setInt(1, studentid);
             statement.executeUpdate();
-
+            statement.close();
             System.out.println("Preparedstatement werkt!");
         } catch (SQLException error) {
             
@@ -89,7 +116,8 @@ public class Student {
     }
     
     public void refreshCellData() {
-        cellData = new String[]{studentid, name, gender, email};
+        String ID = String.format("%08d", studentid);
+        cellData = new String[]{ID, name, gender.toString(), email};
     }
 
     public String getDataAt(int cell) {
@@ -100,11 +128,11 @@ public class Student {
         return name;
     }
 
-    public String getStudentid() {
+    public int getStudentid() {
         return studentid;
     }
 
-    public String getGender() {
+    public Gender getGender() {
         return gender;
     }
 
@@ -116,11 +144,11 @@ public class Student {
         this.name = name;
     }
 
-    public void setStudentid(String studentid) {
+    public void setStudentid(int studentid) {
         this.studentid = studentid;
     }
 
-    public void setGender(String gender) {
+    public void setGender(Gender gender) {
         this.gender = gender;
     }
 

@@ -153,8 +153,8 @@ public class SelectInstituteDialog extends JDialog{
             }
             Institute inst = resultModel.getInstituteAt(selectedRow);
             // if the selected institute matches the required type
-            if(requiredType == null || (requiredType == InstituteType.Company && inst.getIsbusiness().equals("1"))
-                    || (requiredType == InstituteType.University && inst.getIsbusiness().equals("0"))) {
+            if(requiredType == null || (requiredType == InstituteType.Company && inst.isBusiness())
+                    || (requiredType == InstituteType.University && !inst.isBusiness())) {
                 selectedInstitute = inst;
                 selectedInstituteLabel.setText(
                         "Selected institute: " + selectedInstitute.getName());

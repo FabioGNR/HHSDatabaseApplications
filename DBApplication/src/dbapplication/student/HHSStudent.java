@@ -58,8 +58,9 @@ public class HHSStudent extends Student {
             PreparedStatement statement = connection.prepareStatement(
                     "UPDATE hhs_student SET hhs_study=? WHERE student_id=?");
             statement.setString(1, localStudy.toString());
-            statement.setString(2, studentid);
+            statement.setInt(2, studentid);
             statement.executeUpdate();
+            statement.close();
         } catch (Exception error) {
             System.out.println("Error: " + error.getMessage());
             System.out.println("preparedstatement werkt niet :(");
@@ -74,8 +75,9 @@ public class HHSStudent extends Student {
         try {
             PreparedStatement statement = connection.prepareStatement(
                     "DELETE FROM hhs_student WHERE student_id=?");
-            statement.setString(1, studentid);
+            statement.setInt(1, studentid);
             statement.executeUpdate();
+            statement.close();
 
             System.out.println("Preparedstatement werkt!");
         } catch (SQLException error) {
@@ -86,8 +88,8 @@ public class HHSStudent extends Student {
         return super.delete();
     }
 
-    public static boolean insertNewHHSStudent(String student_id, String name,
-            String gender, String email, LocalStudy hhs_study) {
+    public static boolean insertNewHHSStudent(int student_id, String name,
+            Gender gender, String email, LocalStudy hhs_study) {
         if (!Student.insertNewStudent(student_id, name, gender, email)) {
             return false;
         }
@@ -97,7 +99,7 @@ public class HHSStudent extends Student {
                     "INSERT INTO hhs_student "
                     + "(student_id, hhs_study) "
                     + "VALUES (?,?)");
-            statement.setString(1, student_id);
+            statement.setInt(1, student_id);
             statement.setString(2, hhs_study.toString());
 
             statement.executeUpdate();
