@@ -1,12 +1,9 @@
 package dbapplication.program;
 
-import dbapplication.institute.SelectStudyDialog;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-
 import dbapplication.JEditField;
 import dbapplication.institute.Institute;
 import dbapplication.institute.SelectInstituteDialog;
+import dbapplication.institute.SelectStudyDialog;
 import dbapplication.institute.Study;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,7 +23,7 @@ public class RegisterProgramFrame extends JDialog {
     private JComboBox maxCreditBox, studyTypeBox;
     private String[] maxCredit = {"15 EC", "30 EC", "45 EC", "60 EC"};
     private String[] studyType = {"Minor", "European Project", "Summer School"};
-    private String selectedInstitute = null;
+    private int selectedInstitute = -1;
     private String selectedStudy = null;
 
     enum ButtonAction {
@@ -121,7 +118,7 @@ public class RegisterProgramFrame extends JDialog {
         public void actionPerformed(ActionEvent e) {
             boolean studyProgramSelected = internshipButton.isSelected();
             instituteField.setText("");
-            selectedInstitute = null;
+            selectedInstitute = -1;
             selectedStudy = null;
             studyField.setVisible(!studyProgramSelected);
             selectStudyButton.setVisible(!studyProgramSelected);

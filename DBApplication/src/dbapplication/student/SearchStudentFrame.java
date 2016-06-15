@@ -1,5 +1,6 @@
 package dbapplication.student;
 
+import dbapplication.DatabaseTableModel;
 import dbapplication.JEditField;
 import dbapplication.JSearchField;
 import dbapplication.SearchFilter;
@@ -23,10 +24,10 @@ public class SearchStudentFrame extends JDialog {
     private JComboBox searchConditionCombo, searchTypeCombo, hhsStudyCombo;
     private JTable resultTable;
     private JScrollPane resultPanel;
-    private StudentTableModel resultModel;
-    private JButton selectFilterButton, selectUniButton;
+    private DatabaseTableModel<Student> resultModel;
+    private JButton selectFilterButton, selectUniButton, phoneButton;
     private Institute selectedFilterInstitute;
-    private String exchangeUniID;
+    private int exchangeUniID = -1;
 
     private JEditField nameField, emailField, cityField, addressField;
     private JRadioButton genderFBox, genderMBox;
@@ -73,8 +74,7 @@ public class SearchStudentFrame extends JDialog {
         add(searchConditionCombo);
 
         resultTable = new JTable();
-        resultTable.setBounds(0, 0, 400, 500);
-        resultModel = new StudentTableModel();
+        resultModel = new DatabaseTableModel<>(new String[] { "Student ID", "Name", "Gender", "Email" });
         resultTable.setModel(resultModel);
         resultTable.setPreferredScrollableViewportSize(new Dimension(400, 500));
         resultTable.setFillsViewportHeight(true);
@@ -109,30 +109,35 @@ public class SearchStudentFrame extends JDialog {
         genderGroup.add(genderMBox);
         add(genderFBox);
         add(genderMBox);
+        
+        phoneButton = new JButton("Phone numbers");
+        phoneButton.setBounds(450, 220, 130, 30);
+        phoneButton.addActionListener(new PhoneNumbersListener());
+        add(phoneButton);
 
         hhsStudyCombo = new JComboBox(HHSStudent.LocalStudy.values());
-        hhsStudyCombo.setBounds(450, 220, 130, 30);
+        hhsStudyCombo.setBounds(450, 260, 130, 30);
         add(hhsStudyCombo);
         hhsStudyCombo.setVisible(false);
 
         cityField = new JEditField("City");
-        cityField.setBounds(450, 220, 150, 30);
+        cityField.setBounds(450, 260, 150, 30);
         add(cityField);
         cityField.setVisible(false);
 
         addressField = new JEditField("Address");
-        addressField.setBounds(450, 260, 150, 30);
+        addressField.setBounds(450, 300, 150, 30);
         add(addressField);
         addressField.setVisible(false);
 
         uniField = new JEditField("University");
-        uniField.setBounds(450, 300, 120, 30);
+        uniField.setBounds(450, 340, 120, 30);
         add(uniField);
         uniField.setEnabled(false);
         uniField.setVisible(false);
 
         selectUniButton = new JButton("...");
-        selectUniButton.setBounds(570, 300, 30, 30);
+        selectUniButton.setBounds(570, 340, 30, 30);
         add(selectUniButton);
         selectUniButton.addActionListener(new SelectUniversityListener());
         selectUniButton.setVisible(false);
@@ -151,6 +156,7 @@ public class SearchStudentFrame extends JDialog {
     }
 
     private void toggleFields() {
+        // show the right fields depending on the selected student type
         int selectedTypeIndex = searchTypeCombo.getSelectedIndex();
         Student.StudentType type = (Student.StudentType) searchTypeCombo.getItemAt(selectedTypeIndex);
         boolean exchangeSelected = type == Student.StudentType.Exchange;
@@ -162,13 +168,14 @@ public class SearchStudentFrame extends JDialog {
     }
 
     private void search(String filter, String conditionColumn, Student.StudentType type) {
+        // execute search based on user input
         ArrayList<Student> students;
         if (type == Student.StudentType.Exchange) {
             students = ExchangeStudent.searchStudents(filter, conditionColumn);
         } else {
             students = HHSStudent.searchStudents(filter, conditionColumn);
         }
-        resultModel.setResults(students);
+        resultModel.setItems(students);
         setSelectedStudent(null);
     }
     
@@ -185,8 +192,9 @@ public class SearchStudentFrame extends JDialog {
         if(selectedStudent == null) return;
         int selectedTypeIndex = searchTypeCombo.getSelectedIndex();
         Student.StudentType type = (Student.StudentType) searchTypeCombo.getItemAt(selectedTypeIndex);
+        // set new student properties
         if(type == Student.StudentType.Exchange) {
-            if(exchangeUniID == null) {
+            if(exchangeUniID == -1) {
                 JOptionPane.showMessageDialog(this, "Select a university", 
                         "Missing university", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -202,14 +210,28 @@ public class SearchStudentFrame extends JDialog {
             student.setLocalStudy((HHSStudent.LocalStudy)hhsStudyCombo.getSelectedItem());
         }
         selectedStudent.setEmail(emailField.getText());
-        selectedStudent.setGender(genderFBox.isSelected() ? "f" : "m");
+        selectedStudent.setGender(genderFBox.isSelected() 
+                ? Student.Gender.Female : Student.Gender.Male);
         selectedStudent.setName(nameField.getText());
+        // attempt to save
         if(!selectedStudent.save()) {
             JOptionPane.showMessageDialog(this, "Error saving student", 
                     "Could not save student", JOptionPane.ERROR_MESSAGE);
         }
+        // refresh result table
         selectedStudent.refreshCellData();
         resultModel.fireTableDataChanged();
+    }
+    
+    class PhoneNumbersListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if(selectedStudent == null) return;
+            PhoneFrame frame = new PhoneFrame((JFrame)SearchStudentFrame.this.getOwner(), selectedStudent.getPhoneNumbers());
+            frame.setVisible(true);
+            ArrayList<PhoneNumber> numbers = frame.getPhoneNumbers();
+            
+        }    
     }
 
     class SelectTypeListener implements ActionListener {
@@ -276,11 +298,11 @@ public class SearchStudentFrame extends JDialog {
                 setSelectedStudent(null);
                 return; // selection cleared
             }
-            setSelectedStudent(resultModel.getStudentAt(selectedRow));
+            setSelectedStudent(resultModel.get(selectedRow));
             nameField.setText(selectedStudent.getName());
             emailField.setText(selectedStudent.getEmail());
             JRadioButton correctGenderBox;
-            if (selectedStudent.getGender().equals("f")) {
+            if (selectedStudent.getGender() == Student.Gender.Female) {
                 correctGenderBox = genderFBox;
             } else {
                 correctGenderBox = genderMBox;

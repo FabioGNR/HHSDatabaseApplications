@@ -1,6 +1,7 @@
 package dbapplication.student;
 
 import dbapplication.DBConnection;
+import dbapplication.DatabaseTableClass;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,24 +12,60 @@ import java.util.ArrayList;
  *
  * @author fabio
  */
-public class Student {
+public class Student extends DatabaseTableClass {
 
-    enum StudentType {
+    public enum StudentType {
         Exchange, HHS
     }
     
-    protected String name, studentid, gender, email;
+    public enum Gender {
+        Female {
+            @Override
+            public String getValue() {
+                return "f";
+            }
+        }, Male {
+            @Override
+            public String getValue() {
+                return "m";
+            }
+        };
+        
+        public abstract String getValue();
+    }
+    
+    protected ArrayList<PhoneNumber> phoneNumbers;
+    protected int studentid;
+    protected Gender gender;
+    protected String name, email;
     protected String[] cellData;
 
-    public Student(ResultSet result) throws SQLException {
-        studentid = result.getString("student_id");
+    public Student(ResultSet result, ResultSet numbersSet) throws SQLException {
+        studentid = result.getInt("student_id");
         name = result.getString("name");
-        gender = result.getString("gender");
         email = result.getString("email");
+        // cast gender string to enum
+        String sGender = result.getString("gender");
+        Gender[] genders = Gender.values();
+        for (int i = 0; i < genders.length; i++) {
+            if (genders[i].getValue().equals(sGender)) {
+                gender = genders[i];
+                break;
+            }
+        } 
+        phoneNumbers = new ArrayList<>();
+        if(numbersSet != null) {
+            while(numbersSet.next()) {
+                phoneNumbers.add(new PhoneNumber(
+                        numbersSet.getString("phonenr"), 
+                        numbersSet.getBoolean("is_cell")));
+            }
+        }
         refreshCellData();
     }
     
-    protected static boolean insertNewStudent(String student_id, String name, String gender, String email) {
+    protected static boolean insertNewStudent(int student_id, String name, 
+            Gender gender, String email, ArrayList<PhoneNumber> numbers) {
         Connection connection = DBConnection.getConnection();
 
         try {
@@ -37,13 +74,26 @@ public class Student {
                     + "(student_id,name, gender, email) "
                     + "VALUES (?,?,?,?)");
 
-            statement.setString(1, student_id);
+            statement.setInt(1, student_id);
             statement.setString(2, name);
-            statement.setString(3, gender);
+            statement.setString(3, gender.getValue());
             statement.setString(4, email);
             statement.executeUpdate();
             System.out.println("Preparedstatement werkt ");
             statement.close();
+            // add phone numbers
+            for(int i = 0; i < numbers.size(); i++) {
+                PhoneNumber number = numbers.get(i);
+                PreparedStatement phoneStat = connection.prepareStatement(
+                    "INSERT INTO student_phone "
+                    + "(student_id,phonenr, is_cell) "
+                    + "VALUES (?,?,?)");
+                phoneStat.setInt(1, student_id);
+                phoneStat.setString(2, number.getNumber());
+                phoneStat.setInt(3, number.isCellular() ? 1 : 0);
+                phoneStat.executeUpdate();
+                phoneStat.close();
+            }
         } catch (SQLException error) {
             System.out.println("Error: " + error.getMessage());
             System.out.println("preparedstatement werkt niet :(");
@@ -58,10 +108,11 @@ public class Student {
             PreparedStatement statement = connection.prepareStatement(
                     "UPDATE student SET name=?, gender=?, email=? WHERE student_id=?");
             statement.setString(1, name);
-            statement.setString(2, gender);
+            statement.setString(2, gender.getValue());
             statement.setString(3, email);
-            statement.setString(4, studentid);
+            statement.setInt(4, studentid);
             statement.executeUpdate();
+            statement.close();
         } catch (Exception error) {
             System.out.println("Error: " + error.getMessage());
             System.out.println("preparedstatement werkt niet :(");
@@ -69,15 +120,29 @@ public class Student {
         }
         return true;
     }
+    
+    protected static ResultSet requestPhoneNumbers(int student_id) {
+        Connection connection = DBConnection.getConnection();
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT phonenr, is_cell "
+                    + "FROM student_phone WHERE student_id=?");
+            statement.setInt(1, student_id);
+            statement.closeOnCompletion();
+            return statement.executeQuery();
+        }
+        catch (Exception error) {
+            return null;
+        }
+    }
 
     public boolean delete() {
         Connection connection = DBConnection.getConnection();
         try {
             PreparedStatement statement = connection.prepareStatement(
                     "DELETE FROM student WHERE student_id=?");
-            statement.setString(1, studentid);
+            statement.setInt(1, studentid);
             statement.executeUpdate();
-
+            statement.close();
             System.out.println("Preparedstatement werkt!");
         } catch (SQLException error) {
             
@@ -89,9 +154,11 @@ public class Student {
     }
     
     public void refreshCellData() {
-        cellData = new String[]{studentid, name, gender, email};
+        String ID = String.format("%08d", studentid);
+        cellData = new String[]{ID, name, gender.toString(), email};
     }
 
+    @Override
     public String getDataAt(int cell) {
         return cellData[cell];
     }
@@ -99,12 +166,16 @@ public class Student {
     public String getName() {
         return name;
     }
+    
+    public ArrayList<PhoneNumber> getPhoneNumbers() {
+        return phoneNumbers;
+    }
 
-    public String getStudentid() {
+    public int getStudentid() {
         return studentid;
     }
 
-    public String getGender() {
+    public Gender getGender() {
         return gender;
     }
 
@@ -116,11 +187,11 @@ public class Student {
         this.name = name;
     }
 
-    public void setStudentid(String studentid) {
+    public void setStudentid(int studentid) {
         this.studentid = studentid;
     }
 
-    public void setGender(String gender) {
+    public void setGender(Gender gender) {
         this.gender = gender;
     }
 
