@@ -5,11 +5,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JRadioButton;
-import javax.swing.JLabel;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 /**
@@ -113,8 +113,13 @@ public class RegisterInstituteFrame extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+<<<<<<< HEAD
             
             RegisterStudyDialog dlg = new RegisterStudyDialog((JFrame)getOwner(), RegisterStudyDialog.StudyType.Study);
+=======
+
+            SelectStudyDialog dlg = new SelectStudyDialog((JFrame) getOwner());
+>>>>>>> f9cb77ffa7527362a47ed031f97fcdc12eabde19
             dlg.setVisible(true);
 
             }

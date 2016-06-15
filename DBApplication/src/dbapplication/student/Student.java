@@ -1,6 +1,7 @@
 package dbapplication.student;
 
 import dbapplication.DBConnection;
+import dbapplication.DatabaseTableClass;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,13 +12,13 @@ import java.util.ArrayList;
  *
  * @author fabio
  */
-public class Student {
+public class Student extends DatabaseTableClass {
 
-    enum StudentType {
+    public enum StudentType {
         Exchange, HHS
     }
     
-    enum Gender {
+    public enum Gender {
         Female {
             @Override
             public String getValue() {
@@ -33,12 +34,13 @@ public class Student {
         public abstract String getValue();
     }
     
+    protected ArrayList<PhoneNumber> phoneNumbers;
     protected int studentid;
     protected Gender gender;
     protected String name, email;
     protected String[] cellData;
 
-    public Student(ResultSet result) throws SQLException {
+    public Student(ResultSet result, ResultSet numbersSet) throws SQLException {
         studentid = result.getInt("student_id");
         name = result.getString("name");
         email = result.getString("email");
@@ -51,10 +53,19 @@ public class Student {
                 break;
             }
         } 
+        phoneNumbers = new ArrayList<>();
+        if(numbersSet != null) {
+            while(numbersSet.next()) {
+                phoneNumbers.add(new PhoneNumber(
+                        numbersSet.getString("phonenr"), 
+                        numbersSet.getBoolean("is_cell")));
+            }
+        }
         refreshCellData();
     }
     
-    protected static boolean insertNewStudent(int student_id, String name, Gender gender, String email) {
+    protected static boolean insertNewStudent(int student_id, String name, 
+            Gender gender, String email, ArrayList<PhoneNumber> numbers) {
         Connection connection = DBConnection.getConnection();
 
         try {
@@ -70,6 +81,19 @@ public class Student {
             statement.executeUpdate();
             System.out.println("Preparedstatement werkt ");
             statement.close();
+            // add phone numbers
+            for(int i = 0; i < numbers.size(); i++) {
+                PhoneNumber number = numbers.get(i);
+                PreparedStatement phoneStat = connection.prepareStatement(
+                    "INSERT INTO student_phone "
+                    + "(student_id,phonenr, is_cell) "
+                    + "VALUES (?,?,?)");
+                phoneStat.setInt(1, student_id);
+                phoneStat.setString(2, number.getNumber());
+                phoneStat.setInt(3, number.isCellular() ? 1 : 0);
+                phoneStat.executeUpdate();
+                phoneStat.close();
+            }
         } catch (SQLException error) {
             System.out.println("Error: " + error.getMessage());
             System.out.println("preparedstatement werkt niet :(");
@@ -96,6 +120,20 @@ public class Student {
         }
         return true;
     }
+    
+    protected static ResultSet requestPhoneNumbers(int student_id) {
+        Connection connection = DBConnection.getConnection();
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT phonenr, is_cell "
+                    + "FROM student_phone WHERE student_id=?");
+            statement.setInt(1, student_id);
+            statement.closeOnCompletion();
+            return statement.executeQuery();
+        }
+        catch (Exception error) {
+            return null;
+        }
+    }
 
     public boolean delete() {
         Connection connection = DBConnection.getConnection();
@@ -120,12 +158,17 @@ public class Student {
         cellData = new String[]{ID, name, gender.toString(), email};
     }
 
+    @Override
     public String getDataAt(int cell) {
         return cellData[cell];
     }
 
     public String getName() {
         return name;
+    }
+    
+    public ArrayList<PhoneNumber> getPhoneNumbers() {
+        return phoneNumbers;
     }
 
     public int getStudentid() {
