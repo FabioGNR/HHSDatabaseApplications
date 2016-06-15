@@ -9,7 +9,7 @@ import javax.swing.table.AbstractTableModel;
  */
 public class StudyTableModel extends AbstractTableModel{
     private ArrayList<Study> searchResults = new ArrayList<>();
-    private final String[] columnNames = new String[] { "Code", "Org_ID", "Contactperson" };
+    private final String[] columnNames = new String[] { "Code" };
     
     public StudyTableModel() {
         super();

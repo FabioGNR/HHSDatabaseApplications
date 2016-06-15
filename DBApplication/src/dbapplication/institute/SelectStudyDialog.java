@@ -230,11 +230,11 @@ public class SelectStudyDialog extends JDialog {
             selectedStudyLabel.setText(
                     "Selected study: " + selectedStudy.getCode());
 
-            contactpersonField.setText(selectedStudy.getContactperson());
+            //contactpersonField.setText(selectedStudy.getContactperson());
 
             codeField.setText(selectedStudy.getCode());
 
-            org_idField.setText(selectedStudy.getOrg_id());
+            //org_idField.setText(selectedStudy.getOrg_id());
 
         }
 
@@ -251,7 +251,7 @@ public class SelectStudyDialog extends JDialog {
                 int update = JOptionPane.showOptionDialog(SelectStudyDialog.this, "Study has been updated", "Updated", JOptionPane.PLAIN_MESSAGE,
                         JOptionPane.INFORMATION_MESSAGE, null, null, null);
                 if (update == JOptionPane.OK_OPTION) {
-                    selectedStudy.updateStudy(codeField.getText(), org_idField.getText(), contactpersonField.getText());
+                    //selectedStudy.updateStudy(codeField.getText(), org_idField.getText(), contactpersonField.getText());
 
                     int selectedIndex = searchConditionCombo.getSelectedIndex();
                     SearchFilter selectedFilter = (SearchFilter) searchConditionCombo.getItemAt(selectedIndex);
