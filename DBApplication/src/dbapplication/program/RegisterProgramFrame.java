@@ -1,5 +1,6 @@
 package dbapplication.program;
 
+import dbapplication.institute.SelectStudyDialog;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
@@ -119,17 +120,12 @@ public class RegisterProgramFrame extends JDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             boolean studyProgramSelected = internshipButton.isSelected();
-
-            if (studyProgramSelected) {
-                maxCreditBox.setBounds(20, 250, 75, 25); //dit werkt niet
-                studyField.setVisible(studyProgramSelected);
-                selectStudyButton.setVisible(studyProgramSelected);
-                studyTypeBox.setVisible(studyProgramSelected);
-            }
+            instituteField.setText("");
+            selectedInstitute = null;
+            selectedStudy = null;
             studyField.setVisible(!studyProgramSelected);
             selectStudyButton.setVisible(!studyProgramSelected);
             studyTypeBox.setVisible(!studyProgramSelected);
-            maxCreditBox.setBounds(20, 150, 75, 25);
         }
     }
 
@@ -189,22 +185,18 @@ public class RegisterProgramFrame extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) { //how to select company/study?
-            SelectInstituteDialog internshipDlg = new SelectInstituteDialog((JFrame) getOwner(), SelectInstituteDialog.InstituteType.Company);
-            Institute company = internshipDlg.getSelectedInstitute();
-            internshipDlg.setVisible(true);
-            SelectInstituteDialog universityDlg = new SelectInstituteDialog((JFrame) getOwner(), SelectInstituteDialog.InstituteType.University);
-            Institute university = universityDlg.getSelectedInstitute();
-            universityDlg.setVisible(false);
+            
+            SelectInstituteDialog.InstituteType type = internshipButton.isSelected()
+                    ? SelectInstituteDialog.InstituteType.Company 
+                    : SelectInstituteDialog.InstituteType.University;
+                    
+            SelectInstituteDialog instDlg = new SelectInstituteDialog((JFrame) getOwner(), type);
+            instDlg.setVisible(true);
+            Institute institute = instDlg.getSelectedInstitute();
 
-            if (internshipButton.isSelected() && company != null) {
-                instituteField.setText(company.getName());
-                selectedInstitute = company.getOrgid();
-                internshipDlg.setVisible(true);
-            } else if (studyProgramButton.isSelected() && university != null) {
-                instituteField.setText(university.getName());
-                selectedInstitute = university.getOrgid();
-                internshipDlg.setVisible(true);
-                universityDlg.setVisible(false);
+            if (institute != null) {
+                instituteField.setText(institute.getName());
+                selectedInstitute = institute.getOrgid();
             }
         }
     }

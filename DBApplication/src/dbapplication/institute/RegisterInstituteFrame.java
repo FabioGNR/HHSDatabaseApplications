@@ -1,7 +1,6 @@
 package dbapplication.institute;
 
 import dbapplication.JEditField;
-import dbapplication.program.SelectStudyDialog;
 //import dbapplication.program.SelectStudyDialog;
 
 import java.awt.event.ActionEvent;

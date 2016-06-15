@@ -3,7 +3,6 @@ package dbapplication.institute;
 import dbapplication.JEditField;
 import dbapplication.JSearchField;
 import dbapplication.SearchFilter;
-import dbapplication.program.SelectStudyDialog;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

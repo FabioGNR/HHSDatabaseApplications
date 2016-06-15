@@ -1,4 +1,4 @@
-package dbapplication.program;
+package dbapplication.institute;
 
 import dbapplication.JEditField;
 import dbapplication.JSearchField;
