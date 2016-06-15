@@ -169,15 +169,56 @@ public class SearchStudentFrame extends JDialog {
             students = HHSStudent.searchStudents(filter, conditionColumn);
         }
         resultModel.setResults(students);
-        selectedStudent = null;
+        setSelectedStudent(null);
+    }
+    
+    private void setSelectedStudent(Student student) {
+        selectedStudent = student;
+        if(student != null) {
+            selectedStudentLabel.setText("Selected student: "+student.getStudentid());
+        }
+        else
+            selectedStudentLabel.setText("Selected student: ");
+    }
+    
+    private void saveSelectedStudent() {
+        if(selectedStudent == null) return;
+        int selectedTypeIndex = searchTypeCombo.getSelectedIndex();
+        Student.StudentType type = (Student.StudentType) searchTypeCombo.getItemAt(selectedTypeIndex);
+        if(type == Student.StudentType.Exchange) {
+            if(exchangeUniID == null) {
+                JOptionPane.showMessageDialog(this, "Select a university", 
+                        "Missing university", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            ExchangeStudent student = (ExchangeStudent)selectedStudent;
+            student.setAddress(addressField.getText());
+            student.setCity(cityField.getText());
+            student.setUniID(exchangeUniID);
+            student.setUniName(uniField.getText());
+        }
+        else if(type == Student.StudentType.HHS) {
+            HHSStudent student = (HHSStudent)selectedStudent;
+            student.setLocalStudy((HHSStudent.LocalStudy)hhsStudyCombo.getSelectedItem());
+        }
+        selectedStudent.setEmail(emailField.getText());
+        selectedStudent.setGender(genderFBox.isSelected() ? "f" : "m");
+        selectedStudent.setName(nameField.getText());
+        if(!selectedStudent.save()) {
+            JOptionPane.showMessageDialog(this, "Error saving student", 
+                    "Could not save student", JOptionPane.ERROR_MESSAGE);
+        }
+        selectedStudent.refreshCellData();
+        resultModel.fireTableDataChanged();
     }
 
     class SelectTypeListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             toggleFields();
-            selectedStudent = null;
+            setSelectedStudent(null);
             resultModel.clear();
+            
         }
     }
 
@@ -197,7 +238,7 @@ public class SearchStudentFrame extends JDialog {
                 return;
             }
             if (e.getSource() == saveButton) {
-
+                saveSelectedStudent();
             } else if (e.getSource() == deleteButton) {
                 // show confirm dialog and confirm that the user choose "OK"
                 int choice = JOptionPane.showConfirmDialog(SearchStudentFrame.this, "Are you sure you want to delete this student?",
@@ -232,11 +273,10 @@ public class SearchStudentFrame extends JDialog {
             // and update the fields to reflect it
             int selectedRow = resultTable.getSelectedRow();
             if (selectedRow < 0) {
+                setSelectedStudent(null);
                 return; // selection cleared
             }
-            selectedStudent = resultModel.getStudentAt(selectedRow);
-            selectedStudentLabel.setText(
-                    "Selected student: " + selectedStudent.getStudentid());
+            setSelectedStudent(resultModel.getStudentAt(selectedRow));
             nameField.setText(selectedStudent.getName());
             emailField.setText(selectedStudent.getEmail());
             JRadioButton correctGenderBox;
@@ -251,6 +291,7 @@ public class SearchStudentFrame extends JDialog {
             if (type == Student.StudentType.Exchange) {
                 cityField.setText(((ExchangeStudent) selectedStudent).getCity());
                 addressField.setText(((ExchangeStudent) selectedStudent).getAddress());
+                exchangeUniID = ((ExchangeStudent) selectedStudent).getUniID();
                 uniField.setText(((ExchangeStudent) selectedStudent).getUniName());
             } else {
                 hhsStudyCombo.setSelectedItem(((HHSStudent) selectedStudent).getLocalStudy());

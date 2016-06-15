@@ -25,7 +25,7 @@ public class Student {
         name = result.getString("name");
         gender = result.getString("gender");
         email = result.getString("email");
-        cellData = new String[]{studentid, name, gender, email};
+        refreshCellData();
     }
     
     protected static boolean insertNewStudent(String student_id, String name, String gender, String email) {
@@ -51,6 +51,24 @@ public class Student {
         }  
         return true;
     }
+    
+    public boolean save() {
+        Connection connection = DBConnection.getConnection();
+        try {
+            PreparedStatement statement = connection.prepareStatement(
+                    "UPDATE student SET name=?, gender=?, email=? WHERE student_id=?");
+            statement.setString(1, name);
+            statement.setString(2, gender);
+            statement.setString(3, email);
+            statement.setString(4, studentid);
+            statement.executeUpdate();
+        } catch (Exception error) {
+            System.out.println("Error: " + error.getMessage());
+            System.out.println("preparedstatement werkt niet :(");
+            return false;
+        }
+        return true;
+    }
 
     public boolean delete() {
         Connection connection = DBConnection.getConnection();
@@ -68,6 +86,10 @@ public class Student {
             return false;
         }      
         return true;
+    }
+    
+    public void refreshCellData() {
+        cellData = new String[]{studentid, name, gender, email};
     }
 
     public String getDataAt(int cell) {
@@ -89,5 +111,23 @@ public class Student {
     public String getEmail() {
         return email;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setStudentid(String studentid) {
+        this.studentid = studentid;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
+    
 
 }

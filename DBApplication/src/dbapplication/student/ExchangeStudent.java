@@ -38,8 +38,28 @@ public class ExchangeStudent extends Student {
     public String getUniName() {
         return uniName;
     }
-    
-    
+
+    @Override
+    public boolean save() {
+        if (!super.save()) {
+            return false;
+        }
+        Connection connection = DBConnection.getConnection();
+        try {
+            PreparedStatement statement = connection.prepareStatement(
+                    "UPDATE exchange_student SET address=?, city=?, university=? WHERE student_id=?");
+            statement.setString(1, address);
+            statement.setString(2, city);
+            statement.setString(3, uniID);
+            statement.setString(4, studentid);
+            statement.executeUpdate();
+        } catch (Exception error) {
+            System.out.println("Error: " + error.getMessage());
+            System.out.println("preparedstatement werkt niet :(");
+            return false;
+        }
+        return true;
+    }
 
     @Override
     public boolean delete() {
@@ -110,6 +130,22 @@ public class ExchangeStudent extends Student {
             ex.printStackTrace();
         }
         return students;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setUniID(String uniID) {
+        this.uniID = uniID;
+    }
+
+    public void setUniName(String uniName) {
+        this.uniName = uniName;
     }
 
 }
