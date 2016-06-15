@@ -7,9 +7,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JRadioButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -24,7 +22,7 @@ import javax.swing.event.ListSelectionListener;
 
 /**
  *
- * @author omari_000
+ * @author jordain & sishi
  */
 public class SearchInstituteFrame extends JDialog {
 
@@ -40,23 +38,20 @@ public class SearchInstituteFrame extends JDialog {
     private JLabel countryLabel;
     private JLabel addressLabel;
     private JLabel selectedInstituteLabel;
-    private JLabel isBusinessLabel;
 
+    private static String[] programs = {"Company ", "University"};
+
+    private JComboBox searchConditionCombo;
+    private JComboBox type;
     private JButton searchButton;
     private JButton showButton;
     private JButton updateButton;
     private JButton deleteButton;
 
-    private JComboBox searchConditionCombo;
-
-    private JRadioButton yesRadio;
-    private JRadioButton noRadio;
-
     private JTable resultTable;
     private JScrollPane resultPanel;
     private InstituteTableModel resultModel;
 
-    private String selectedStudy;
     private Institute selectedInstitute = null;
 
     public SearchInstituteFrame(JFrame owner) {
@@ -67,18 +62,16 @@ public class SearchInstituteFrame extends JDialog {
     }
 
     private void setupFrame() {
-        setSize(700, 480);
+        setSize(800, 580);
         setTitle("Search Institute");
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setLayout(null);
-
     }
 
     private void createComponents() {
         SearchListener lis = new SearchListener();
         InstituteEditListener edit = new InstituteEditListener();
         SelectStudyListener studyLis = new SelectStudyListener();
-        SwitchInstituteListener switchLis = new SwitchInstituteListener();
 
         searchField = new JSearchField();
         searchField.setLocation(20, 20);
@@ -91,14 +84,18 @@ public class SearchInstituteFrame extends JDialog {
         searchButton.addActionListener(lis);
         add(searchButton);
 
+        type = new JComboBox(programs);
+        type.setLocation(620, 20);
+        type.setSize(150, 30);
+        type.addActionListener(lis);
+        add(type);
+
         searchConditionCombo = new JComboBox(new SearchFilter[]{
             new SearchFilter("ID", "org_id"),
             new SearchFilter("City", "city"),
             new SearchFilter("Name", "name"),
             new SearchFilter("Country", "country"),
-            new SearchFilter("Address", "address"),
-            new SearchFilter("Business?", "is_business")
-        });
+            new SearchFilter("Address", "address"),});
         searchConditionCombo.setLocation(320, 20);
         searchConditionCombo.setSize(100, 30);
         add(searchConditionCombo);
@@ -162,27 +159,6 @@ public class SearchInstituteFrame extends JDialog {
         addressField.setSize(120, 30);
         add(addressField);
 
-        isBusinessLabel = new JLabel("Business?");
-        isBusinessLabel.setLocation(440, 270);
-        isBusinessLabel.setSize(100, 30);
-        add(isBusinessLabel);
-
-        yesRadio = new JRadioButton("Yes");
-        yesRadio.setLocation(510, 270);
-        yesRadio.setSize(50, 30);
-        yesRadio.addActionListener(switchLis);
-        add(yesRadio);
-
-        noRadio = new JRadioButton("No");
-        noRadio.setLocation(560, 270);
-        noRadio.setSize(50, 30);
-        noRadio.addActionListener(switchLis);
-        add(noRadio);
-
-        ButtonGroup group = new ButtonGroup();
-        group.add(yesRadio);
-        group.add(noRadio);
-
         studyField = new JEditField("Studies");
         studyField.setLocation(440, 320);
         studyField.setSize(70, 30);
@@ -201,15 +177,20 @@ public class SearchInstituteFrame extends JDialog {
         updateButton.setLocation(440, 370);
         updateButton.setSize(90, 30);
         updateButton.addActionListener(edit);
-
         add(updateButton);
 
         deleteButton = new JButton("Delete");
         deleteButton.setLocation(540, 370);
         deleteButton.setSize(90, 30);
         deleteButton.addActionListener(edit);
-
         add(deleteButton);
+
+    }
+
+    public void refresh() {
+        int selectedIndex = searchConditionCombo.getSelectedIndex();
+        SearchFilter selectedFilter = (SearchFilter) searchConditionCombo.getItemAt(selectedIndex);
+        search(searchField.getText(), selectedFilter.getColumnName());
 
     }
 
@@ -221,16 +202,6 @@ public class SearchInstituteFrame extends JDialog {
             StudyFrame dlg = new StudyFrame((JFrame) getOwner(), StudyFrame.ProgramType.studyProgram);
             dlg.setVisible(true);
             // pauses until dialog is closed
-        }
-    }
-
-    private class SwitchInstituteListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            boolean showExchangeFields = noRadio.isSelected();
-            studyField.setVisible(showExchangeFields);
-            showButton.setVisible(showExchangeFields);
         }
     }
 
@@ -261,9 +232,7 @@ public class SearchInstituteFrame extends JDialog {
                 country = null;
             }
             address = addressField.getText();
-            if (address.isEmpty() || address.matches(".*\\d+.*")) {
-                JOptionPane.showMessageDialog(SearchInstituteFrame.this,
-                        "addres cannot be a number", "Incorrect input", JOptionPane.WARNING_MESSAGE);
+            if (address.isEmpty()) {
                 address = null;
             }
             if (e.getSource() == updateButton) {
@@ -275,28 +244,20 @@ public class SearchInstituteFrame extends JDialog {
                             JOptionPane.INFORMATION_MESSAGE, null, null, null);
                     if (update == JOptionPane.OK_OPTION) {
                         selectedInstitute.updateInstitute(cityField.getText(), nameField.getText(), countryField.getText(), addressField.getText());
-                        //refresh
-                        int selectedIndex = searchConditionCombo.getSelectedIndex();
-                        SearchFilter selectedFilter = (SearchFilter) searchConditionCombo.getItemAt(selectedIndex);
-                        search(searchField.getText(), selectedFilter.getColumnName());
+                        refresh();
+
                     }
                 }
             }
             if (e.getSource() == deleteButton) {
-                // show confirm dialog and confirm that the user choose "OK"
                 if (city == null || address == null || name == null || country == null) {
-
                     JOptionPane.showMessageDialog(SearchInstituteFrame.this, "Update of institute failed", "Error", JOptionPane.WARNING_MESSAGE);
                 } else {
                     int choice = JOptionPane.showConfirmDialog(SearchInstituteFrame.this, "Are you sure you want to delete this institute?",
                             "Delete institute", JOptionPane.OK_CANCEL_OPTION);
                     if (choice == JOptionPane.OK_OPTION) {
                         selectedInstitute.deleteInstitute();
-                        //refresh
-                        int selectedIndex = searchConditionCombo.getSelectedIndex();
-                        SearchFilter selectedFilter = (SearchFilter) searchConditionCombo.getItemAt(selectedIndex);
-                        search(searchField.getText(), selectedFilter.getColumnName());
-
+                        refresh();
                     }
 
                 }
@@ -305,15 +266,28 @@ public class SearchInstituteFrame extends JDialog {
     }
 
     private void search(String filter, String conditionColumn) {
-        ArrayList<dbapplication.institute.Institute> institute = 
-                dbapplication.institute.Institute.searchInstitute(filter, conditionColumn);
-        resultModel.setResults(institute);
+        if (type.getSelectedIndex() == 0) {
+            ArrayList<dbapplication.institute.Institute> institute
+                    = dbapplication.institute.Institute.searchInstituteC(filter, conditionColumn);
+            resultModel.setResults(institute);
+            studyField.setVisible(false);
+            showButton.setVisible(false);
+
+        } else {
+            ArrayList<dbapplication.institute.Institute> institute
+                    = dbapplication.institute.Institute.searchInstitute(filter, conditionColumn);
+            resultModel.setResults(institute);
+            studyField.setVisible(true);
+            showButton.setVisible(true);
+
+        }
     }
 
     class SearchListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent event) {
+
             int selectedIndex = searchConditionCombo.getSelectedIndex();
             SearchFilter selectedFilter = (SearchFilter) searchConditionCombo.getItemAt(selectedIndex);
             search(searchField.getText(), selectedFilter.getColumnName());
@@ -345,6 +319,6 @@ public class SearchInstituteFrame extends JDialog {
             addressField.setText(selectedInstitute.getAddress());
 
         }
-    }
 
+    }
 }
