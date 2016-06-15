@@ -187,8 +187,8 @@ public class SearchInstituteFrame extends JDialog {
         studyField = new JEditField("Studies");
         studyField.setLocation(440, 320);
         studyField.setSize(70, 30);
-        studyField.setEnabled(false);
         add(studyField);
+        studyField.setEnabled(false);
         studyField.setVisible(false);
 
         showButton = new JButton("Show studies");
@@ -223,9 +223,16 @@ public class SearchInstituteFrame extends JDialog {
             dlg.setVisible(true);
             // pauses until dialog is closed
             Study study = dlg.getSelectedStudy();
+<<<<<<< HEAD
             if (study != null) {
                 //uniField.setText(getName());
                 selectedStudy = study.getCode();
+=======
+            if(study != null)
+            {
+                studyField.setText(study.getCode());
+                selectedStudy = study.getOrg_id();
+>>>>>>> cbbf5599b18221de1fa01074dc12cbf6c222413b
             }
         }
     }
