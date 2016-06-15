@@ -3,7 +3,11 @@ package dbapplication.institute;
 import dbapplication.JEditField;
 import dbapplication.JSearchField;
 import dbapplication.SearchFilter;
+import dbapplication.institute.RegisterStudyDialog;
+import dbapplication.institute.Study;
+import dbapplication.institute.StudyTableModel;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -19,155 +23,261 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
 /**
  *
- * @author sishi
+ * @author Sishi
  */
-public class StudyFrame extends JDialog{
+public class StudyFrame extends JDialog {
+
+    public enum ProgramType {
+        Internship, studyProgram
+    }
+    private final ProgramType requiredType;
+
     private JTextField searchField;
-    private JTextField codefield;
-    private JTextField org_idField;
-    private JTextField contactField;
-    
+
+    private JButton cancelButton;
     private JButton searchButton;
-    private JButton saveButton;
+    private JButton updateButton;
     private JButton deleteButton;
-    
+    private JButton okButton;
+    private JButton addButton;
+
+    private JLabel codeLabel;
+    private JLabel org_idLabel;
+    private JLabel contactpersonLabel;
+    private JLabel selectedStudyLabel;
+
+    private JTextField org_idField;
+    private JTextField codeField;
+    private JTextField contactpersonField;
+
     private JComboBox searchConditionCombo;
     private JTable resultTable;
     private JScrollPane resultPanel;
+
     private StudyTableModel resultModel;
-    private JLabel selectedStudyLabel;
     private Study selectedStudy = null;
-    
-    public StudyFrame(JFrame owner) {
+
+    public StudyFrame(Frame owner, ProgramType type) {
         super(owner, true);
-        setupFrame();     
+        requiredType = type;
+        setupFrame();
         createComponents();
         // fill JTable searching on empty filter
         search("", "code");
     }
-    
+
     private void setupFrame() {
-        setSize(500,500);
-        setTitle("Study");
-        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        setSize(700, 500);
+        setResizable(false);
         setLayout(null);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setTitle("Select Study");
     }
-    
+
     private void createComponents() {
-        StudyEditListener edit = new StudyEditListener();
-        
+        SelectionListener select = new SelectionListener();
+        searchListener search = new searchListener();
+        CloseDialogListener close = new CloseDialogListener();
+        RegisterStudyListener register = new RegisterStudyListener();
+
         searchField = new JSearchField();
-        searchField.setLocation(20, 20);
-        searchField.setSize(180, 30);
+        searchField.setBounds(20, 20, 180, 30);
         add(searchField);
-        
+
         searchButton = new JButton("Search");
-        searchButton.setLocation(220, 20);
-        searchButton.setSize(90, 30);
-        searchButton.addActionListener(new SearchListener());
+        searchButton.setBounds(220, 20, 90, 30);
+        searchButton.addActionListener(search);
         add(searchButton);
-        
+
         searchConditionCombo = new JComboBox(new SearchFilter[]{
-            new SearchFilter("Code", "code"), 
-            new SearchFilter("Org ID", "org_id"), 
-            new SearchFilter("Contactperson", "contactperson")});
-        searchConditionCombo.setLocation(340, 20);
-        searchConditionCombo.setSize(100, 30);
+            new SearchFilter("Code", "code"),
+            new SearchFilter("Org_ID", "org_id"),
+            new SearchFilter("Contactperson", "contactperson")
+        });
+        searchConditionCombo.setBounds(320, 20, 100, 30);
         add(searchConditionCombo);
-        
+
+        selectedStudyLabel = new JLabel("Selected study:");
+        selectedStudyLabel.setLocation(440, 20);
+        selectedStudyLabel.setSize(200, 30);
+        add(selectedStudyLabel);
+
+        codeLabel = new JLabel("code");
+        codeLabel.setLocation(440, 70);
+        codeLabel.setSize(90, 30);
+        add(codeLabel);
+
+        codeField = new JEditField("code");
+        codeField.setLocation(490, 70);
+        codeField.setSize(120, 30);
+        add(codeField);
+
+        org_idLabel = new JLabel("org_id");
+        org_idLabel.setLocation(440, 120);
+        org_idLabel.setSize(90, 30);
+        add(org_idLabel);
+
+        org_idField = new JEditField("org_id");
+        org_idField.setLocation(490, 120);
+        org_idField.setSize(120, 30);
+        add(org_idField);
+
+        contactpersonLabel = new JLabel("Contact");
+        contactpersonLabel.setLocation(440, 170);
+        contactpersonLabel.setSize(90, 30);
+        add(contactpersonLabel);
+
+        contactpersonField = new JEditField("contactperson");
+        contactpersonField.setLocation(490, 170);
+        contactpersonField.setSize(120, 30);
+        add(contactpersonField);
+
+        //table
         resultTable = new JTable();
-        resultTable.setLocation(0, 0);
-        resultTable.setSize(400, 500);
+        resultTable.setBounds(0, 0, 400, 300);
         resultModel = new StudyTableModel();
         resultTable.setModel(resultModel);
-        resultTable.setPreferredScrollableViewportSize(new Dimension(400, 500));
+        resultTable.setPreferredScrollableViewportSize(new Dimension(400, 300));
         resultTable.setFillsViewportHeight(true);
         resultTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        resultTable.getSelectionModel().addListSelectionListener(new SelectionListener());
+        resultTable.getSelectionModel().addListSelectionListener(select);
         resultPanel = new JScrollPane(resultTable);
-        resultPanel.setLocation(20, 60);
-        resultPanel.setSize(420, 500);
+        resultPanel.setBounds(20, 60, 400, 300);
         add(resultPanel);
-        
-        selectedStudyLabel = new JLabel("Selected study:");
-        selectedStudyLabel.setLocation(450, 20);
-        selectedStudyLabel.setSize(150, 30);
-        add(selectedStudyLabel);
-        
-        codefield = new JEditField("Code");
-        codefield.setLocation(450, 60);
-        codefield.setSize(150, 30);
-        add(codefield);
-        
-        org_idField = new JEditField("Org_ID");
-        org_idField.setLocation(450, 100);
-        org_idField.setSize(150, 30);
-        add(org_idField);
-        
-        contactField = new JEditField("Contactperson");
-        contactField.setLocation(450, 140);
-        contactField.setSize(150, 30);
-        add(contactField);
-        
-        saveButton = new JButton("Save");
-        saveButton.setLocation(450, 490);
-        saveButton.setSize(75, 30);
-        saveButton.addActionListener(edit);
-        add(saveButton);
-        
+
+        //de buttons
+        StudyEditListener edit = new StudyEditListener();
+
+        cancelButton = new JButton("Cancel");
+        cancelButton.setLocation(260, 400);
+        cancelButton.setSize(70, 30);
+        cancelButton.addActionListener(close);
+        add(cancelButton);
+
+        okButton = new JButton("OK");
+        okButton.setLocation(350, 400);
+        okButton.setSize(70, 30);
+        okButton.addActionListener(close);
+        add(okButton);
+
+        updateButton = new JButton("Update");
+        updateButton.setLocation(440, 370);
+        updateButton.setSize(90, 30);
+        updateButton.addActionListener(edit);
+        add(updateButton);
+
         deleteButton = new JButton("Delete");
-        deleteButton.setLocation(525, 490);
-        deleteButton.setSize(75, 30);
+        deleteButton.setLocation(540, 370);
+        deleteButton.setSize(90, 30);
         deleteButton.addActionListener(edit);
         add(deleteButton);
+        
+        addButton = new JButton("Add");
+        addButton.setLocation(490, 400);
+        addButton.setSize(90, 30);
+        addButton.addActionListener(register);
+        add(addButton);
+
     }
-    
+
+    public Study getSelectedStudy() {
+        return selectedStudy;
+    }
+
     private void search(String filter, String conditionColumn) {
-        ArrayList<Study> study = Study.searchStudy(filter, conditionColumn);
+        ArrayList<dbapplication.institute.Study> study = dbapplication.institute.Study.searchStudy(filter, conditionColumn);
         resultModel.setResults(study);
     }
-    
-    class StudyEditListener implements ActionListener {
+
+    class CloseDialogListener implements ActionListener {
+
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(selectedStudy == null) return;
-            if(e.getSource() == saveButton) {
-                
+            if (e.getSource() == cancelButton) {
+                selectedStudy = null;
             }
-            else if(e.getSource() == deleteButton) {
-                // show confirm dialog and confirm that the user choose "OK"
-                int choice = JOptionPane.showConfirmDialog(StudyFrame.this, "Are you sure you want to delete this study?", 
-                    "Delete study", JOptionPane.OK_CANCEL_OPTION);
-                if(choice == JOptionPane.OK_OPTION) {
-                    selectedStudy.deleteStudy();
-                }
-            }
-        }    
+            dispose();
+        }
+
     }
-    
+
+    class searchListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent event) {
+            int selectedIndex = searchConditionCombo.getSelectedIndex();
+            SearchFilter selectedFilter = (SearchFilter) searchConditionCombo.getItemAt(selectedIndex);
+            search(searchField.getText(), selectedFilter.getColumnName());
+
+        }
+    }
+
     class SelectionListener implements ListSelectionListener {
+
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            // get the corresponding 'Student' object 
+
+            // get the corresponding 'Institute' object 
             // and update the fields to reflect it
             int selectedRow = resultTable.getSelectedRow();
-            if(selectedRow < 0) return; // selection cleared
+            if (selectedRow < 0) {
+                return; // selection cleared
+            }
             selectedStudy = resultModel.getStudyAt(selectedRow);
-            selectedStudyLabel.setText("Selected study: "+selectedStudy.getCode());
-            codefield.setText(selectedStudy.getCode());
+            selectedStudyLabel.setText(
+                    "Selected study: " + selectedStudy.getCode());
+
+            contactpersonField.setText(selectedStudy.getContactperson());
+
+            codeField.setText(selectedStudy.getCode());
+
             org_idField.setText(selectedStudy.getOrg_id());
-            
-        }       
+
+        }
+
     }
-    
-    class SearchListener implements ActionListener {
+
+    class StudyEditListener implements ActionListener {
+
         @Override
         public void actionPerformed(ActionEvent e) {
-            int selectedIndex = searchConditionCombo.getSelectedIndex();
-            SearchFilter selectedFilter = (SearchFilter)searchConditionCombo.getItemAt(selectedIndex);
-            search(searchField.getText(), selectedFilter.getColumnName());
+            if (selectedStudy == null) {
+                return;
+            }
+            if (e.getSource() == updateButton) {
+                int update = JOptionPane.showOptionDialog(StudyFrame.this, "Study has been updated", "Updated", JOptionPane.PLAIN_MESSAGE,
+                        JOptionPane.INFORMATION_MESSAGE, null, null, null);
+                if (update == JOptionPane.OK_OPTION) {
+                    selectedStudy.updateStudy(codeField.getText(), org_idField.getText(), contactpersonField.getText());
+
+                    int selectedIndex = searchConditionCombo.getSelectedIndex();
+                    SearchFilter selectedFilter = (SearchFilter) searchConditionCombo.getItemAt(selectedIndex);
+                    search(searchField.getText(), selectedFilter.getColumnName());
+                }
+            }
+            if (e.getSource() == deleteButton) {
+                // show confirm dialog and confirm that the user choose "OK"
+                int choice = JOptionPane.showConfirmDialog(StudyFrame.this, "Are you sure you want to delete this Study?",
+                        "Delete Study", JOptionPane.OK_CANCEL_OPTION);
+                if (choice == JOptionPane.OK_OPTION) {
+                    selectedStudy.deleteStudy();
+                    
+                    int selectedIndex = searchConditionCombo.getSelectedIndex();
+                    SearchFilter selectedFilter = (SearchFilter) searchConditionCombo.getItemAt(selectedIndex);
+                    search(searchField.getText(), selectedFilter.getColumnName());
+                }
+            }
         }
-    }     
-}
+    }
+        
+        private class RegisterStudyListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            RegisterStudyDialog rsf = new RegisterStudyDialog((JFrame)getOwner(), RegisterStudyDialog.StudyType.Study);
+            rsf.setVisible(true);
+    }
+        }
+    }

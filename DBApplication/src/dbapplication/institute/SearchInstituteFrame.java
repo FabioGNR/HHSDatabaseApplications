@@ -218,7 +218,7 @@ public class SearchInstituteFrame extends JDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
 
-            SelectStudyDialog dlg = new SelectStudyDialog((JFrame) getOwner(), SelectStudyDialog.ProgramType.studyProgram);
+            StudyFrame dlg = new StudyFrame((JFrame) getOwner(), StudyFrame.ProgramType.studyProgram);
             dlg.setVisible(true);
             // pauses until dialog is closed
         }
