@@ -26,10 +26,6 @@ public class SearchFilterDialog extends JDialog {
         setupFrame();     
         createComponents();
     }
-
-    SearchFilterDialog() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
     
     private void setupFrame() {
         setSize(700,600);
@@ -45,6 +41,7 @@ public class SearchFilterDialog extends JDialog {
         add(selectedInstituteLabel);
         selectInstituteButton = new JButton("...");
         selectInstituteButton.setBounds(220, 20, 70, 30);
+        selectInstituteButton.addActionListener(new SelectInstituteListener());
         add(selectInstituteButton);
         CloseDialogListener closeLis = new CloseDialogListener();
         okButton = new JButton("OK");
