@@ -64,7 +64,8 @@ public class Student extends DatabaseTableClass {
         refreshCellData();
     }
     
-    protected static boolean insertNewStudent(int student_id, String name, Gender gender, String email) {
+    protected static boolean insertNewStudent(int student_id, String name, 
+            Gender gender, String email, ArrayList<PhoneNumber> numbers) {
         Connection connection = DBConnection.getConnection();
 
         try {
@@ -80,6 +81,19 @@ public class Student extends DatabaseTableClass {
             statement.executeUpdate();
             System.out.println("Preparedstatement werkt ");
             statement.close();
+            // add phone numbers
+            for(int i = 0; i < numbers.size(); i++) {
+                PhoneNumber number = numbers.get(i);
+                PreparedStatement phoneStat = connection.prepareStatement(
+                    "INSERT INTO student_phone "
+                    + "(student_id,phonenr, is_cell) "
+                    + "VALUES (?,?,?)");
+                phoneStat.setInt(1, student_id);
+                phoneStat.setString(2, number.getNumber());
+                phoneStat.setInt(3, number.isCellular() ? 1 : 0);
+                phoneStat.executeUpdate();
+                phoneStat.close();
+            }
         } catch (SQLException error) {
             System.out.println("Error: " + error.getMessage());
             System.out.println("preparedstatement werkt niet :(");

@@ -82,9 +82,9 @@ public class ExchangeStudent extends Student {
         return super.delete();
     }
 
-    public static boolean insertNewExchangeStudent(int student_id, String name,
-            Gender gender, String email, String city, String address, int university) {
-        if (!Student.insertNewStudent(student_id, name, gender, email)) {
+    public static boolean insertNewExchangeStudent(int student_id, String name, Gender gender, 
+            String email, String city, String address, int university, ArrayList<PhoneNumber> numbers) {
+        if (!Student.insertNewStudent(student_id, name, gender, email, numbers)) {
             return false;
         }
         Connection connection = DBConnection.getConnection();

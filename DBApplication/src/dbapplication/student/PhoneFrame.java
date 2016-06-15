@@ -78,6 +78,7 @@ public class PhoneFrame extends JDialog {
 
         addButton = new JButton("Add New");
         addButton.setBounds(10, 250, 80, 30);
+        addButton.addActionListener(new AddNumberListener());
         add(addButton);
 
         okButton = new JButton("OK");
@@ -88,6 +89,24 @@ public class PhoneFrame extends JDialog {
 
     public ArrayList<PhoneNumber> getPhoneNumbers() {
         return tableModel.getAll();
+    }
+    
+    private class AddNumberListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            AddPhoneNumberFrame frame = new AddPhoneNumberFrame((JFrame)PhoneFrame.this.getOwner());
+            frame.setVisible(true);
+            PhoneNumber newNumber = frame.getNewPhoneNumber();
+            if(newNumber != null) {
+                tableModel.getAll().add(newNumber);
+                tableModel.fireTableDataChanged();
+                // select newest row
+                numbersTable.setRowSelectionInterval(
+                        tableModel.getRowCount()-1, tableModel.getRowCount()-1);
+            }
+        }
+        
     }
 
     private class DeleteButtonListener implements ActionListener {
@@ -109,43 +128,43 @@ public class PhoneFrame extends JDialog {
         }
     }
 
-        private class SaveButtonListener implements ActionListener {
+    private class SaveButtonListener implements ActionListener {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (selectedNumber == null) {
-                    return;
-                }
-                String number = numberField.getText();
-                boolean cellular = cellularBox.isSelected();
-                selectedNumber.setNumber(number);
-                selectedNumber.setCellular(cellular);
-                selectedNumber.refreshCellData();
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (selectedNumber == null) {
+                return;
             }
-        }
-
-        private class OKButtonListener implements ActionListener {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                PhoneFrame.this.dispose();
-            }
-        }
-
-        private class SelectionListener implements ListSelectionListener {
-
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                int selectedRow = numbersTable.getSelectedRow();
-                if (selectedRow < 0) {
-                    selectedNumber = null;
-                    numberField.setText("");
-                    cellularBox.setSelected(false);
-                    return; // selection cleared
-                }
-                selectedNumber = tableModel.get(selectedRow);
-                numberField.setText(selectedNumber.getNumber());
-                cellularBox.setSelected(selectedNumber.isCellular());
-            }
+            String number = numberField.getText();
+            boolean cellular = cellularBox.isSelected();
+            selectedNumber.setNumber(number);
+            selectedNumber.setCellular(cellular);
+            selectedNumber.refreshCellData();
         }
     }
+
+    private class OKButtonListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            PhoneFrame.this.dispose();
+        }
+    }
+
+    private class SelectionListener implements ListSelectionListener {
+
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
+            int selectedRow = numbersTable.getSelectedRow();
+            if (selectedRow < 0) {
+                selectedNumber = null;
+                numberField.setText("");
+                cellularBox.setSelected(false);
+                return; // selection cleared
+            }
+            selectedNumber = tableModel.get(selectedRow);
+            numberField.setText(selectedNumber.getNumber());
+            cellularBox.setSelected(selectedNumber.isCellular());
+        }
+    }
+}

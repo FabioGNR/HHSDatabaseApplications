@@ -89,8 +89,8 @@ public class HHSStudent extends Student {
     }
 
     public static boolean insertNewHHSStudent(int student_id, String name,
-            Gender gender, String email, LocalStudy hhs_study) {
-        if (!Student.insertNewStudent(student_id, name, gender, email)) {
+            Gender gender, String email, LocalStudy hhs_study, ArrayList<PhoneNumber> numbers) {
+        if (!Student.insertNewStudent(student_id, name, gender, email, numbers)) {
             return false;
         }
         Connection connection = DBConnection.getConnection();
