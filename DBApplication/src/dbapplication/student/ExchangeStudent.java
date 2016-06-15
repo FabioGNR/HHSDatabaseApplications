@@ -16,8 +16,8 @@ public class ExchangeStudent extends Student {
     private int uniID;
     private String city, address, uniName;
 
-    public ExchangeStudent(ResultSet result) throws SQLException {
-        super(result);
+    public ExchangeStudent(ResultSet result, ResultSet numbers) throws SQLException {
+        super(result, numbers);
         city = result.getString("city");
         address = result.getString("address");
         uniID = result.getInt("uni_id");
@@ -125,7 +125,9 @@ public class ExchangeStudent extends Student {
             stat.setString(1, "%" + filter + "%");
             ResultSet results = stat.executeQuery();
             while (results.next()) {
-                students.add(new ExchangeStudent(results));
+                ResultSet numbers = requestPhoneNumbers(results.getInt("student_id"));
+                students.add(new ExchangeStudent(results, numbers));
+                numbers.close();
             }
             results.close();
             stat.close();

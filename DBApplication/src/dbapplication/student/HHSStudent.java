@@ -32,8 +32,8 @@ public class HHSStudent extends Student {
 
     private LocalStudy localStudy;
 
-    public HHSStudent(ResultSet result) throws SQLException {
-        super(result);
+    public HHSStudent(ResultSet result, ResultSet numbers) throws SQLException {
+        super(result, numbers);
         String lStudy = result.getString("hhs_study");
         LocalStudy[] localStudies = LocalStudy.values();
         for (int i = 0; i < localStudies.length; i++) {
@@ -128,7 +128,9 @@ public class HHSStudent extends Student {
             stat.setString(1, "%" + filter + "%");
             ResultSet results = stat.executeQuery();
             while (results.next()) {
-                students.add(new HHSStudent(results));
+                ResultSet numbers = requestPhoneNumbers(results.getInt("student_id"));
+                students.add(new HHSStudent(results, numbers));
+                numbers.close();
             }
             results.close();
             stat.close();
