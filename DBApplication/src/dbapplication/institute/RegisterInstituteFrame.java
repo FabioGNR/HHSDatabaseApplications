@@ -26,7 +26,6 @@ public class RegisterInstituteFrame extends JDialog {
     private JTextField cityField;
     private JTextField countryField;
     private JTextField addressField;
-    private JTextField studyField;
 
     private JButton registerButton;
     private JButton addButton;
@@ -108,16 +107,9 @@ public class RegisterInstituteFrame extends JDialog {
         group.add(yesRadio);
         group.add(noRadio);
         
-        studyField = new JEditField("Register studies");
-        studyField.setLocation(20, 220);
-        studyField.setSize(100, 30);
-        studyField.setEnabled(false);
-        add(studyField);
-        studyField.setVisible(false);
-        
-        showButton = new JButton("...");
-        showButton.setLocation(120, 220);
-        showButton.setSize(40, 30);
+        showButton = new JButton("Show studies");
+        showButton.setLocation(20, 220);
+        showButton.setSize(150, 30);
         add(showButton);
         showButton.addActionListener(studyLis);
         showButton.setVisible(false); 
@@ -145,7 +137,6 @@ public class RegisterInstituteFrame extends JDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             boolean showExchangeFields = noRadio.isSelected();
-            studyField.setVisible(showExchangeFields);
             showButton.setVisible(showExchangeFields);
         }       
     }

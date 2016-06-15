@@ -3,6 +3,7 @@ package dbapplication.program;
 import dbapplication.JEditField;
 import dbapplication.JSearchField;
 import dbapplication.SearchFilter;
+import dbapplication.institute.RegisterStudyDialog;
 import dbapplication.institute.Study;
 import dbapplication.institute.StudyTableModel;
 import java.awt.Dimension;
@@ -41,6 +42,7 @@ public class SelectStudyDialog extends JDialog {
     private JButton updateButton;
     private JButton deleteButton;
     private JButton okButton;
+    private JButton addButton;
 
     private JLabel codeLabel;
     private JLabel org_idLabel;
@@ -68,7 +70,7 @@ public class SelectStudyDialog extends JDialog {
     }
 
     private void setupFrame() {
-        setSize(800, 800);
+        setSize(700, 500);
         setResizable(false);
         setLayout(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -79,6 +81,7 @@ public class SelectStudyDialog extends JDialog {
         SelectionListener select = new SelectionListener();
         searchListener search = new searchListener();
         CloseDialogListener close = new CloseDialogListener();
+        RegisterStudyListener register = new RegisterStudyListener();
 
         searchField = new JSearchField();
         searchField.setBounds(20, 20, 180, 30);
@@ -103,32 +106,32 @@ public class SelectStudyDialog extends JDialog {
         add(selectedStudyLabel);
 
         codeLabel = new JLabel("code");
-        codeLabel.setLocation(440, 120);
+        codeLabel.setLocation(440, 70);
         codeLabel.setSize(90, 30);
         add(codeLabel);
 
         codeField = new JEditField("code");
-        codeField.setLocation(490, 120);
-        codeField.setSize(140, 30);
+        codeField.setLocation(490, 70);
+        codeField.setSize(120, 30);
         add(codeField);
 
         org_idLabel = new JLabel("org_id");
-        org_idLabel.setLocation(440, 170);
+        org_idLabel.setLocation(440, 120);
         org_idLabel.setSize(90, 30);
         add(org_idLabel);
 
         org_idField = new JEditField("org_id");
-        org_idField.setLocation(490, 170);
+        org_idField.setLocation(490, 120);
         org_idField.setSize(120, 30);
         add(org_idField);
 
         contactpersonLabel = new JLabel("Contact");
-        contactpersonLabel.setLocation(440, 220);
+        contactpersonLabel.setLocation(440, 170);
         contactpersonLabel.setSize(90, 30);
         add(contactpersonLabel);
 
         contactpersonField = new JEditField("contactperson");
-        contactpersonField.setLocation(490, 220);
+        contactpersonField.setLocation(490, 170);
         contactpersonField.setSize(120, 30);
         add(contactpersonField);
 
@@ -146,7 +149,7 @@ public class SelectStudyDialog extends JDialog {
         add(resultPanel);
 
         //de buttons
-        StudtEditListener edit = new StudtEditListener();
+        StudyEditListener edit = new StudyEditListener();
 
         cancelButton = new JButton("Cancel");
         cancelButton.setLocation(260, 400);
@@ -171,6 +174,12 @@ public class SelectStudyDialog extends JDialog {
         deleteButton.setSize(90, 30);
         deleteButton.addActionListener(edit);
         add(deleteButton);
+        
+        addButton = new JButton("Add");
+        addButton.setLocation(490, 400);
+        addButton.setSize(90, 30);
+        addButton.addActionListener(register);
+        add(addButton);
 
     }
 
@@ -219,7 +228,7 @@ public class SelectStudyDialog extends JDialog {
             }
             selectedStudy = resultModel.getStudyAt(selectedRow);
             selectedStudyLabel.setText(
-                    "Selected institute: " + selectedStudy.getCode());
+                    "Selected study: " + selectedStudy.getCode());
 
             contactpersonField.setText(selectedStudy.getContactperson());
 
@@ -231,7 +240,7 @@ public class SelectStudyDialog extends JDialog {
 
     }
 
-    class StudtEditListener implements ActionListener {
+    class StudyEditListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -263,4 +272,12 @@ public class SelectStudyDialog extends JDialog {
             }
         }
     }
-}
+        
+        private class RegisterStudyListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            RegisterStudyDialog rsf = new RegisterStudyDialog((JFrame)getOwner(), RegisterStudyDialog.StudyType.Study);
+            rsf.setVisible(true);
+    }
+        }
+    }

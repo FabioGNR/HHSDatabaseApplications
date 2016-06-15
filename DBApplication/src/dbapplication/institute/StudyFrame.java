@@ -49,7 +49,7 @@ public class StudyFrame extends JDialog{
     }
     
     private void setupFrame() {
-        setSize(700,600);
+        setSize(500,500);
         setTitle("Study");
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setLayout(null);
