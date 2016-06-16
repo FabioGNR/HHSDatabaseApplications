@@ -15,19 +15,21 @@ import java.util.ArrayList;
  */
 public class ExProgram extends DatabaseTableClass {
 
-    enum ProgramType {
+    public enum ProgramType {
         Internship, StudyProgram
     }
-    protected String name;
+    protected String name, description;
     protected int maxCredits, code;
     protected String[] cellData;
     protected boolean[] terms = new boolean[5];
 
     public ExProgram(ResultSet result) throws SQLException {
         name = result.getString("name");
-        code = result.getInt("code");       
-        maxCredits = result.getInt("max_credit"); // dit zorgt voor problemen bij het tonen van de tabel
-        cellData = new String[]{name, maxCredits + " ECS"};
+        code = result.getInt("code");
+        maxCredits = result.getInt("max_credit");
+        description = result.getString("description");
+//        terms = result.getBoolean("term"); 
+        cellData = new String[]{name, maxCredits + " ECS", description};
     }
 
     public static ArrayList<ExProgram> searchExProgram(String searchFilter, String conditionColumn) {
@@ -48,9 +50,9 @@ public class ExProgram extends DatabaseTableClass {
         return program;
     }
 
-    protected static int insertExProgram(String name, boolean[] terms, int maxCredits) {
+    protected static int insertExProgram(String name, boolean[] terms, int maxCredits, String description) {
         Connection connection = DBConnection.getConnection();
-        String insertExProgram = "INSERT INTO ex_program (name, max_credit) VALUES (?,?)";
+        String insertExProgram = "INSERT INTO ex_program (name, max_credit, description) VALUES (?,?,?)";
         String insertTerm = "INSERT INTO ex_program_term (code, term) VALUES (?,?)";
         int code = -1;
 
@@ -59,6 +61,7 @@ public class ExProgram extends DatabaseTableClass {
                     insertExProgram, Statement.RETURN_GENERATED_KEYS);
             exProgramStatement.setString(1, name);
             exProgramStatement.setInt(2, maxCredits);
+            exProgramStatement.setString(3, description);
             exProgramStatement.executeUpdate();
             System.out.println("Preparedstatement passed ");
             ResultSet set = exProgramStatement.getGeneratedKeys();
@@ -77,24 +80,27 @@ public class ExProgram extends DatabaseTableClass {
             }
         } catch (SQLException error) {
             System.out.println("Error: " + error.getMessage());
-            System.out.println("preparedstatement was not succesful");
+            System.out.println("Insert ExProgram was not succesful");
         }
         return code;
     }
 
     public boolean update() {
         Connection connect = DBConnection.getConnection();
-        String sql = "UPDATE ex_program SET name = ?, max_credit = ?"
-                + "WHERE code=?";
+        String sql = "UPDATE ex_program SET name = ?, max_credit = ?,"
+                + " description = ? WHERE code = ?";
         try {
             PreparedStatement updateStatement = connect.prepareStatement(sql);
             updateStatement.setString(1, name);
             updateStatement.setInt(2, maxCredits);
-            updateStatement.setInt(3, code);
+            updateStatement.setString(3, description);
+            updateStatement.setInt(4, code);
             updateStatement.executeUpdate();
             updateStatement.close();
+            System.out.println("Updated ExProgram.");
         } catch (SQLException e) {
-            e.getMessage();
+            System.out.println("Error: " + e.getMessage());
+            System.out.println("Update ExProgram was not succesful");
             return false;
         }
         return true;
@@ -107,9 +113,10 @@ public class ExProgram extends DatabaseTableClass {
             PreparedStatement statement = connect.prepareStatement(sql);
             statement.setInt(1, code);
             statement.executeUpdate();
-            System.out.println("PreparedStatement was succesful");
+            System.out.println("Deleted ExProgram");
         } catch (SQLException error) {
             System.out.println("Error: " + error.getMessage());
+            System.out.println("Failed deleting ExProgram");
             return false;
         }
         return true;
@@ -143,5 +150,12 @@ public class ExProgram extends DatabaseTableClass {
     public void setMaxCredit(int maxCredit) {
         this.maxCredits = maxCredit;
     }
-    
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

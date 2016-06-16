@@ -30,7 +30,7 @@ public class SearchProgramFrame extends JDialog {
     private String[] studyType = {"Minor", "EPS", "Summer School"};
     private JTable resultTable;
     private JScrollPane resultPanel;
-    private DatabaseTableModel<ExProgram> internshipModel, studyProgramModel;
+    private DatabaseTableModel<ExProgram> internshipModel, studyProgramModel, resultModel;
     private JLabel selectedProgramLabel, programCodeLabel;
     private ExProgram selectedProgram = null;
     private Internship internshipSelected = null;
@@ -69,7 +69,6 @@ public class SearchProgramFrame extends JDialog {
 
         internshipConditionBox = new JComboBox(new SearchFilter[]{
             new SearchFilter("Name", "name")});
-        //misschien zoeken op credits}
         internshipConditionBox.setBounds(450, 20, 125, 30);
         add(internshipConditionBox);
         internshipConditionBox.setVisible(true);
@@ -83,13 +82,14 @@ public class SearchProgramFrame extends JDialog {
 
         resultTable = new JTable();
         resultTable.setBounds(0, 0, 555, 300);
-        internshipModel = new DatabaseTableModel<ExProgram>(
-                new String[]{"Name", "Institute", "Credits"});
-
-        studyProgramModel = new DatabaseTableModel<ExProgram>(new String[]{
-            "Name", "Institute", "type", "Study Name", "Credits"});
-
-        resultTable.setModel(internshipModel);
+        resultModel = new DatabaseTableModel<ExProgram>(new String[]{
+            "Program", "Term", "Credits"});
+//        internshipModel = new DatabaseTableModel<ExProgram>(
+//                new String[]{"Program", "Institute", "Credits"});
+//        studyProgramModel = new DatabaseTableModel<ExProgram>(new String[]{
+//            "Name", "Institute", "type", "Study Name", "Credits"});
+        //        resultTable.setModel(internshipModel);
+        resultTable.setModel(resultModel);
         resultTable.setPreferredScrollableViewportSize(new Dimension(400, 300));
         resultTable.setFillsViewportHeight(true);
         resultTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -143,14 +143,14 @@ public class SearchProgramFrame extends JDialog {
     }
 
     private void search(String filter, String conditionColumn, ExProgram.ProgramType type) {
-        ArrayList<ExProgram> program;
+        ArrayList<ExProgram> programs;
 
         if (type == ExProgram.ProgramType.Internship) {
-            program = Internship.searchProgram(filter, conditionColumn);
+            programs = Internship.searchProgram(filter, conditionColumn);
         } else {
-            program = StudyProgram.searchStudyProgram(filter, conditionColumn);
+            programs = StudyProgram.searchStudyProgram(filter, conditionColumn);
         }
-        internshipModel.setItems(program);
+        resultModel.setItems(programs);
 
     }
 
@@ -215,16 +215,11 @@ public class SearchProgramFrame extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            SearchFilter selectedFilter;
-            if (e.getSource() == programBox.getItemAt(0)) {
-                int selectedIndex = internshipConditionBox.getSelectedIndex();
-                selectedFilter = (SearchFilter) internshipConditionBox.getItemAt(selectedIndex);
-            } else {
-                int selectedIndex = studyProgramBox.getSelectedIndex();
-                selectedFilter = (SearchFilter) studyProgramBox.getItemAt(selectedIndex);
-            }
-            search(searchField.getText(), selectedFilter.getColumnName(),
-                    (ExProgram.ProgramType) programBox.getSelectedItem());
+            int selectedProgramIndex = studyProgramBox.getSelectedIndex();
+            ExProgram.ProgramType type = (ExProgram.ProgramType) programBox.getItemAt(selectedProgramIndex);
+            int selectedConditionIndex = internshipConditionBox.getSelectedIndex();
+            SearchFilter selectedFilter = (SearchFilter) internshipConditionBox.getItemAt(selectedConditionIndex);
+            search(searchField.getText(), selectedFilter.getColumnName(),type);
         }
     }
 

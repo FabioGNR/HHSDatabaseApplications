@@ -13,13 +13,13 @@ import java.util.ArrayList;
  */
 public class StudyProgram extends ExProgram {
 
-    private int org_id;
-    private String study_code, studyType;
+    private int org_id, studyType;
+    private String study_code;
 
     public StudyProgram(ResultSet result) throws SQLException {
         super(result);
         org_id = result.getInt("org_id");
-        studyType = result.getString("type");
+        studyType = result.getInt("type");
         study_code = result.getString("study_code");
     }
 
@@ -42,6 +42,7 @@ public class StudyProgram extends ExProgram {
             statement.close();
         } catch (Exception ex) {
             ex.printStackTrace();
+            System.out.println("Search studyProgram failed.");
         }
         return programs;
     }
@@ -56,14 +57,14 @@ public class StudyProgram extends ExProgram {
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, org_id);
-            statement.setString(2, studyType);
+            statement.setInt(2, studyType);
             statement.setString(3, study_code);
             statement.setInt(4, code);
             statement.executeUpdate();
             statement.close();
         } catch (Exception error) {
             System.out.println("Error: " + error.getMessage());
-            System.out.println("preparedstatement werkt niet :(");
+            System.out.println("Updating studyProgram failed.");
             return false;
         }
         return true;
@@ -79,16 +80,16 @@ public class StudyProgram extends ExProgram {
             statement.executeUpdate();
             System.out.println("Study Program was succesfully deleted.");
         } catch (SQLException e) {
-            System.out.println("Failed to delete: " + e.getMessage());
+            System.out.println("Failed to delete studyProgram. " + "\n" + e.getMessage());
             return false;
         }
         return super.delete();
     }
 
     public static boolean insertNewStudyProgram(String name, boolean[] terms,
-            int org_id, String studyType, int maxCredit, String studyCode) {
+            int maxCredit, String description, int org_id, int studyType, String studyCode) {
         Connection connect = DBConnection.getConnection();
-        int code = ExProgram.insertExProgram(name, terms, maxCredit);
+        int code = ExProgram.insertExProgram(name, terms, maxCredit, description);
         if (code <= -1) {
             return false;
         }
@@ -97,12 +98,12 @@ public class StudyProgram extends ExProgram {
             PreparedStatement statement = connect.prepareStatement(sql);
             statement.setInt(1, code);
             statement.setInt(2, org_id);
-            statement.setString(3, studyType);
+            statement.setInt(3, studyType);
             statement.setString(4, studyCode);
             statement.executeUpdate();
             System.out.println("A new studyProgram was succesfully added.");
         } catch (SQLException e) {
-            System.out.println("Failed to add a study program: " + e.getMessage());
+            System.out.println("Failed to add a study program \n " + e.getMessage());
             return false;
         }
         return true;
@@ -112,7 +113,7 @@ public class StudyProgram extends ExProgram {
         this.org_id = org_id;
     }
 
-    public void setStudyType(String studyType) {
+    public void setStudyType(int studyType) {
         this.studyType = studyType;
     }
 
@@ -124,7 +125,7 @@ public class StudyProgram extends ExProgram {
         return org_id;
     }
 
-    public String getStudyType() {
+    public int getStudyType() {
         return studyType;
     }
 

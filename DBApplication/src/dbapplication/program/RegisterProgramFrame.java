@@ -15,7 +15,8 @@ import javax.swing.*;
  */
 public class RegisterProgramFrame extends JDialog {
 
-    private JTextField instituteField, nameField, studyField;
+    private JTextField instituteField, nameField;
+    private JTextField studyField, studyCodeName, descriptionField;
     private JButton registerButton, instituteButton, selectStudyButton;
     private JRadioButton internshipButton, studyProgramButton;
     private ButtonGroup buttonGroup;
@@ -37,7 +38,7 @@ public class RegisterProgramFrame extends JDialog {
     }
 
     private void setupFrame() {
-        setSize(510, 510);
+        setSize(575, 575);
         setLayout(null);
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setTitle("Register Program");
@@ -89,11 +90,20 @@ public class RegisterProgramFrame extends JDialog {
         selectStudyButton.addActionListener(studyButtonListener);
         add(selectStudyButton);
         selectStudyButton.setVisible(false);
+        
+        studyCodeName = new JEditField("Study Code eg. HBO-ICT");
+        studyCodeName.setBounds(20, 250, 125, 25);
+        add(studyCodeName);
+        studyCodeName.setVisible(false);
 
         studyTypeBox = new JComboBox(studyType);
-        studyTypeBox.setBounds(20, 250, 125, 25);
+        studyTypeBox.setBounds(20, 300, 125, 25);
         add(studyTypeBox);
         studyTypeBox.setVisible(false);
+        
+        descriptionField = new JEditField("Write a description");
+        descriptionField.setBounds(20, 350, 350, 100);
+        add(descriptionField);
 
         maxCreditBox = new JComboBox(maxCredit);
         maxCreditBox.setBounds(20, 150, 75, 25);
@@ -101,13 +111,13 @@ public class RegisterProgramFrame extends JDialog {
 
         for (int i = 0; i < termBoxes.length; i++) {
             termBoxes[i] = new JCheckBox("Term " + (i + 1));
-            termBoxes[i].setBounds(220, 50 + (i * 25), 100, 25);
+            termBoxes[i].setBounds(240, 50 + (i * 25), 100, 25);
             add(termBoxes[i]);
         }
 
         ActionListener register = new RegisterProgram();
         registerButton = new JButton("Register");
-        registerButton.setBounds(350, 380, 100, 25);
+        registerButton.setBounds(400, 425, 100, 25);
         registerButton.addActionListener(register);
         add(registerButton);
     }
@@ -123,6 +133,7 @@ public class RegisterProgramFrame extends JDialog {
             studyField.setVisible(!studyProgramSelected);
             selectStudyButton.setVisible(!studyProgramSelected);
             studyTypeBox.setVisible(!studyProgramSelected);
+            studyCodeName.setVisible(!studyProgramSelected);
         }
     }
 
@@ -148,33 +159,55 @@ public class RegisterProgramFrame extends JDialog {
             int maxCredit = 0;
             boolean[] terms = new boolean[5];
             String studyType = "";
-
+            // nameField
             String name = nameField.getText();
             if (name.isEmpty()) {
                 name = null;
+                JOptionPane.showMessageDialog(RegisterProgramFrame.this,
+                        "Please enter a name!",
+                        "No name entered", JOptionPane.WARNING_MESSAGE);
+                return;
             }
+            // instituteBox
             if (selectedInstitute == -1) {
                 JOptionPane.showMessageDialog(RegisterProgramFrame.this,
                         "Please choose an institute!",
                         "Institute not selected.", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            maxCredit = (maxCreditBox.getSelectedIndex() + 1) * 15;
-
+            // checkBoxes
+            boolean anySelected = false;
             for (int i = 0; i < 5; i++) {
                 terms[i] = termBoxes[i].isSelected();
+                if (terms[i] == true) {
+                    anySelected = true;
+                }
             }
-            if (terms == null) {
+            if (anySelected == false) {
                 JOptionPane.showMessageDialog(RegisterProgramFrame.this,
                         "Please select at least one term!",
                         "No term was selected.", JOptionPane.WARNING_MESSAGE);
                 return;
             }
+            // descriptionField
+            String description = descriptionField.getText();
+            if (description.isEmpty()) {
+                description = null;
+                JOptionPane.showMessageDialog(RegisterProgramFrame.this,
+                        "Please enter a description!",
+                        "No description", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            // creditBox
+            maxCredit = (maxCreditBox.getSelectedIndex() + 1) * 15;
 
             boolean result;
             if (internshipButton.isSelected()) {
-                result = Internship.insertNewInternship(selectedInstitute, name, terms, maxCredit);
+                // insert internship data
+                result = Internship.insertNewInternship(name, terms,
+                        maxCredit, description, selectedInstitute);
             } else {
+                // studyField
                 String study = studyField.getText();
                 if (study.isEmpty()) {
                     JOptionPane.showMessageDialog(RegisterProgramFrame.this,
@@ -182,8 +215,18 @@ public class RegisterProgramFrame extends JDialog {
                             "Study not selected.", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
-                studyType = (String) studyTypeBox.getSelectedItem();
-                result = StudyProgram.insertNewStudyProgram(name, terms, selectedInstitute, studyType, maxCredit, selectedStudy);
+                String studyCode = studyCodeName.getText();
+                if (studyCode.isEmpty()) {
+                    JOptionPane.showMessageDialog(RegisterProgramFrame.this,
+                            "Please enter a study code e.g HBO-ICT",
+                            "Study Code not entered.", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                // studyTypeBox
+                int selectedStudyType = studyTypeBox.getSelectedIndex();
+                // insert studyProgram data
+                result = StudyProgram.insertNewStudyProgram(name, terms, maxCredit,
+                        description, selectedInstitute, selectedStudyType, studyCode);
             }
             if (!result) {
                 JOptionPane.showMessageDialog(RegisterProgramFrame.this,
