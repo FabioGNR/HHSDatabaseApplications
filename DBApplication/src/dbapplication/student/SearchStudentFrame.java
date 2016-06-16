@@ -236,6 +236,7 @@ public class SearchStudentFrame extends JDialog {
             EnrollmentFrame frame = new EnrollmentFrame(
                 (JFrame)SearchStudentFrame.this.getOwner(), new ArrayList<>(), 
                     selectedStudent);
+            frame.setVisible(true);
         }
         
     }
