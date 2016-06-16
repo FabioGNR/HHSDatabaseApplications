@@ -24,11 +24,11 @@ import javax.swing.event.ListSelectionListener;
  * @author jordain & sishi
  */
 public class SelectInstituteDialog extends JDialog{
-    public enum InstituteType { Company, University }
-    private final InstituteType requiredType;
+    private final Institute.InstituteType requiredType;
     private JTextField searchField;
     private JButton searchButton, cancelButton, okButton;
     private JComboBox searchConditionCombo;
+    private JComboBox typeCombo;
     private JLabel selectedInstituteLabel;
 
     private JTable resultTable;
@@ -37,7 +37,7 @@ public class SelectInstituteDialog extends JDialog{
 
     private Institute selectedInstitute = null;
     
-    public SelectInstituteDialog(Frame owner, InstituteType type) {
+    public SelectInstituteDialog(Frame owner, Institute.InstituteType type) {
         super(owner, true);
         requiredType = type;
         setupFrame();
@@ -47,7 +47,7 @@ public class SelectInstituteDialog extends JDialog{
     }
     
     private void setupFrame() {
-        setSize(510, 510);
+        setSize(550, 510);
         setResizable(false);
         setLayout(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -67,20 +67,27 @@ public class SelectInstituteDialog extends JDialog{
         add(searchButton);
 
         searchConditionCombo = new JComboBox(new SearchFilter[]{
-            new SearchFilter("ID", "org_id"),
-            new SearchFilter("City", "city"),
             new SearchFilter("Name", "name"),
-            new SearchFilter("Country", "country"),
-            new SearchFilter("Address", "address"),
-            new SearchFilter("Business?", "is_business")
+            new SearchFilter("City", "city"),
+            new SearchFilter("Country", "country")
         });
         searchConditionCombo.setLocation(320, 20);
         searchConditionCombo.setSize(100, 30);
         add(searchConditionCombo);     
+        Institute.InstituteType[] types;
+        if(requiredType == null)
+            types = Institute.InstituteType.values();
+        else
+            types = new Institute.InstituteType[] {requiredType};
+        typeCombo = new JComboBox(types);
+        typeCombo.setLocation(430, 20);
+        typeCombo.setSize(100, 30);
+        typeCombo.addActionListener(new SwitchTypeListener());
+        add(typeCombo);
         
         resultTable = new JTable();
         resultTable.setLocation(0, 0);
-        resultTable.setSize(400, 300);
+        resultTable.setSize(440, 300);
         resultModel = new InstituteTableModel();
         resultTable.setModel(resultModel);
         resultTable.setPreferredScrollableViewportSize(new Dimension(400, 300));
@@ -114,8 +121,17 @@ public class SelectInstituteDialog extends JDialog{
     }
     
     private void search(String filter, String conditionColumn) {
-        ArrayList<Institute> institute = Institute.searchInstitute(filter, conditionColumn);
-        resultModel.setResults(institute);
+        if ((Institute.InstituteType)typeCombo.getSelectedItem() 
+                == Institute.InstituteType.University) {
+            ArrayList<dbapplication.institute.Institute> institute
+                    = dbapplication.institute.Institute.searchUniversity(filter, conditionColumn);
+            resultModel.setResults(institute);
+
+        } else {
+            ArrayList<dbapplication.institute.Institute> institute
+                    = dbapplication.institute.Institute.searchCompany(filter, conditionColumn);
+            resultModel.setResults(institute); 
+        }
     }
     
     class CloseDialogListener implements ActionListener {
@@ -126,6 +142,16 @@ public class SelectInstituteDialog extends JDialog{
                 selectedInstitute = null;
             }
             dispose();
+        }      
+    }
+    
+    class SwitchTypeListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int selectedIndex = searchConditionCombo.getSelectedIndex();
+            SearchFilter selectedFilter = (SearchFilter) searchConditionCombo.getItemAt(selectedIndex);
+            search(searchField.getText(), selectedFilter.getColumnName());
         }
         
     }
@@ -137,7 +163,6 @@ public class SelectInstituteDialog extends JDialog{
             int selectedIndex = searchConditionCombo.getSelectedIndex();
             SearchFilter selectedFilter = (SearchFilter) searchConditionCombo.getItemAt(selectedIndex);
             search(searchField.getText(), selectedFilter.getColumnName());
-
         }
     }
 
@@ -153,8 +178,9 @@ public class SelectInstituteDialog extends JDialog{
             }
             Institute inst = resultModel.getInstituteAt(selectedRow);
             // if the selected institute matches the required type
-            if(requiredType == null || (requiredType == InstituteType.Company && inst.isBusiness())
-                    || (requiredType == InstituteType.University && !inst.isBusiness())) {
+            if(requiredType == null 
+                    || (requiredType == Institute.InstituteType.Company && inst.isBusiness())
+                    || (requiredType == Institute.InstituteType.University && !inst.isBusiness())) {
                 selectedInstitute = inst;
                 selectedInstituteLabel.setText(
                         "Selected institute: " + selectedInstitute.getName());

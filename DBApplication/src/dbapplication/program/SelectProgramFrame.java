@@ -1,12 +1,8 @@
 package dbapplication.program;
 
 import dbapplication.DatabaseTableModel;
-import dbapplication.JEditField;
 import dbapplication.JSearchField;
 import dbapplication.SearchFilter;
-import dbapplication.institute.Institute;
-import dbapplication.institute.SelectInstituteDialog;
-import dbapplication.institute.SelectInstituteDialog.InstituteType;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

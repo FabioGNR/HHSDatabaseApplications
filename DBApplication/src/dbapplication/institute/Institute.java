@@ -18,6 +18,7 @@ public class Institute {
     private boolean is_business;
     private String city, name, country, address;
     private String[] cellData;
+    public enum InstituteType {Company, University};
 
     public Institute(ResultSet result) throws SQLException {
         org_id = result.getInt("org_id");
@@ -29,7 +30,7 @@ public class Institute {
         cellData = new String[]{name, city, country, address, is_business ? "Yes" : "No"};
     }
 
-    public static ArrayList<Institute> searchInstitute(String filter, String conditionColumn) {
+    public static ArrayList<Institute> searchCompany(String filter, String conditionColumn) {
         ArrayList<Institute> institute = new ArrayList<>();
         try {
             // column names can't be set dynamically with preparedstatement
@@ -49,7 +50,7 @@ public class Institute {
         return institute;
     }
 
-    public static ArrayList<Institute> searchInstituteUniversity(String filter, String conditionColumn) {
+    public static ArrayList<Institute> searchUniversity(String filter, String conditionColumn) {
         ArrayList<Institute> institute = new ArrayList<>();
         try {
             // column names can't be set dynamically with preparedstatement

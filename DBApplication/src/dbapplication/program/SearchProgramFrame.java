@@ -6,7 +6,6 @@ import dbapplication.JSearchField;
 import dbapplication.SearchFilter;
 import dbapplication.institute.Institute;
 import dbapplication.institute.SelectInstituteDialog;
-import dbapplication.institute.SelectInstituteDialog.InstituteType;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -248,7 +247,7 @@ public class SearchProgramFrame extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            SelectInstituteDialog instituteDlg = new SelectInstituteDialog((JFrame) getOwner(), SelectInstituteDialog.InstituteType.University);
+            SelectInstituteDialog instituteDlg = new SelectInstituteDialog((JFrame) getOwner(), Institute.InstituteType.University);
             instituteDlg.setVisible(true);
 
             Institute institute = instituteDlg.getSelectedInstitute();

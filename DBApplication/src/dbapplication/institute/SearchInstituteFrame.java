@@ -40,7 +40,7 @@ public class SearchInstituteFrame extends JDialog {
     private JLabel selectedInstituteLabel;
 
     private JComboBox searchConditionCombo;
-    private JComboBox type;
+    private JComboBox typeCombo;
     
     private JButton searchButton;
     private JButton showButton;
@@ -51,7 +51,6 @@ public class SearchInstituteFrame extends JDialog {
     private JScrollPane resultPanel;
     private InstituteTableModel resultModel;
     private Institute selectedInstitute = null;
-    private static String[] programs = {"Company ", "University"};
     
     public SearchInstituteFrame(JFrame owner) {
         super(owner, true);
@@ -83,15 +82,15 @@ public class SearchInstituteFrame extends JDialog {
         searchButton.addActionListener(lis);
         add(searchButton);
 
-        type = new JComboBox(programs);
-        type.setLocation(440, 20);
-        type.setSize(150, 30);
-        type.addActionListener(lis);
-        add(type);
+        typeCombo = new JComboBox(Institute.InstituteType.values());
+        typeCombo.setLocation(440, 20);
+        typeCombo.setSize(150, 30);
+        typeCombo.addActionListener(lis);
+        add(typeCombo);
 
         searchConditionCombo = new JComboBox(new SearchFilter[]{
-            new SearchFilter("City", "city"),
             new SearchFilter("Name", "name"),
+            new SearchFilter("City", "city"),
             new SearchFilter("Country", "country")});
         searchConditionCombo.setLocation(320, 20);
         searchConditionCombo.setSize(100, 30);
@@ -185,14 +184,10 @@ public class SearchInstituteFrame extends JDialog {
     }
 
     private class SelectStudyListener implements ActionListener {
-
         @Override
         public void actionPerformed(ActionEvent e) {
-
             StudyFrame dlg = new StudyFrame((JFrame) getOwner(), StudyFrame.ProgramType.studyProgram);
-            dlg.setVisible(true);
-
-            
+            dlg.setVisible(true);          
         }
     }
 
@@ -257,19 +252,18 @@ public class SearchInstituteFrame extends JDialog {
     }
 
     private void search(String filter, String conditionColumn) {
-        if (type.getSelectedIndex() == 0) {
+        if ((Institute.InstituteType)typeCombo.getSelectedItem() 
+                == Institute.InstituteType.University) {
             ArrayList<dbapplication.institute.Institute> institute
-                    = dbapplication.institute.Institute.searchInstituteUniversity(filter, conditionColumn);
+                    = dbapplication.institute.Institute.searchUniversity(filter, conditionColumn);
             resultModel.setResults(institute);
             showButton.setVisible(false);
 
         } else {
             ArrayList<dbapplication.institute.Institute> institute
-                    = dbapplication.institute.Institute.searchInstitute(filter, conditionColumn);
-            resultModel.setResults(institute);
-           
+                    = dbapplication.institute.Institute.searchCompany(filter, conditionColumn);
+            resultModel.setResults(institute); 
             showButton.setVisible(true);
-
         }
     }
 
