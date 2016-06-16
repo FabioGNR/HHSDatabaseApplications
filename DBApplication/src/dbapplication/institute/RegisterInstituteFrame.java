@@ -145,9 +145,14 @@ public class RegisterInstituteFrame extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            boolean showExchangeFields = noRadio.isSelected();
-            showButton.setVisible(showExchangeFields);
-            Studiesbox.setVisible(true);
+            if (yesRadio.isSelected()) {
+                showButton.setVisible(false);
+                Studiesbox.setVisible(false);
+            }
+            else {
+               showButton.setVisible(true);
+                Studiesbox.setVisible(true); 
+    }
         }
     }
 

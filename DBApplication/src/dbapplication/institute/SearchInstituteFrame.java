@@ -258,13 +258,13 @@ public class SearchInstituteFrame extends JDialog {
             ArrayList<dbapplication.institute.Institute> institute
                     = dbapplication.institute.Institute.searchUniversity(filter, conditionColumn);
             resultModel.setResults(institute);
-            showButton.setVisible(false);
+            showButton.setVisible(true);
 
         } else {
             ArrayList<dbapplication.institute.Institute> institute
                     = dbapplication.institute.Institute.searchCompany(filter, conditionColumn);
             resultModel.setResults(institute); 
-            showButton.setVisible(true);
+            showButton.setVisible(false);
         }
     }
 
