@@ -85,12 +85,12 @@ public class EnrollmentFrame extends JDialog {
         add(deleteButton);
 
         addButton = new JButton("Add New");
-        addButton.setBounds(10, 350, 80, 30);
+        addButton.setBounds(10, 250, 80, 30);
         addButton.addActionListener(new EnrollStudentListener());
         add(addButton);
 
         okButton = new JButton("OK");
-        okButton.setBounds(260, 350, 70, 30);
+        okButton.setBounds(360, 250, 70, 30);
         okButton.addActionListener(new OKButtonListener());
         add(okButton);
     }

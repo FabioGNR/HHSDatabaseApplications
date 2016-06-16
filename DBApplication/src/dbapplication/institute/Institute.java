@@ -128,9 +128,9 @@ public class Institute {
         Connection connection = DBConnection.getConnection();
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "DELETE FROM institute WHERE name = ?");
+                    "DELETE FROM institute WHERE org_id = ?");
 
-            statement.setString(1, name);
+            statement.setInt(1, org_id);
             statement.executeUpdate();
             statement.close();
 
