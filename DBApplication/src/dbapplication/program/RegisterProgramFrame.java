@@ -145,7 +145,7 @@ public class RegisterProgramFrame extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            int maxCredit = 0;
+            int maxCredits = 0;
             boolean[] terms = new boolean[5];
             String studyType = "";
 
@@ -159,7 +159,7 @@ public class RegisterProgramFrame extends JDialog {
                         "Institute not selected.", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            maxCredit = (maxCreditBox.getSelectedIndex() + 1) * 15;
+            maxCredits = (maxCreditBox.getSelectedIndex() + 1) * 15;
 
             for (int i = 0; i < 5; i++) {
                 terms[i] = termBoxes[i].isSelected();
@@ -183,7 +183,7 @@ public class RegisterProgramFrame extends JDialog {
                     return;
                 }
                 studyType = (String) studyTypeBox.getSelectedItem();
-                result = StudyProgram.insertNewStudyProgram(name, terms, selectedInstitute, studyType, maxCredit, selectedStudy);
+                StudyProgram.insertNewStudyProgram(name, terms, selectedInstitute, studyType, maxCredits, selectedStudy);
             }
             if (!result) {
                 JOptionPane.showMessageDialog(RegisterProgramFrame.this,
