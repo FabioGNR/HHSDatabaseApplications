@@ -16,7 +16,7 @@ import javax.swing.*;
 public class RegisterProgramFrame extends JDialog {
 
     private JTextField instituteField, nameField;
-    private JTextField studyField, studyCodeName, descriptionField;
+    private JTextField studyField, descriptionField;
     private JButton registerButton, instituteButton, selectStudyButton;
     private JRadioButton internshipButton, studyProgramButton;
     private ButtonGroup buttonGroup;
@@ -25,7 +25,7 @@ public class RegisterProgramFrame extends JDialog {
     private String[] maxCredit = {"15 EC", "30 EC", "45 EC", "60 EC"};
     private String[] studyType = {"Minor", "European Project", "Summer School"};
     private int selectedInstitute = -1;
-    private String selectedStudy = null;
+    private Study selectedStudy = null;
 
     enum ButtonAction {
         Internship, StudyProgram
@@ -43,6 +43,18 @@ public class RegisterProgramFrame extends JDialog {
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setTitle("Register Program");
         setResizable(true);
+    }
+    
+    private void resetFields() {
+        selectedStudy = null;
+        selectedInstitute = -1;
+        instituteField.setText("");
+        studyField.setText("");
+        descriptionField.setText("");
+        nameField.setText("");
+        for(int i = 0; i < termBoxes.length; i++) {
+            termBoxes[i].setSelected(false);
+        }
     }
 
     private void createComponents() {
@@ -72,7 +84,7 @@ public class RegisterProgramFrame extends JDialog {
         instituteField.setEnabled(false);
         add(instituteField);
 
-        ActionListener openOrgButtonListener = new Selectinstitute();
+        ActionListener openOrgButtonListener = new SelectInstitute();
         instituteButton = new JButton("...");
         instituteButton.setBounds(155, 100, 40, 25);
         instituteButton.addActionListener(openOrgButtonListener);
@@ -91,18 +103,14 @@ public class RegisterProgramFrame extends JDialog {
         add(selectStudyButton);
         selectStudyButton.setVisible(false);
         
-        studyCodeName = new JEditField("Study Code eg. HBO-ICT");
-        studyCodeName.setBounds(20, 250, 125, 25);
-        add(studyCodeName);
-        studyCodeName.setVisible(false);
 
         studyTypeBox = new JComboBox(studyType);
-        studyTypeBox.setBounds(20, 300, 125, 25);
+        studyTypeBox.setBounds(20, 250, 125, 25);
         add(studyTypeBox);
         studyTypeBox.setVisible(false);
         
         descriptionField = new JEditField("Write a description");
-        descriptionField.setBounds(20, 350, 350, 100);
+        descriptionField.setBounds(20, 300, 350, 100);
         add(descriptionField);
 
         maxCreditBox = new JComboBox(maxCredit);
@@ -133,7 +141,6 @@ public class RegisterProgramFrame extends JDialog {
             studyField.setVisible(!studyProgramSelected);
             selectStudyButton.setVisible(!studyProgramSelected);
             studyTypeBox.setVisible(!studyProgramSelected);
-            studyCodeName.setVisible(!studyProgramSelected);
         }
     }
 
@@ -143,13 +150,13 @@ public class RegisterProgramFrame extends JDialog {
         public void actionPerformed(ActionEvent e) {
             if(selectedInstitute == -1) return;
             SelectStudyDialog dlg = new SelectStudyDialog(
-                    (JFrame) getOwner(), selectedInstitute);
-            Study study = dlg.getSelectedStudy();
+                    (JFrame) getOwner(), selectedInstitute); 
             dlg.setVisible(true);
+            Study study = dlg.getSelectedStudy();
 
-            if (studyProgramButton.isSelected() && study != null) {
-                instituteField.setText(study.getCode());
-                selectedStudy = study.getCode();
+            if (study != null) {
+                studyField.setText(study.getCode());
+                selectedStudy = study;
             }
         }
     }
@@ -210,25 +217,18 @@ public class RegisterProgramFrame extends JDialog {
                         maxCredit, description, selectedInstitute);
             } else {
                 // studyField
-                String study = studyField.getText();
-                if (study.isEmpty()) {
+                if (selectedStudy == null) {
                     JOptionPane.showMessageDialog(RegisterProgramFrame.this,
                             "Please choose a study!",
                             "Study not selected.", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-                String studyCode = studyCodeName.getText();
-                if (studyCode.isEmpty()) {
-                    JOptionPane.showMessageDialog(RegisterProgramFrame.this,
-                            "Please enter a study code e.g HBO-ICT",
-                            "Study Code not entered.", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
                 // studyTypeBox
                 int selectedStudyType = studyTypeBox.getSelectedIndex();
                 // insert studyProgram data
                 result = StudyProgram.insertNewStudyProgram(name, terms, maxCredit,
-                        description, selectedInstitute, selectedStudyType, studyCode);
+                        description, selectedInstitute, selectedStudyType, 
+                        selectedStudy.getCode());
             }
             if (!result) {
                 JOptionPane.showMessageDialog(RegisterProgramFrame.this,
@@ -236,12 +236,15 @@ public class RegisterProgramFrame extends JDialog {
             } else {
                 JOptionPane.showMessageDialog(RegisterProgramFrame.this,
                         "Program was registered.", "Success", JOptionPane.PLAIN_MESSAGE);
+                // reset fields and close dialog
+                resetFields();
+                setVisible(false);
             }
 
         }
     }
 
-    class Selectinstitute implements ActionListener {
+    class SelectInstitute implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {

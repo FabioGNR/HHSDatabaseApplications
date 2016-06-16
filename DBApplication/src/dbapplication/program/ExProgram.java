@@ -26,7 +26,7 @@ public class ExProgram extends DatabaseTableClass {
     public ExProgram(ResultSet result) throws SQLException {
         name = result.getString("name");
         code = result.getInt("code");
-        maxCredits = result.getInt("max_credit");
+        maxCredits = Integer.parseInt(result.getString("max_credit"));
         description = result.getString("description");
 //        terms = result.getBoolean("term"); 
         cellData = new String[]{name, maxCredits + " ECS", description};
@@ -60,7 +60,7 @@ public class ExProgram extends DatabaseTableClass {
             PreparedStatement exProgramStatement = connection.prepareStatement(
                     insertExProgram, Statement.RETURN_GENERATED_KEYS);
             exProgramStatement.setString(1, name);
-            exProgramStatement.setInt(2, maxCredits);
+            exProgramStatement.setString(2, maxCredits+"");
             exProgramStatement.setString(3, description);
             exProgramStatement.executeUpdate();
             System.out.println("Preparedstatement passed ");

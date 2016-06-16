@@ -50,6 +50,14 @@ public class SearchProgramFrame extends JDialog {
         setLayout(null);
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
     }
+    
+    @Override
+    public void setVisible(boolean state) {
+        super.setVisible(state);
+        // reset fields here
+        if(state)
+            search("", "name");
+    }
 
     private void createComponents() {
         searchField = new JSearchField();
@@ -201,7 +209,7 @@ public class SearchProgramFrame extends JDialog {
                 return;
             }
             selectedProgram = tableModel.get(selectedRow);
-            selectedProgramLabel.setText("Selected program: " + selectedProgram.getCode());
+            selectedProgramLabel.setText("Selected program: " + selectedProgram.getName());
             nameField.setText(selectedProgram.getName());
 //            orgIDField.setText(); 
 //            studyCodeField.setText();
