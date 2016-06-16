@@ -21,7 +21,7 @@ import javax.swing.event.ListSelectionListener;
 
 /**
  *
- * @author fabio
+ * @author jordain & sishi
  */
 public class SelectInstituteDialog extends JDialog{
     public enum InstituteType { Company, University }

@@ -5,7 +5,7 @@ import javax.swing.table.AbstractTableModel;
 
 /**
  *
- * @author Sishi
+ * @author jordain & sishi
  */
 public class InstituteTableModel extends AbstractTableModel{
     private ArrayList<Institute> searchResults = new ArrayList<>();

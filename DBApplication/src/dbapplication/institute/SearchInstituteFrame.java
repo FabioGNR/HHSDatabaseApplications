@@ -31,7 +31,7 @@ public class SearchInstituteFrame extends JDialog {
     private JTextField nameField;
     private JTextField countryField;
     private JTextField addressField;
-    private JTextField studyField;
+   
 
     private JLabel cityLabel;
     private JLabel nameLabel;
@@ -156,16 +156,9 @@ public class SearchInstituteFrame extends JDialog {
         addressField.setSize(120, 30);
         add(addressField);
 
-        studyField = new JEditField("Studies");
-        studyField.setLocation(440, 285);
-        studyField.setSize(70, 30);
-        add(studyField);
-        studyField.setEnabled(false);
-        studyField.setVisible(false);
-
-        showButton = new JButton("Show studies");
-        showButton.setLocation(520, 285);
-        showButton.setSize(120, 30);
+        showButton = new JButton("Manage Studies");
+        showButton.setLocation(440, 285);
+        showButton.setSize(150, 30);
         add(showButton);
         showButton.addActionListener(studyLis);
         showButton.setVisible(false);
@@ -198,11 +191,8 @@ public class SearchInstituteFrame extends JDialog {
 
             StudyFrame dlg = new StudyFrame((JFrame) getOwner(), StudyFrame.ProgramType.studyProgram);
             dlg.setVisible(true);
+
             
-            Study study = dlg.getSelectedStudy();
-            if (study != null) {
-                studyField.setText(study.getCode());
-            }
         }
     }
 
@@ -271,14 +261,13 @@ public class SearchInstituteFrame extends JDialog {
             ArrayList<dbapplication.institute.Institute> institute
                     = dbapplication.institute.Institute.searchInstituteUniversity(filter, conditionColumn);
             resultModel.setResults(institute);
-            studyField.setVisible(false);
             showButton.setVisible(false);
 
         } else {
             ArrayList<dbapplication.institute.Institute> institute
                     = dbapplication.institute.Institute.searchInstitute(filter, conditionColumn);
             resultModel.setResults(institute);
-            studyField.setVisible(true);
+           
             showButton.setVisible(true);
 
         }

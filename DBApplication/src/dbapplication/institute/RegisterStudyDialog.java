@@ -11,7 +11,7 @@ import javax.swing.JTextField;
 
 /**
  *
- * @author Sishi
+ * @author jordain & sishi
  */
 public class RegisterStudyDialog extends JDialog {
 
@@ -85,7 +85,7 @@ public class RegisterStudyDialog extends JDialog {
                         "Phone number cannot be a letter", "Incorrect input", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            int nummer = Integer.parseInt(nr);
+            
             
             if (e.getSource() == registerButton) {
                 if (code == null || email == null || nr == null) {
@@ -98,7 +98,7 @@ public class RegisterStudyDialog extends JDialog {
                             JOptionPane.INFORMATION_MESSAGE, null, null, null);
                     
                     if (register == JOptionPane.OK_OPTION) {
-                        Study.insertStudy(code, email, nummer);
+                        Study.insertStudy(code, nr, email);
                     }
                     
                 }

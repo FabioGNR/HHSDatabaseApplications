@@ -34,7 +34,7 @@ public class MainFrame extends JFrame {
     }
 
     private void setupFrame() {
-        setSize(300, 350);
+        setSize(1920, 1080);
         setLayout(null);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

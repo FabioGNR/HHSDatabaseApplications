@@ -67,7 +67,7 @@ public class StudyFrame extends JDialog {
     }
 
     private void setupFrame() {
-        setSize(700, 450);
+        setSize(750, 450);
         setResizable(false);
         setLayout(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -90,8 +90,7 @@ public class StudyFrame extends JDialog {
         add(searchButton);
 
         searchConditionCombo = new JComboBox(new SearchFilter[]{
-            new SearchFilter("Code", "code"),
-        });
+            new SearchFilter("Code", "code"),});
         searchConditionCombo.setBounds(320, 20, 100, 30);
         add(searchConditionCombo);
 
@@ -146,33 +145,27 @@ public class StudyFrame extends JDialog {
         //de buttons
         StudyEditListener edit = new StudyEditListener();
 
-        cancelButton = new JButton("Cancel");
-        cancelButton.setLocation(440, 331);
-        cancelButton.setSize(70, 30);
-        cancelButton.addActionListener(close);
-        add(cancelButton);
-
-        okButton = new JButton("OK");
-        okButton.setLocation(540, 331);
-        okButton.setSize(70, 30);
+        okButton = new JButton("Go back");
+        okButton.setLocation(640, 331);
+        okButton.setSize(90, 30);
         okButton.addActionListener(close);
         add(okButton);
 
         updateButton = new JButton("Update");
-        updateButton.setLocation(440, 270);
+        updateButton.setLocation(440, 331);
         updateButton.setSize(90, 30);
         updateButton.addActionListener(edit);
         add(updateButton);
 
         deleteButton = new JButton("Delete");
-        deleteButton.setLocation(540, 270);
+        deleteButton.setLocation(540, 331);
         deleteButton.setSize(90, 30);
         deleteButton.addActionListener(edit);
         add(deleteButton);
-        
-        addButton = new JButton("Add study");
+
+        addButton = new JButton("Register Study");
         addButton.setLocation(440, 220);
-        addButton.setSize(90, 30);
+        addButton.setSize(120, 30);
         addButton.addActionListener(register);
         add(addButton);
 
@@ -191,7 +184,7 @@ public class StudyFrame extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (e.getSource() == cancelButton) {
+            if (e.getSource() == okButton) {
                 selectedStudy = null;
             }
             dispose();
@@ -229,7 +222,7 @@ public class StudyFrame extends JDialog {
 
             codeField.setText(selectedStudy.getCode());
 
-            numberField.setText(selectedStudy.getPhone_number()+"");
+            numberField.setText(selectedStudy.getPhone_number());
 
         }
 
@@ -246,7 +239,7 @@ public class StudyFrame extends JDialog {
                 int update = JOptionPane.showOptionDialog(StudyFrame.this, "Study has been updated", "Updated", JOptionPane.PLAIN_MESSAGE,
                         JOptionPane.INFORMATION_MESSAGE, null, null, null);
                 if (update == JOptionPane.OK_OPTION) {
-                    selectedStudy.updateStudy(codeField.getText(), numberField.getText(), Integer.parseInt(contactpersonField.getText()));
+                    selectedStudy.updateStudy(codeField.getText(), contactpersonField.getText(), numberField.getText());
 
                     int selectedIndex = searchConditionCombo.getSelectedIndex();
                     SearchFilter selectedFilter = (SearchFilter) searchConditionCombo.getItemAt(selectedIndex);
@@ -259,7 +252,7 @@ public class StudyFrame extends JDialog {
                         "Delete Study", JOptionPane.OK_CANCEL_OPTION);
                 if (choice == JOptionPane.OK_OPTION) {
                     selectedStudy.deleteStudy();
-                    
+
                     int selectedIndex = searchConditionCombo.getSelectedIndex();
                     SearchFilter selectedFilter = (SearchFilter) searchConditionCombo.getItemAt(selectedIndex);
                     search(searchField.getText(), selectedFilter.getColumnName());
@@ -267,12 +260,13 @@ public class StudyFrame extends JDialog {
             }
         }
     }
-        
-        private class RegisterStudyListener implements ActionListener {
+
+    private class RegisterStudyListener implements ActionListener {
+
         @Override
         public void actionPerformed(ActionEvent e) {
-            RegisterStudyDialog rsf = new RegisterStudyDialog((JFrame)getOwner(), RegisterStudyDialog.StudyType.Study);
+            RegisterStudyDialog rsf = new RegisterStudyDialog((JFrame) getOwner(), RegisterStudyDialog.StudyType.Study);
             rsf.setVisible(true);
-    }
         }
     }
+}

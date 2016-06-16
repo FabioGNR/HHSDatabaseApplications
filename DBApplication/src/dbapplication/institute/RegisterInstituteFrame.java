@@ -14,7 +14,7 @@ import javax.swing.JTextField;
 
 /**
  *
- * @author omari_000
+ * @author jordain & sishi
  */
 public class RegisterInstituteFrame extends JDialog {
 
@@ -99,7 +99,7 @@ public class RegisterInstituteFrame extends JDialog {
         ButtonGroup group = new ButtonGroup();
         group.add(yesRadio);
         group.add(noRadio);
-        
+
         showButton = new JButton("Register study");
         showButton.setLocation(20, 220);
         showButton.setSize(120, 30);
@@ -113,13 +113,12 @@ public class RegisterInstituteFrame extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            
-            RegisterStudyDialog dlg = new RegisterStudyDialog((JFrame)getOwner(), RegisterStudyDialog.StudyType.Study);
+
+            RegisterStudyDialog dlg = new RegisterStudyDialog((JFrame) getOwner(), RegisterStudyDialog.StudyType.Study);
             dlg.setVisible(true);
 
-            }
         }
-    
+    }
 
     private class SwitchInstituteListener implements ActionListener {
 
@@ -155,9 +154,8 @@ public class RegisterInstituteFrame extends JDialog {
                 country = null;
             }
             address = addressField.getText();
-            if (address.isEmpty() || address.matches(".*\\d+.*")) {
-                JOptionPane.showMessageDialog(RegisterInstituteFrame.this,
-                        "addres cannot be a number", "Incorrect input", JOptionPane.WARNING_MESSAGE);
+            if (address.isEmpty()) {
+
                 address = null;
             }
 
