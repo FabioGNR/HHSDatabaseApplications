@@ -34,7 +34,7 @@ public class StudyFrame extends JDialog {
 
     private JTextField searchField;
 
-    private JButton cancelButton;
+    
     private JButton searchButton;
     private JButton updateButton;
     private JButton deleteButton;
@@ -99,12 +99,12 @@ public class StudyFrame extends JDialog {
         selectedStudyLabel.setSize(200, 30);
         add(selectedStudyLabel);
 
-        codeLabel = new JLabel("Code");
+        codeLabel = new JLabel("Name");
         codeLabel.setLocation(440, 70);
         codeLabel.setSize(90, 30);
         add(codeLabel);
 
-        codeField = new JEditField("Code");
+        codeField = new JEditField("Name");
         codeField.setLocation(490, 70);
         codeField.setSize(120, 30);
         add(codeField);

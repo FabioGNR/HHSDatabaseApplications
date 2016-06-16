@@ -39,7 +39,7 @@ public class RegisterStudyDialog extends JDialog {
     }
 
     private void createComponents() {
-        codeField = new JEditField("Code");
+        codeField = new JEditField("Name");
         codeField.setLocation(20, 20);
         codeField.setSize(150, 30);
         add(codeField);
@@ -59,7 +59,14 @@ public class RegisterStudyDialog extends JDialog {
         registerButton.setSize(90, 30);
         registerButton.addActionListener(new RegisterButtonListener());
         add(registerButton);
+    } 
+    public void clearField() {
+        codeField.setText("");
+        emailField.setText("");
+        numberField.setText("");
+        
     }
+    
     
     private class RegisterButtonListener implements ActionListener {
 
@@ -97,8 +104,10 @@ public class RegisterStudyDialog extends JDialog {
                             "Study has been registerd", "Registerd", JOptionPane.PLAIN_MESSAGE,
                             JOptionPane.INFORMATION_MESSAGE, null, null, null);
                     
-                    if (register == JOptionPane.OK_OPTION) {
                         Study.insertStudy(code, nr, email);
+                        clearField();
+                        setVisible(false);
+                        dispose();
                     }
                     
                 }
@@ -107,5 +116,4 @@ public class RegisterStudyDialog extends JDialog {
         }
         
     }
-    
-}
+   
