@@ -173,7 +173,7 @@ public class RegisterProgramFrame extends JDialog {
 
             boolean result;
             if (internshipButton.isSelected()) {
-                result = Internship.insertNewInternship(selectedInstitute, name, terms, maxCredit);
+                result = Internship.insertNewInternship(selectedInstitute, name, terms, maxCredits);
             } else {
                 String study = studyField.getText();
                 if (study.isEmpty()) {
@@ -183,7 +183,7 @@ public class RegisterProgramFrame extends JDialog {
                     return;
                 }
                 studyType = (String) studyTypeBox.getSelectedItem();
-                StudyProgram.insertNewStudyProgram(name, terms, selectedInstitute, studyType, maxCredits, selectedStudy);
+                result = StudyProgram.insertNewStudyProgram(name, terms, selectedInstitute, studyType, maxCredits, selectedStudy);
             }
             if (!result) {
                 JOptionPane.showMessageDialog(RegisterProgramFrame.this,
