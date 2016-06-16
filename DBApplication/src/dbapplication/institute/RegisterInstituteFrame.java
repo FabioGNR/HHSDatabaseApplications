@@ -129,6 +129,13 @@ public class RegisterInstituteFrame extends JDialog {
         }
     }
 
+    public void clearField() {
+        cityField.setText("");
+        nameField.setText("");
+        countryField.setText("");
+        addressField.setText("");
+    }
+
     private class AddButtonListener implements ActionListener {
 
         @Override
@@ -169,7 +176,11 @@ public class RegisterInstituteFrame extends JDialog {
 
                         is_business = yesRadio.isSelected() ? 1 : 0;
                         int org_id = Institute.insertInstitute(city, name, country, address, is_business);
-                        // add study
+                        clearField();
+                        
+                        setVisible(false);
+                        dispose();
+
                     }
                 }
             }
