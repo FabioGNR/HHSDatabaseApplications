@@ -54,7 +54,7 @@ public class Internship extends ExProgram {
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, institute);
-            statement.setInt(1, exProcode);
+            statement.setInt(2, code);
             statement.executeUpdate();
             statement.close();
         } catch (Exception error) {
@@ -71,7 +71,7 @@ public class Internship extends ExProgram {
         String sql = "DELETE FROM internship WHERE code = ?";
         try {
             PreparedStatement statement = connect.prepareStatement(sql);
-            statement.setInt(1, exProcode);
+            statement.setInt(1, code);
             statement.executeUpdate();
             System.out.println("PreparedStatement was succesful");
         } catch (SQLException e) {

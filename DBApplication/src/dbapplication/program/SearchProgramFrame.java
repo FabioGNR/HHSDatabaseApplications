@@ -183,7 +183,7 @@ public class SearchProgramFrame extends JDialog {
                 return;
             }
             selectedProgram = resultModel.getProgramAt(selectedRow);
-            selectedProgramLabel.setText("Selected program: " + selectedProgram.getExPcode());
+            selectedProgramLabel.setText("Selected program: " + selectedProgram.getCode());
             nameField.setText(selectedProgram.getName());
 //            orgIDField.setText(); 
 //            studyCodeField.setText();
