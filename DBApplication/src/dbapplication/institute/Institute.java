@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author Sishi
+ *@author jordain & sishi
  */
 public class Institute {
 
