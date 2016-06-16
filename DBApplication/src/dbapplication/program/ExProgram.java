@@ -1,6 +1,7 @@
 package dbapplication.program;
 
 import dbapplication.DBConnection;
+import dbapplication.DatabaseTableClass;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
  *
  * @author RLH
  */
-public class ExProgram {
+public class ExProgram extends DatabaseTableClass {
 
     enum ProgramType {
         Internship, StudyProgram
@@ -24,8 +25,8 @@ public class ExProgram {
 
     public ExProgram(ResultSet result) throws SQLException {
         name = result.getString("name");
-        code = result.getInt("code");
-//        maxCredits = result.getInt("max_credits"); // dit zorgt voor problemen bij het tonen van de tabel
+        code = result.getInt("code");       
+        maxCredits = result.getInt("max_credits"); // dit zorgt voor problemen bij het tonen van de tabel
         cellData = new String[]{name, maxCredits+ " ECS"};
     }
 
@@ -121,6 +122,7 @@ public class ExProgram {
         return code;
     }
 
+    @Override
     public String getDataAt(int cell) {
         return cellData[cell];
     }

@@ -1,5 +1,6 @@
 package dbapplication.program;
 
+import dbapplication.DatabaseTableModel;
 import dbapplication.JEditField;
 import dbapplication.JSearchField;
 import dbapplication.SearchFilter;
@@ -24,12 +25,9 @@ public class SearchProgramFrame extends JDialog {
     private JTextField instituteField, studyTypeField, studyField;
     private JButton searchButton, saveButton, deleteButton, studyTypeButton, instituteButton;
     private JComboBox internshipConditionBox, studyProgramBox, programBox;
-    private final static String INTERSHIP_CARD_ID = "Internship";
-    private final static String STUDYPROGRAM_CARD_ID = "Study Program";
-    private String[] programType = {INTERSHIP_CARD_ID, STUDYPROGRAM_CARD_ID};
     private JTable resultTable;
     private JScrollPane resultPanel;
-    private ProgramTableModel resultModel;
+    private DatabaseTableModel<ExProgram> resultModel;
     private JLabel selectedProgramLabel, programCodeLabel;
     private ExProgram selectedProgram = null;
     private Internship internshipSelected = null;
@@ -60,7 +58,7 @@ public class SearchProgramFrame extends JDialog {
         searchButton.addActionListener(new SearchListener());
         add(searchButton);
 
-        programBox = new JComboBox(programType);
+        programBox = new JComboBox(ExProgram.ProgramType.values());
         programBox.setBounds(330, 20, 100, 30);
         programBox.addActionListener(new SwitchProgramListener());
         add(programBox);
@@ -73,8 +71,7 @@ public class SearchProgramFrame extends JDialog {
         internshipConditionBox.setVisible(true);
 
         studyProgramBox = new JComboBox(new SearchFilter[]{
-            new SearchFilter("Study Type", "type"),
-            new SearchFilter("Study Code", "study_code")
+            new SearchFilter("Name", "name")
         });
         studyProgramBox.setBounds(450, 20, 125, 30);
         add(studyProgramBox);
@@ -82,7 +79,8 @@ public class SearchProgramFrame extends JDialog {
 
         resultTable = new JTable();
         resultTable.setBounds(0, 0, 555, 300);
-        resultModel = new ProgramTableModel();
+        resultModel = new DatabaseTableModel<ExProgram>(
+                new String[] { "Name", "Credits" });
         resultTable.setModel(resultModel);
         resultTable.setPreferredScrollableViewportSize(new Dimension(400, 300));
         resultTable.setFillsViewportHeight(true);
@@ -145,7 +143,7 @@ public class SearchProgramFrame extends JDialog {
         }else{
             program = StudyProgram.searchStudyProgram(filter, conditionColumn);
         }
-        resultModel.setResults(program);
+        resultModel.setItems(program);
         
     }
 
@@ -182,7 +180,7 @@ public class SearchProgramFrame extends JDialog {
             if (selectedRow < 0) {
                 return;
             }
-            selectedProgram = resultModel.getProgramAt(selectedRow);
+            selectedProgram = resultModel.get(selectedRow);
             selectedProgramLabel.setText("Selected program: " + selectedProgram.getCode());
             nameField.setText(selectedProgram.getName());
 //            orgIDField.setText(); 
@@ -203,7 +201,8 @@ public class SearchProgramFrame extends JDialog {
                 int selectedIndex = studyProgramBox.getSelectedIndex();
                 selectedFilter = (SearchFilter) studyProgramBox.getItemAt(selectedIndex);
             }
-//            search(searchField.getText(), selectedFilter.getColumnName());
+            search(searchField.getText(), selectedFilter.getColumnName(), 
+                    (ExProgram.ProgramType)programBox.getSelectedItem());
         }
     }
 
