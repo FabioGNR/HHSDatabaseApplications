@@ -11,16 +11,17 @@ import java.util.ArrayList;
  * @author Sishi
  */
 public class Study {
-    private String code, org_id, contactperson;
+    private String code, email; 
+    private int phone_number;
     private String[] cellData;
     
     public Study(ResultSet result) throws SQLException
     {
         code = result.getString("code");
-        org_id = result.getString("org_id");
-        contactperson = result.getString("contactperson");
+        email = result.getString("email");
+        phone_number = result.getInt("phone number");
         
-        cellData = new String[] {code ,org_id, contactperson};
+        refreshCellData();
     }
     
     public static ArrayList<Study> searchStudy(String filter, String conditionColumn) {
@@ -46,16 +47,16 @@ public class Study {
     }
     
     public static void insertStudy(String code, 
-                String org_id, String contactperson) {
+                String email, int phone_number) {
         Connection connection = DBConnection.getConnection();
         try {
             PreparedStatement statement = connection.prepareStatement(
                     "INSERT INTO study "
-                        + "(code, org_id, contactperson) "
+                        + "(code, email, phone number) "
                         + "VALUES (?,?,?)");
             statement.setString(1, code);
-            statement.setString(2, org_id);
-            statement.setString(3, contactperson);
+            statement.setString(2, email);
+            statement.setInt(3, phone_number);
            
             statement.executeUpdate();
             statement.close();
@@ -66,16 +67,16 @@ public class Study {
         }
     }
     public boolean updateStudy(String code, 
-                String org_id, String contactperson){
+                String email, int phone_number){
         
         Connection connection = DBConnection.getConnection();
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "UPDATE study SET code = ?, org_id = ?, contactperson = ? WHERE code = ?");
+                    "UPDATE study SET code = ?, email = ?, phone number = ? WHERE code = ?");
             
             statement.setString(1, code);
-            statement.setString(2, org_id);
-            statement.setString(3, contactperson);   
+            statement.setString(2, email);
+            statement.setInt(3, phone_number);   
             statement.setString(4, code);
             statement.executeUpdate();
             statement.close();
@@ -114,6 +115,11 @@ public class Study {
         
     }
     
+    public void refreshCellData() {
+        String number = String.format("^\\d+$", phone_number);
+        cellData = new String[] {code, email, number};
+    }
+    
    
     
     public String getDataAt(int cell) {
@@ -124,12 +130,12 @@ public class Study {
         return code;
     }
     
-    public String getOrg_id() {
-        return org_id;
+    public String getEmail() {
+        return email;
     }
 
-    public String getContactperson() {
-        return contactperson;
+    public int getPhone_number() {
+        return phone_number;
     }
     
     

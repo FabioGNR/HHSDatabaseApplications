@@ -39,10 +39,9 @@ public class SearchInstituteFrame extends JDialog {
     private JLabel addressLabel;
     private JLabel selectedInstituteLabel;
 
-    private static String[] programs = {"Company ", "University"};
-
     private JComboBox searchConditionCombo;
     private JComboBox type;
+    
     private JButton searchButton;
     private JButton showButton;
     private JButton updateButton;
@@ -51,9 +50,9 @@ public class SearchInstituteFrame extends JDialog {
     private JTable resultTable;
     private JScrollPane resultPanel;
     private InstituteTableModel resultModel;
-
     private Institute selectedInstitute = null;
-
+    private static String[] programs = {"Company ", "University"};
+    
     public SearchInstituteFrame(JFrame owner) {
         super(owner, true);
         setupFrame();
@@ -62,7 +61,7 @@ public class SearchInstituteFrame extends JDialog {
     }
 
     private void setupFrame() {
-        setSize(800, 580);
+        setSize(700, 450);
         setTitle("Search Institute");
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setLayout(null);
@@ -85,17 +84,15 @@ public class SearchInstituteFrame extends JDialog {
         add(searchButton);
 
         type = new JComboBox(programs);
-        type.setLocation(620, 20);
+        type.setLocation(440, 20);
         type.setSize(150, 30);
         type.addActionListener(lis);
         add(type);
 
         searchConditionCombo = new JComboBox(new SearchFilter[]{
-            new SearchFilter("ID", "org_id"),
             new SearchFilter("City", "city"),
             new SearchFilter("Name", "name"),
-            new SearchFilter("Country", "country"),
-            new SearchFilter("Address", "address"),});
+            new SearchFilter("Country", "country")});
         searchConditionCombo.setLocation(320, 20);
         searchConditionCombo.setSize(100, 30);
         add(searchConditionCombo);
@@ -115,72 +112,72 @@ public class SearchInstituteFrame extends JDialog {
         add(resultPanel);
 
         selectedInstituteLabel = new JLabel("Selected institute:");
-        selectedInstituteLabel.setLocation(440, 20);
+        selectedInstituteLabel.setLocation(440, 55);
         selectedInstituteLabel.setSize(200, 30);
         add(selectedInstituteLabel);
 
         cityLabel = new JLabel("City");
-        cityLabel.setLocation(440, 70);
+        cityLabel.setLocation(440, 85);
         cityLabel.setSize(90, 30);
         add(cityLabel);
 
         cityField = new JEditField("City");
-        cityField.setLocation(490, 70);
+        cityField.setLocation(490, 85);
         cityField.setSize(120, 30);
         add(cityField);
 
         nameLabel = new JLabel("Name");
-        nameLabel.setLocation(440, 120);
+        nameLabel.setLocation(440, 135);
         nameLabel.setSize(90, 30);
         add(nameLabel);
 
         nameField = new JEditField("Name");
-        nameField.setLocation(490, 120);
+        nameField.setLocation(490, 135);
         nameField.setSize(120, 30);
         add(nameField);
 
         countryLabel = new JLabel("Country");
-        countryLabel.setLocation(440, 170);
+        countryLabel.setLocation(440, 185);
         countryLabel.setSize(90, 30);
         add(countryLabel);
 
         countryField = new JEditField("Country");
-        countryField.setLocation(490, 170);
+        countryField.setLocation(490, 185);
         countryField.setSize(120, 30);
         add(countryField);
 
         addressLabel = new JLabel("Address");
-        addressLabel.setLocation(440, 220);
+        addressLabel.setLocation(440, 235);
         addressLabel.setSize(90, 30);
         add(addressLabel);
 
         addressField = new JEditField("Address");
-        addressField.setLocation(490, 220);
+        addressField.setLocation(490, 235);
         addressField.setSize(120, 30);
         add(addressField);
 
         studyField = new JEditField("Studies");
-        studyField.setLocation(440, 320);
+        studyField.setLocation(440, 285);
         studyField.setSize(70, 30);
         add(studyField);
         studyField.setEnabled(false);
         studyField.setVisible(false);
 
         showButton = new JButton("Show studies");
-        showButton.setLocation(520, 320);
+        showButton.setLocation(520, 285);
         showButton.setSize(120, 30);
         add(showButton);
         showButton.addActionListener(studyLis);
         showButton.setVisible(false);
 
         updateButton = new JButton("Update");
-        updateButton.setLocation(440, 370);
+        updateButton.setLocation(440, 331);
         updateButton.setSize(90, 30);
         updateButton.addActionListener(edit);
         add(updateButton);
 
         deleteButton = new JButton("Delete");
-        deleteButton.setLocation(540, 370);
+        deleteButton.setLocation(540, 331);
         deleteButton.setSize(90, 30);
         deleteButton.addActionListener(edit);
         add(deleteButton);
@@ -201,7 +198,11 @@ public class SearchInstituteFrame extends JDialog {
 
             StudyFrame dlg = new StudyFrame((JFrame) getOwner(), StudyFrame.ProgramType.studyProgram);
             dlg.setVisible(true);
-            // pauses until dialog is closed
+            
+            Study study = dlg.getSelectedStudy();
+            if (study != null) {
+                studyField.setText(study.getCode());
+            }
         }
     }
 
@@ -268,7 +269,7 @@ public class SearchInstituteFrame extends JDialog {
     private void search(String filter, String conditionColumn) {
         if (type.getSelectedIndex() == 0) {
             ArrayList<dbapplication.institute.Institute> institute
-                    = dbapplication.institute.Institute.searchInstituteC(filter, conditionColumn);
+                    = dbapplication.institute.Institute.searchInstituteUniversity(filter, conditionColumn);
             resultModel.setResults(institute);
             studyField.setVisible(false);
             showButton.setVisible(false);

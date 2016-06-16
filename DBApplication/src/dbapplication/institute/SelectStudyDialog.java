@@ -161,5 +161,12 @@ public class SelectStudyDialog extends JDialog {
         }
 
     }
-
-}
+    
+        private class RegisterStudyListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            RegisterStudyDialog rsf = new RegisterStudyDialog((JFrame)getOwner(), RegisterStudyDialog.StudyType.Study);
+            rsf.setVisible(true);
+    }
+        }
+    }

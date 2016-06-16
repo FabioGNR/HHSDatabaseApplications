@@ -91,6 +91,7 @@ public class SearchStudentFrame extends JDialog {
         selectFilterButton = new JButton("Select institute filter");
         selectFilterButton.setBounds(510, 20, 150, 30);
         add(selectFilterButton);
+        selectFilterButton.addActionListener(new SelectFilterListener());
 
         nameField = new JEditField("Name");
         nameField.setBounds(450, 100, 150, 30);
@@ -247,7 +248,8 @@ public class SearchStudentFrame extends JDialog {
     class SelectFilterListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            SearchFilterDialog dlg = new SearchFilterDialog();
+            SearchFilterDialog dlg = new SearchFilterDialog(
+                    (JFrame)SearchStudentFrame.this.getOwner());
             dlg.setVisible(true);
             selectedFilterInstitute = dlg.getSelectedInstitute();
         }

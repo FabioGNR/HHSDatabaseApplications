@@ -42,11 +42,11 @@ public class StudyFrame extends JDialog {
     private JButton addButton;
 
     private JLabel codeLabel;
-    private JLabel org_idLabel;
+    private JLabel numberLabel;
     private JLabel contactpersonLabel;
     private JLabel selectedStudyLabel;
 
-    private JTextField org_idField;
+    private JTextField numberField;
     private JTextField codeField;
     private JTextField contactpersonField;
 
@@ -67,11 +67,11 @@ public class StudyFrame extends JDialog {
     }
 
     private void setupFrame() {
-        setSize(700, 500);
+        setSize(700, 450);
         setResizable(false);
         setLayout(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setTitle("Select Study");
+        setTitle("Manage Study");
     }
 
     private void createComponents() {
@@ -91,8 +91,6 @@ public class StudyFrame extends JDialog {
 
         searchConditionCombo = new JComboBox(new SearchFilter[]{
             new SearchFilter("Code", "code"),
-            new SearchFilter("Org_ID", "org_id"),
-            new SearchFilter("Contactperson", "contactperson")
         });
         searchConditionCombo.setBounds(320, 20, 100, 30);
         add(searchConditionCombo);
@@ -102,32 +100,32 @@ public class StudyFrame extends JDialog {
         selectedStudyLabel.setSize(200, 30);
         add(selectedStudyLabel);
 
-        codeLabel = new JLabel("code");
+        codeLabel = new JLabel("Code");
         codeLabel.setLocation(440, 70);
         codeLabel.setSize(90, 30);
         add(codeLabel);
 
-        codeField = new JEditField("code");
+        codeField = new JEditField("Code");
         codeField.setLocation(490, 70);
         codeField.setSize(120, 30);
         add(codeField);
 
-        org_idLabel = new JLabel("org_id");
-        org_idLabel.setLocation(440, 120);
-        org_idLabel.setSize(90, 30);
-        add(org_idLabel);
+        numberLabel = new JLabel("Number");
+        numberLabel.setLocation(440, 120);
+        numberLabel.setSize(90, 30);
+        add(numberLabel);
 
-        org_idField = new JEditField("org_id");
-        org_idField.setLocation(490, 120);
-        org_idField.setSize(120, 30);
-        add(org_idField);
+        numberField = new JEditField("Contactperson");
+        numberField.setLocation(490, 120);
+        numberField.setSize(120, 30);
+        add(numberField);
 
-        contactpersonLabel = new JLabel("Contact");
+        contactpersonLabel = new JLabel("Email");
         contactpersonLabel.setLocation(440, 170);
         contactpersonLabel.setSize(90, 30);
         add(contactpersonLabel);
 
-        contactpersonField = new JEditField("contactperson");
+        contactpersonField = new JEditField("Contactperson");
         contactpersonField.setLocation(490, 170);
         contactpersonField.setSize(120, 30);
         add(contactpersonField);
@@ -149,31 +147,31 @@ public class StudyFrame extends JDialog {
         StudyEditListener edit = new StudyEditListener();
 
         cancelButton = new JButton("Cancel");
-        cancelButton.setLocation(260, 400);
+        cancelButton.setLocation(440, 331);
         cancelButton.setSize(70, 30);
         cancelButton.addActionListener(close);
         add(cancelButton);
 
         okButton = new JButton("OK");
-        okButton.setLocation(350, 400);
+        okButton.setLocation(540, 331);
         okButton.setSize(70, 30);
         okButton.addActionListener(close);
         add(okButton);
 
         updateButton = new JButton("Update");
-        updateButton.setLocation(440, 370);
+        updateButton.setLocation(440, 270);
         updateButton.setSize(90, 30);
         updateButton.addActionListener(edit);
         add(updateButton);
 
         deleteButton = new JButton("Delete");
-        deleteButton.setLocation(540, 370);
+        deleteButton.setLocation(540, 270);
         deleteButton.setSize(90, 30);
         deleteButton.addActionListener(edit);
         add(deleteButton);
         
-        addButton = new JButton("Add");
-        addButton.setLocation(490, 400);
+        addButton = new JButton("Add study");
+        addButton.setLocation(440, 220);
         addButton.setSize(90, 30);
         addButton.addActionListener(register);
         add(addButton);
@@ -227,11 +225,11 @@ public class StudyFrame extends JDialog {
             selectedStudyLabel.setText(
                     "Selected study: " + selectedStudy.getCode());
 
-            contactpersonField.setText(selectedStudy.getContactperson());
+            contactpersonField.setText(selectedStudy.getEmail());
 
             codeField.setText(selectedStudy.getCode());
 
-            org_idField.setText(selectedStudy.getOrg_id());
+            numberField.setText(selectedStudy.getPhone_number()+"");
 
         }
 
@@ -248,7 +246,7 @@ public class StudyFrame extends JDialog {
                 int update = JOptionPane.showOptionDialog(StudyFrame.this, "Study has been updated", "Updated", JOptionPane.PLAIN_MESSAGE,
                         JOptionPane.INFORMATION_MESSAGE, null, null, null);
                 if (update == JOptionPane.OK_OPTION) {
-                    selectedStudy.updateStudy(codeField.getText(), org_idField.getText(), contactpersonField.getText());
+                    selectedStudy.updateStudy(codeField.getText(), numberField.getText(), Integer.parseInt(contactpersonField.getText()));
 
                     int selectedIndex = searchConditionCombo.getSelectedIndex();
                     SearchFilter selectedFilter = (SearchFilter) searchConditionCombo.getItemAt(selectedIndex);

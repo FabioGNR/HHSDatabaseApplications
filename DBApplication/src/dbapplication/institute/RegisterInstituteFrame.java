@@ -79,23 +79,20 @@ public class RegisterInstituteFrame extends JDialog {
         registerButton.addActionListener(lis);
         add(registerButton);
 
-        isBusinessLabel = new JLabel();
+        isBusinessLabel = new JLabel("Company?");
         isBusinessLabel.setLocation(230, 20);
         isBusinessLabel.setSize(100, 30);
-        isBusinessLabel.setText("Business?");
         add(isBusinessLabel);
 
-        yesRadio = new JRadioButton();
+        yesRadio = new JRadioButton("Yes");
         yesRadio.setLocation(300, 20);
         yesRadio.setSize(100, 30);
-        yesRadio.setText("Yes");
         yesRadio.addActionListener(switchLis);
         add(yesRadio);
 
-        noRadio = new JRadioButton();
+        noRadio = new JRadioButton("No");
         noRadio.setLocation(300, 50);
         noRadio.setSize(100, 30);
-        noRadio.setText("No");
         noRadio.addActionListener(switchLis);
         add(noRadio);
 
@@ -103,9 +100,9 @@ public class RegisterInstituteFrame extends JDialog {
         group.add(yesRadio);
         group.add(noRadio);
         
-        showButton = new JButton("Show studies");
+        showButton = new JButton("Register study");
         showButton.setLocation(20, 220);
-        showButton.setSize(150, 30);
+        showButton.setSize(120, 30);
         add(showButton);
         showButton.addActionListener(studyLis);
         showButton.setVisible(false);
@@ -116,18 +113,13 @@ public class RegisterInstituteFrame extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-
-            SelectStudyDialog dlg = new SelectStudyDialog((JFrame) getOwner());
+            
+            RegisterStudyDialog dlg = new RegisterStudyDialog((JFrame)getOwner(), RegisterStudyDialog.StudyType.Study);
             dlg.setVisible(true);
-            // pauses until dialog is closed
-            Study study = dlg.getSelectedStudy();
-            if (study != null) {
-                //uniField.setText(getName());
-                selectedStudy = study.getCode();
 
             }
         }
-    }
+    
 
     private class SwitchInstituteListener implements ActionListener {
 
@@ -179,13 +171,8 @@ public class RegisterInstituteFrame extends JDialog {
 
                         is_business = yesRadio.isSelected() ? 1 : 0;
                         Institute.insertInstitute(city, name, country, address, is_business);
-
-                        JOptionPane.showMessageDialog(null, "BANANAAAAAAAAA");
                     }
-
-                    // is_business is 1 als yes is geselecteerd, anders 0
                 }
-
             }
         }
     }
