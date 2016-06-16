@@ -187,7 +187,9 @@ public class SearchInstituteFrame extends JDialog {
     private class SelectStudyListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            StudyFrame dlg = new StudyFrame((JFrame) getOwner(), StudyFrame.ProgramType.studyProgram);
+            if(selectedInstitute == null) return;
+            StudyFrame dlg = new StudyFrame((JFrame) getOwner(), 
+                    selectedInstitute.getOrgid());
             dlg.setVisible(true);          
         }
     }
@@ -258,13 +260,13 @@ public class SearchInstituteFrame extends JDialog {
             ArrayList<dbapplication.institute.Institute> institute
                     = dbapplication.institute.Institute.searchUniversity(filter, conditionColumn);
             resultModel.setResults(institute);
-            showButton.setVisible(false);
+            showButton.setVisible(true);
 
         } else {
             ArrayList<dbapplication.institute.Institute> institute
                     = dbapplication.institute.Institute.searchCompany(filter, conditionColumn);
             resultModel.setResults(institute); 
-            showButton.setVisible(true);
+            showButton.setVisible(false);
         }
     }
 

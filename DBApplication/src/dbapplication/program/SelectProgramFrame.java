@@ -32,6 +32,7 @@ public class SelectProgramFrame extends JDialog {
         super(owner, true);
         setupFrame();
         createComponents();   
+        search("", "name");
     }
     
     public SelectProgramFrame(JFrame owner, int company) {
@@ -50,7 +51,11 @@ public class SelectProgramFrame extends JDialog {
         setTitle("Select Program");
         setSize(595, 500);
         setLayout(null);
-        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);      
+    }
+    
+    private ExProgram.ProgramType getSelectedType() {
+        return (ExProgram.ProgramType)programBox.getSelectedItem();
     }
 
     private void createComponents() {
@@ -62,11 +67,6 @@ public class SelectProgramFrame extends JDialog {
         searchButton.setBounds(220, 20, 90, 30);
         searchButton.addActionListener(new SearchListener());
         add(searchButton);
-
-        programBox = new JComboBox(ExProgram.ProgramType.values());
-        programBox.setBounds(330, 20, 100, 30);
-        programBox.addActionListener(new SwitchProgramListener());
-        add(programBox);
 
         internshipConditionBox = new JComboBox(new SearchFilter[]{
             new SearchFilter("Name", "name")});
@@ -99,6 +99,16 @@ public class SelectProgramFrame extends JDialog {
         selectedProgramLabel.setBounds(20, 370, 150, 30);
         add(selectedProgramLabel);
         
+        ExProgram.ProgramType type;
+        if(study == null) // company > internship
+            type = ExProgram.ProgramType.Internship;
+        else
+            type = ExProgram.ProgramType.StudyProgram;
+        programBox = new JComboBox(new ExProgram.ProgramType[] {type});
+        programBox.setBounds(330, 20, 100, 30);
+        programBox.addActionListener(new SwitchProgramListener());
+        add(programBox);
+        
         cancelButton = new JButton("Cancel");
         cancelButton.setBounds(425, 370, 75, 30);
         cancelButton.addActionListener(new CancelButtonListener());
@@ -115,9 +125,9 @@ public class SelectProgramFrame extends JDialog {
         return selectedProgram;
     }
 
-    private void search(String filter, String conditionColumn, ExProgram.ProgramType type) {
+    private void search(String filter, String conditionColumn) {
         ArrayList<ExProgram> programs, filteredPrograms = new ArrayList<>();
-        
+        ExProgram.ProgramType type = getSelectedType();
         if(type == ExProgram.ProgramType.Internship){
             programs = Internship.searchProgram(filter, conditionColumn);
             for(int i = 0; i < programs.size(); i++) {
@@ -169,7 +179,7 @@ public class SelectProgramFrame extends JDialog {
                 return;
             }
             selectedProgram = resultModel.get(selectedRow);
-            selectedProgramLabel.setText("Selected program: " + selectedProgram.getCode());
+            selectedProgramLabel.setText("Selected program: " + selectedProgram.getName());
             okButton.setEnabled(true);
         }
     }
@@ -179,15 +189,14 @@ public class SelectProgramFrame extends JDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             SearchFilter selectedFilter;
-            if (e.getSource() == programBox.getItemAt(0)) {
+            if (getSelectedType() == ExProgram.ProgramType.Internship) {
                 int selectedIndex = internshipConditionBox.getSelectedIndex();
                 selectedFilter = (SearchFilter) internshipConditionBox.getItemAt(selectedIndex);
             } else {
                 int selectedIndex = studyProgramBox.getSelectedIndex();
                 selectedFilter = (SearchFilter) studyProgramBox.getItemAt(selectedIndex);
             }
-            search(searchField.getText(), selectedFilter.getColumnName(), 
-                    (ExProgram.ProgramType)programBox.getSelectedItem());
+            search(searchField.getText(), selectedFilter.getColumnName());            
         }
     }
 
@@ -195,7 +204,8 @@ public class SelectProgramFrame extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            boolean internshipSelected = programBox.getSelectedIndex() == 0;
+            boolean internshipSelected = 
+                    getSelectedType() == ExProgram.ProgramType.Internship;
             internshipConditionBox.setVisible(internshipSelected);
             studyProgramBox.setVisible(!internshipSelected);
         }

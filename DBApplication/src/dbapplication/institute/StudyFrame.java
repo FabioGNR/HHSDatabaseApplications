@@ -30,10 +30,7 @@ public class StudyFrame extends JDialog {
     public enum ProgramType {
         Internship, studyProgram
     }
-    private final ProgramType requiredType;
-
     private JTextField searchField;
-
     
     private JButton searchButton;
     private JButton updateButton;
@@ -56,10 +53,11 @@ public class StudyFrame extends JDialog {
 
     private StudyTableModel resultModel;
     private Study selectedStudy = null;
+    private final int instituteID;
 
-    public StudyFrame(Frame owner, ProgramType type) {
+    public StudyFrame(Frame owner, int institute) {
         super(owner, true);
-        requiredType = type;
+        instituteID = institute;
         setupFrame();
         createComponents();
         // fill JTable searching on empty filter
@@ -176,7 +174,8 @@ public class StudyFrame extends JDialog {
     }
 
     private void search(String filter, String conditionColumn) {
-        ArrayList<dbapplication.institute.Study> study = dbapplication.institute.Study.searchStudy(filter, conditionColumn);
+        ArrayList<Study> study = Study.searchStudy(filter, 
+                conditionColumn, instituteID);
         resultModel.setResults(study);
     }
 
@@ -222,7 +221,7 @@ public class StudyFrame extends JDialog {
 
             codeField.setText(selectedStudy.getCode());
 
-            numberField.setText(selectedStudy.getPhone_number());
+            numberField.setText(selectedStudy.getPhoneNumber());
 
         }
 
