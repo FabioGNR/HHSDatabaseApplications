@@ -168,7 +168,8 @@ public class RegisterInstituteFrame extends JDialog {
                     if (register == JOptionPane.OK_OPTION) {
 
                         is_business = yesRadio.isSelected() ? 1 : 0;
-                        Institute.insertInstitute(city, name, country, address, is_business);
+                        int org_id = Institute.insertInstitute(city, name, country, address, is_business);
+                        // add study
                     }
                 }
             }
