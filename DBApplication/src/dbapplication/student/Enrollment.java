@@ -20,20 +20,26 @@ public class Enrollment extends DatabaseTableClass {
     private Date registrationDate;
     private ExProgram program;
     private String[] cellData;
+    private int existingProgam;
+    private boolean existsInDB, needsUpdate = false;
     
     public Enrollment(ResultSet set, ResultSet programSet) throws SQLException {
         acquiredCredits = set.getInt("acquired_credits");
         student_id = set.getInt("student_id");
         registrationDate = set.getDate("registration_date");
         program = new ExProgram(programSet);
+        existingProgam = program.getCode();
         refreshCellData();
+        existsInDB = true;
     }
     
     public Enrollment(int student_id, ExProgram program, int acquiredCredits, Date regDate) {
         this.program = program;
+        existingProgam = program.getCode();
         this.student_id = student_id;
         this.acquiredCredits = acquiredCredits;
         registrationDate = regDate;
+        existsInDB = false;
     }
     
     public void refreshCellData() {
@@ -49,6 +55,7 @@ public class Enrollment extends DatabaseTableClass {
 
     public void setAcquiredCredits(int acquiredCredits) {
         this.acquiredCredits = acquiredCredits;
+        needsUpdate = true;
     }
 
     public Date getRegistrationDate() {
@@ -57,6 +64,7 @@ public class Enrollment extends DatabaseTableClass {
 
     public void setRegistrationDate(Date registrationDate) {
         this.registrationDate = registrationDate;
+        needsUpdate = true;
     }
 
     public ExProgram getProgram() {
@@ -65,11 +73,46 @@ public class Enrollment extends DatabaseTableClass {
 
     public void setProgram(ExProgram program) {
         this.program = program;
+        needsUpdate = true;
     }
     
     @Override
     public String getDataAt(int cell) {
         return cellData[cell];
+    }
+
+    public boolean existsInDB() {
+        return existsInDB;
+    }
+
+    public void setExistsInDB(boolean existsInDB) {
+        this.existsInDB = existsInDB;
+    }
+
+    public boolean needsUpdate() {
+        return needsUpdate;
+    }
+
+    public void setNeedsUpdate(boolean needsUpdate) {
+        this.needsUpdate = needsUpdate;
+    }
+    
+    public boolean delete() {
+        try {
+            Connection connection = DBConnection.getConnection();
+            PreparedStatement deleteStat = connection.prepareStatement(
+                    "DELETE FROM enrollment "
+                            + "WHERE student_id=? AND ex_program=?");
+            deleteStat.setInt(1, student_id);
+            // use existing program code instead of potentially updated program
+            deleteStat.setInt(2, existingProgam);
+            deleteStat.executeUpdate();
+            deleteStat.close();
+        }
+        catch (Exception error) {
+            return false;
+        }
+        return true;        
     }
     
     public boolean save() {
@@ -83,6 +126,9 @@ public class Enrollment extends DatabaseTableClass {
             updateStat.setDate(2, registrationDate);
             updateStat.setInt(3, student_id);
             updateStat.setInt(4, program.getCode());
+            needsUpdate = false;
+            updateStat.executeUpdate();
+            updateStat.close();
         }
         catch (Exception error) {
             return false;

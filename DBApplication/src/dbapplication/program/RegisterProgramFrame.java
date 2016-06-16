@@ -153,7 +153,6 @@ public class RegisterProgramFrame extends JDialog {
             if (name.isEmpty()) {
                 name = null;
             }
-
             if (selectedInstitute == -1) {
                 JOptionPane.showMessageDialog(RegisterProgramFrame.this,
                         "Please choose an institute!",
@@ -165,19 +164,35 @@ public class RegisterProgramFrame extends JDialog {
             for (int i = 0; i < 5; i++) {
                 terms[i] = termBoxes[i].isSelected();
             }
+            if (terms == null) {
+                JOptionPane.showMessageDialog(RegisterProgramFrame.this,
+                        "Please select at least one term!",
+                        "No term was selected.", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            boolean result;
             if (internshipButton.isSelected()) {
-                Internship.insertNewInternship(selectedInstitute, name, terms, maxCredits);
+                result = Internship.insertNewInternship(selectedInstitute, name, terms, maxCredits);
             } else {
                 String study = studyField.getText();
                 if (study.isEmpty()) {
                     JOptionPane.showMessageDialog(RegisterProgramFrame.this,
-                            "Please choose a study.",
+                            "Please choose a study!",
                             "Study not selected.", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
                 studyType = (String) studyTypeBox.getSelectedItem();
-                StudyProgram.insertNewStudyProgram(name, terms, selectedInstitute, studyType, maxCredits, selectedStudy);
+                result = StudyProgram.insertNewStudyProgram(name, terms, selectedInstitute, studyType, maxCredits, selectedStudy);
             }
+            if (!result) {
+                JOptionPane.showMessageDialog(RegisterProgramFrame.this,
+                        "Registering a program failed.", "Error", JOptionPane.WARNING_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(RegisterProgramFrame.this,
+                        "Program was registered.", "Success", JOptionPane.PLAIN_MESSAGE);
+            }
+
         }
     }
 
