@@ -160,7 +160,7 @@ public class RegisterStudentFrame extends JDialog {
     private class SelectUniversityListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            SelectInstituteDialog dlg = new SelectInstituteDialog((JFrame)getOwner(), SelectInstituteDialog.InstituteType.University);
+            SelectInstituteDialog dlg = new SelectInstituteDialog((JFrame)getOwner(), Institute.InstituteType.University);
             dlg.setVisible(true);
             // pauses until dialog is closed
             Institute institute = dlg.getSelectedInstitute();

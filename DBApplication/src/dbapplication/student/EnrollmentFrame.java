@@ -27,6 +27,7 @@ public class EnrollmentFrame extends JDialog {
 
     private JTable enrollmentsTable;
     private Enrollment selectedEnrollment = null;
+    private Enrollment[] existingEnrollments;
     private DatabaseTableModel<Enrollment> tableModel;
     private JScrollPane tablePanel;
     private JEditField dateField, creditsField, programField;
@@ -38,6 +39,7 @@ public class EnrollmentFrame extends JDialog {
         super(owner, true);
         setupFrame();
         createComponents();
+        existingEnrollments = enrollments.toArray(new Enrollment[enrollments.size()]);
         this.student = student;
         tableModel.setItems(enrollments);
     }
@@ -186,6 +188,30 @@ public class EnrollmentFrame extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            ArrayList<Enrollment> enrollments = tableModel.getAll();
+            // save and add enrollments
+            for(int i = 0; i < enrollments.size();i ++) {
+                Enrollment enrollment = enrollments.get(i);
+                if(!enrollment.existsInDB()) {
+                    // insert new
+                    Enrollment.insertEnrollment(student.getStudentid(), 
+                            enrollment.getProgram().getCode(), 
+                            enrollment.getAcquiredCredits(), 
+                            enrollment.getRegistrationDate());
+                    enrollment.setExistsInDB(true);
+                }
+                else if(enrollment.needsUpdate()) {
+                    enrollment.save();
+                }              
+            }
+            // remove enrollments by comparing to new list
+            for(int i = 0; i < existingEnrollments.length; i ++) {
+                Enrollment enrollment = existingEnrollments[i];
+                if(!enrollments.contains(enrollment)) {
+                    enrollment.delete();
+                }           
+            }           
+            // close dialog
             EnrollmentFrame.this.dispose();
         }
     }

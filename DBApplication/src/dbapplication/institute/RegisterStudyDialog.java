@@ -1,8 +1,10 @@
 package dbapplication.institute;
 
 import dbapplication.JEditField;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -17,10 +19,17 @@ public class RegisterStudyDialog extends JDialog {
 
     public enum StudyType {Study}
     private final StudyType requiredType;
+    RegisterInstituteFrame Rg ;
     
     private JTextField codeField;
     private JTextField emailField;
     private JTextField numberField;
+   public static ArrayList<String> codearray = new ArrayList<>();
+     public static ArrayList<String> emailarray = new ArrayList<>();
+
+    
+      public static  ArrayList<String> numberarray = new ArrayList<>();
+        
     
     private JButton registerButton;
     
@@ -78,42 +87,79 @@ public class RegisterStudyDialog extends JDialog {
             if (code.isEmpty() || code.matches(".*\\d+.*")) {
                 JOptionPane.showMessageDialog(RegisterStudyDialog.this, 
                         "Code cannot be a number", "Incorrect input", JOptionPane.WARNING_MESSAGE);
-                
+                code = null;
             }
+            
+            
             email = emailField.getText();
-            if (email.isEmpty() || !email.contains("@")) {
+            if (!email.contains("@") && !email.isEmpty()) {
                 JOptionPane.showMessageDialog(RegisterStudyDialog.this, 
                         "Email must be in format of a@b.ccc", "Incorrect input", JOptionPane.WARNING_MESSAGE);
-                
+                email = null;
             }
-            nr = numberField.getText();
-            if (nr.isEmpty() || nr.matches("^\\D+$")) {
+            email = emailField.getText();
+            if (email.isEmpty()) {
+                JOptionPane.showMessageDialog(RegisterStudyDialog.this, 
+                        "Email must be intered ", "Incorrect input", JOptionPane.WARNING_MESSAGE);
+                email = null;
+            }
+            nr = numberField.getText();   
+            if (nr.matches("^\\D+$")) {
                 JOptionPane.showMessageDialog(RegisterStudyDialog.this, 
                         "Phone number cannot be a letter", "Incorrect input", JOptionPane.WARNING_MESSAGE);
-                return;
+               nr = null;
+            }
+            nr = numberField.getText();
+              if (nr.isEmpty()) {
+                JOptionPane.showMessageDialog(RegisterStudyDialog.this, 
+                        "Phone number must be entered", "Incorrect input", JOptionPane.WARNING_MESSAGE);
+               nr = null;
             }
             
-            
             if (e.getSource() == registerButton) {
+                
                 if (code == null || email == null || nr == null) {
                     JOptionPane.showMessageDialog(RegisterStudyDialog.this, 
                             "Registering of study failed", "Error", JOptionPane.WARNING_MESSAGE);
+                    
                 } 
                 else {
                     int register = JOptionPane.showOptionDialog(RegisterStudyDialog.this, 
                             "Study has been registerd", "Registerd", JOptionPane.PLAIN_MESSAGE,
                             JOptionPane.INFORMATION_MESSAGE, null, null, null);
-                    
-                        Study.insertStudy(code, nr, email);
-                        clearField();
-                        setVisible(false);
-                        dispose();
+                            
+                            
+                            numberarray.add(numberField.getText());
+                            emailarray.add(emailField.getText());
+                            codearray.add(codeField.getText());
+                            
+                            RegisterInstituteFrame.addStudiesbox(codeField.getText());
+                            clearField();
+                            setVisible(false);
+                            dispose();
                     }
+                
+                
                     
                 }
-            }
             
-        }
+            }
+    }
+        
+        
+        
+    public static ArrayList<String> getCodearray() {
+        return codearray;
+    }
+
+    public static ArrayList<String> getEmailarray() {
+        return emailarray;
+    }
+
+    public static ArrayList<String> getNumberarray() {
+        return numberarray;
+    }
+    
         
     }
    
