@@ -13,7 +13,7 @@ import java.util.ArrayList;
  */
 public class Internship extends ExProgram {
 
-    private int institute; //moeten maxCredit en name erbij? en term?
+    private int institute; 
 
     public Internship(ResultSet result) throws SQLException {
         super(result);
@@ -23,7 +23,7 @@ public class Internship extends ExProgram {
     public static ArrayList<ExProgram> searchProgram(String filter, String conditionColumn) {
         ArrayList<ExProgram> programs = new ArrayList<>();
         //wat er moet er gebeuren?
-        String sql = "SELECT EX.code, EX.name, I.org_id, IN.org_id \n"
+        String sql = "SELECT EX.code, EX.name, I.org_id, IN.`name` \n"
                 + "FROM ex_program EX JOIN internship I ON EX.code = I.code "
                 + "JOIN institute IN ON I.org_id = IN.org_id"
                 + "WHERE ex_program. `" + conditionColumn + "` LIKE ?\n"
