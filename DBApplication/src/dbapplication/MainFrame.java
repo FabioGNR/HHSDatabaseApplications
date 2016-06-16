@@ -34,9 +34,9 @@ public class MainFrame extends JFrame {
     }
 
     private void setupFrame() {
-        setSize(1920, 1080);
+        setSize(600, 600);
         setLayout(null);
-        setResizable(false);
+        setResizable(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("International office Exchange students systeem");
     }

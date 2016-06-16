@@ -13,11 +13,11 @@ import java.util.ArrayList;
  */
 public class Internship extends ExProgram {
 
-    private int institute; //moeten maxCredit en name erbij? en term?
+    private int instituteID;
 
     public Internship(ResultSet result) throws SQLException {
         super(result);
-        institute = result.getInt("org_id");
+        instituteID = result.getInt("org_id");
     }
 
     public static ArrayList<ExProgram> searchProgram(String filter, String conditionColumn) {
@@ -40,6 +40,7 @@ public class Internship extends ExProgram {
             statement.close();
         } catch (Exception ex) {
             ex.printStackTrace();
+            System.out.println("Search internship doesn't work.");
         }
         return programs;
     }
@@ -53,13 +54,14 @@ public class Internship extends ExProgram {
         String sql = "UPDATE internship SET org_id = ? WHERE code = ?";
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, institute);
+            statement.setInt(1, instituteID);
             statement.setInt(2, code);
             statement.executeUpdate();
             statement.close();
+            System.out.println("Updated internship.");
         } catch (Exception error) {
             System.out.println("Error: " + error.getMessage());
-            System.out.println("preparedstatement werkt niet :(");
+            System.out.println("Updating internship failed");
             return false;
         }
         return true;
@@ -73,17 +75,19 @@ public class Internship extends ExProgram {
             PreparedStatement statement = connect.prepareStatement(sql);
             statement.setInt(1, code);
             statement.executeUpdate();
-            System.out.println("PreparedStatement was succesful");
+            System.out.println("Deleted internship");
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
+            System.out.println("Deleting internship failed.");
             return false;
         }
         return super.delete();
     }
 
-    public static boolean insertNewInternship(int orgID, String name, boolean[] terms, int maxCredit) {
+    public static boolean insertNewInternship(String name, boolean[] terms,
+            int maxCredit, String description, int orgID) {
         Connection connect = DBConnection.getConnection();
-        int code = ExProgram.insertExProgram(name, terms, maxCredit);
+        int code = ExProgram.insertExProgram(name, terms, maxCredit, description);
         if (code <= -1) {
             return false;
         }
@@ -93,15 +97,17 @@ public class Internship extends ExProgram {
             statement.setInt(1, code);
             statement.setInt(2, orgID);
             statement.executeUpdate();
+            statement.close();
             System.out.println("Inserting new Internship was succesful");
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
+            System.out.println("Insert new internship failed.");
             return false;
         }
         return true;
     }
 
     public int getOrg_id() {
-        return institute;
+        return instituteID;
     }
 }
