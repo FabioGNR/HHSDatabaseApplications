@@ -246,9 +246,9 @@ public class RegisterProgramFrame extends JDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
 
-            SelectInstituteDialog.InstituteType type = internshipButton.isSelected()
-                    ? SelectInstituteDialog.InstituteType.Company
-                    : SelectInstituteDialog.InstituteType.University;
+            Institute.InstituteType type = internshipButton.isSelected()
+                    ? Institute.InstituteType.Company
+                    : Institute.InstituteType.University;
 
             SelectInstituteDialog instDlg = new SelectInstituteDialog((JFrame) getOwner(), type);
             instDlg.setVisible(true);
