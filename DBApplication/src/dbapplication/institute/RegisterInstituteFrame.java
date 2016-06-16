@@ -151,7 +151,7 @@ public class RegisterInstituteFrame extends JDialog {
             }
             else {
                showButton.setVisible(true);
-                Studiesbox.setVisible(true); 
+               Studiesbox.setVisible(true); 
     }
         }
     }

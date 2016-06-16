@@ -37,6 +37,7 @@ public class StudyFrame extends JDialog {
     private JButton deleteButton;
     private JButton okButton;
     private JButton addButton;
+    private JButton registerButton;
 
     private JLabel codeLabel;
     private JLabel numberLabel;
@@ -48,13 +49,15 @@ public class StudyFrame extends JDialog {
     private JTextField contactpersonField;
 
     private JComboBox searchConditionCombo;
+    private static JComboBox StudiesCombo;
+    
     private JTable resultTable;
     private JScrollPane resultPanel;
 
     private StudyTableModel resultModel;
     private Study selectedStudy = null;
     private final int instituteID;
-
+    
     public StudyFrame(Frame owner, int institute) {
         super(owner, true);
         instituteID = institute;
@@ -76,7 +79,7 @@ public class StudyFrame extends JDialog {
         SelectionListener select = new SelectionListener();
         searchListener search = new searchListener();
         CloseDialogListener close = new CloseDialogListener();
-        RegisterStudyListener register = new RegisterStudyListener();
+        AddStudyListener add = new AddStudyListener();
 
         searchField = new JSearchField();
         searchField.setBounds(20, 20, 180, 30);
@@ -161,16 +164,31 @@ public class StudyFrame extends JDialog {
         deleteButton.addActionListener(edit);
         add(deleteButton);
 
-        addButton = new JButton("Register Study");
-        addButton.setLocation(440, 220);
+        addButton = new JButton("Add Study");
+        addButton.setLocation(570, 220);
         addButton.setSize(120, 30);
-        addButton.addActionListener(register);
+        addButton.addActionListener(add);
         add(addButton);
+        
+        StudiesCombo = new JComboBox();
+        StudiesCombo.setLocation(440, 220);
+        StudiesCombo.setSize(120, 30);
+        add(StudiesCombo);
+        
+        registerButton = new JButton("Register study");
+        registerButton.setLocation(440, 270);
+        registerButton.setSize(90, 30);
+        registerButton.addActionListener(new RegisterStudyListener());
+        add(registerButton);
 
     }
 
     public Study getSelectedStudy() {
         return selectedStudy;
+    }
+    
+    public static void addStudiesbox(String text) {
+        StudiesCombo.addItem(text);
     }
 
     private void search(String filter, String conditionColumn) {
@@ -260,12 +278,21 @@ public class StudyFrame extends JDialog {
         }
     }
 
-    private class RegisterStudyListener implements ActionListener {
+    private class AddStudyListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
             RegisterStudyDialog rsf = new RegisterStudyDialog((JFrame) getOwner(), RegisterStudyDialog.StudyType.Study);
             rsf.setVisible(true);
         }
+    }
+    
+    private class RegisterStudyListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent ee) {
+            
+        }
+        
     }
 }
