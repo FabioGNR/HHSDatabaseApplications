@@ -33,14 +33,15 @@ public class Student extends DatabaseTableClass {
         
         public abstract String getValue();
     }
-    
+    protected ArrayList<Enrollment> enrollments;
     protected ArrayList<PhoneNumber> phoneNumbers;
     protected int studentid;
     protected Gender gender;
     protected String name, email;
     protected String[] cellData;
 
-    public Student(ResultSet result, ResultSet numbersSet) throws SQLException {
+    public Student(ResultSet result, ResultSet numbersSet, 
+            ResultSet enrollmentsSet) throws SQLException {
         studentid = result.getInt("student_id");
         name = result.getString("name");
         email = result.getString("email");
@@ -59,6 +60,12 @@ public class Student extends DatabaseTableClass {
                 phoneNumbers.add(new PhoneNumber(
                         numbersSet.getString("phonenr"), 
                         numbersSet.getBoolean("is_cell")));
+            }
+        }
+        enrollments = new ArrayList<>();
+        if(enrollmentsSet != null) {
+            while (enrollmentsSet.next()) {
+                enrollments.add(new Enrollment(enrollmentsSet, enrollmentsSet));
             }
         }
         refreshCellData();
@@ -119,6 +126,25 @@ public class Student extends DatabaseTableClass {
             return false;
         }
         return true;
+    }
+    
+    protected static ResultSet requestEnrollments(int student_id) {
+        Connection connection = DBConnection.getConnection();
+        try {
+            PreparedStatement statement = connection.prepareStatement(
+                "SELECT student_id, ex_program, acquired_credits, "
+                        + "registration_date, "
+                        + "P.`code`, P.`name`, P.max_credit FROM enrollment E "
+                        + "JOIN ex_program P ON P.`code` = ex_program WHERE student_id=?");
+            statement.setInt(1, student_id);
+            ResultSet set = statement.executeQuery();
+            statement.closeOnCompletion();
+            return set;
+        }
+        catch(Exception error) {
+            error.printStackTrace();
+            return null;
+        }
     }
     
     protected static ResultSet requestPhoneNumbers(int student_id) {
