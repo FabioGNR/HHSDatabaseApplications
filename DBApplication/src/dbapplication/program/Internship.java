@@ -15,8 +15,8 @@ public class Internship extends ExProgram {
 
     private int instituteID;
 
-    public Internship(ResultSet result) throws SQLException {
-        super(result);
+    public Internship(ResultSet result, ResultSet termSet) throws SQLException {
+        super(result, termSet);
         instituteID = result.getInt("org_id");
     }
 
@@ -35,9 +35,10 @@ public class Internship extends ExProgram {
             statement.setString(1, "%" + filter + "%");
             ResultSet results = statement.executeQuery();
             while (results.next()) {
-                programs.add(new Internship(results));
+                ResultSet termSet = requestTerms(results.getInt("code"));
+                programs.add(new Internship(results, termSet));
+                termSet.close();
             }
-            results.close();
             statement.close();
         } catch (Exception ex) {
             ex.printStackTrace();

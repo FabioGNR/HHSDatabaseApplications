@@ -16,8 +16,8 @@ public class StudyProgram extends ExProgram {
     private int org_id, studyType;
     private String study_code;
 
-    public StudyProgram(ResultSet result) throws SQLException {
-        super(result);
+    public StudyProgram(ResultSet result, ResultSet termSet) throws SQLException {
+        super(result, termSet);
         org_id = result.getInt("org_id");
         studyType = result.getInt("type");
         study_code = result.getString("study_code");
@@ -37,9 +37,10 @@ public class StudyProgram extends ExProgram {
             statement.setString(1, "%" + filter + "%");
             ResultSet results = statement.executeQuery();
             while (results.next()) {
-                programs.add(new StudyProgram(results));
+                ResultSet termSet = requestTerms(results.getInt("code"));
+                programs.add(new StudyProgram(results, termSet));
+                termSet.close();
             }
-            results.close();
             statement.close();
         } catch (Exception ex) {
             ex.printStackTrace();

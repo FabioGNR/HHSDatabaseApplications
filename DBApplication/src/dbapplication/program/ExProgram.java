@@ -23,31 +23,23 @@ public class ExProgram extends DatabaseTableClass {
     protected String[] cellData;
     protected boolean[] terms = new boolean[5];
 
-    public ExProgram(ResultSet result) throws SQLException {
+    public ExProgram(ResultSet result, ResultSet termSet) throws SQLException {
         name = result.getString("name");
         code = result.getInt("code");
         maxCredits = Integer.parseInt(result.getString("max_credit"));
         description = result.getString("description");
-//        terms = result.getBoolean("term"); 
         cellData = new String[]{name, maxCredits + " ECS", description};
-    }
-
-    public static ArrayList<ExProgram> searchExProgram(String searchFilter, String conditionColumn) {
-        ArrayList<ExProgram> program = new ArrayList<>();
-        String sql = "SELECT * FROM ex_program WHERE `" + conditionColumn + "` LIKE ?";
-        try {
-            PreparedStatement state = DBConnection.getConnection().prepareStatement(sql);
-            state.setString(1, "%" + searchFilter + "%");
-            ResultSet result = state.executeQuery();
-            while (result.next()) {
-                program.add(new ExProgram(result));
+        if(termSet != null) {
+            while(termSet.next()) {
+                // convert 1-5 to index ( 0-4 )
+                int term = Integer.parseInt(termSet.getString("term"))-1;
+                terms[term] = true;
             }
-            result.close();
-            state.close();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-        return program;
+    }
+    
+    public ExProgram(ResultSet result) throws SQLException {
+        this(result, null);
     }
 
     protected static int insertExProgram(String name, boolean[] terms, int maxCredits, String description) {
@@ -85,6 +77,22 @@ public class ExProgram extends DatabaseTableClass {
         return code;
     }
 
+    protected static ResultSet requestTerms(int code) {
+        Connection connection = DBConnection.getConnection();
+        try {
+            PreparedStatement stat = connection.prepareStatement(
+                "SELECT code, term FROM ex_program_term WHERE code=?");
+            stat.setInt(1, code);
+            ResultSet set = stat.executeQuery();
+            stat.closeOnCompletion();
+            return set;
+        }
+        catch (Exception error) {
+            error.printStackTrace();
+            return null;
+        }
+    }
+    
     public boolean update() {
         Connection connect = DBConnection.getConnection();
         String sql = "UPDATE ex_program SET name = ?, max_credit = ?,"
