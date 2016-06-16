@@ -45,7 +45,7 @@ public class RegisterStudentFrame extends JDialog {
         setResizable(false);
         setLayout(null);
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        setTitle("Register Institute");
+        setTitle("Register Student");
         addWindowListener(new CloseListener());
     }
 

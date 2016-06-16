@@ -31,6 +31,8 @@ public class RegisterInstituteFrame extends JDialog {
     private JRadioButton noRadio;
     private JLabel isBusinessLabel;
 
+    private String selectedStudy;
+
     public RegisterInstituteFrame(JFrame owner) {
         super(owner, true);
         setupFrame();
@@ -69,6 +71,7 @@ public class RegisterInstituteFrame extends JDialog {
         addressField.setSize(180, 30);
         add(addressField);
 
+        // de buttons:
         AddButtonListener lis = new AddButtonListener();
         registerButton = new JButton("Register");
         registerButton.setLocation(400, 180);
@@ -126,13 +129,6 @@ public class RegisterInstituteFrame extends JDialog {
         }
     }
 
-    public void clearField() {
-        cityField.setText("");
-        nameField.setText("");
-        countryField.setText("");
-        addressField.setText("");
-    }
-
     private class AddButtonListener implements ActionListener {
 
         @Override
@@ -172,12 +168,8 @@ public class RegisterInstituteFrame extends JDialog {
                     if (register == JOptionPane.OK_OPTION) {
 
                         is_business = yesRadio.isSelected() ? 1 : 0;
-                        Institute.insertInstitute(city, name, country, address, is_business);
-                        clearField();
-                        
-                        setVisible(false);
-                        dispose();
-
+                        int org_id = Institute.insertInstitute(city, name, country, address, is_business);
+                        // add study
                     }
                 }
             }
