@@ -46,16 +46,17 @@ public class Study {
     }
 
     public static void insertStudy(String code,
-            String email, String phone_nr) {
+            String email, String phone_nr , int org_id) {
         Connection connection = DBConnection.getConnection();
         try {
             PreparedStatement statement = connection.prepareStatement(
                     "INSERT INTO study "
-                    + "(code, email, phone_nr) "
-                    + "VALUES (?,?,?)");
+                    + "(code, email, phone_nr ,org_id) "
+                    + "VALUES (?,?,?,?)");
             statement.setString(1, code);
             statement.setString(2, email);
             statement.setString(3, phone_nr);
+             statement.setInt(4, org_id);
 
             statement.executeUpdate();
             statement.close();

@@ -3,8 +3,10 @@ package dbapplication.institute;
 import dbapplication.JEditField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -26,10 +28,18 @@ public class RegisterInstituteFrame extends JDialog {
     private JButton registerButton;
 
     private JButton showButton;
+    RegisterStudyDialog s = null;
+    private Study study;
+    private static JComboBox Studiesbox;
 
     private JRadioButton yesRadio;
     private JRadioButton noRadio;
     private JLabel isBusinessLabel;
+    int org_idreturn;
+
+    public int getOrg_idreturn() {
+        return org_idreturn;
+    }
 
     private String selectedStudy;
 
@@ -100,13 +110,24 @@ public class RegisterInstituteFrame extends JDialog {
         group.add(yesRadio);
         group.add(noRadio);
 
-        showButton = new JButton("Register study");
-        showButton.setLocation(20, 220);
+        showButton = new JButton("Add Studies");
+        showButton.setLocation(180, 220);
         showButton.setSize(120, 30);
         add(showButton);
         showButton.addActionListener(studyLis);
         showButton.setVisible(false);
 
+        Studiesbox = new JComboBox();
+        Studiesbox.setLocation(20, 220);
+        Studiesbox.setSize(150, 30);
+        Studiesbox.setVisible(false);
+
+        add(Studiesbox);
+
+    }
+
+    public static void addStudiesbox(String text) {
+        Studiesbox.addItem(text);
     }
 
     private class RegisterStudyListener implements ActionListener {
@@ -126,6 +147,7 @@ public class RegisterInstituteFrame extends JDialog {
         public void actionPerformed(ActionEvent e) {
             boolean showExchangeFields = noRadio.isSelected();
             showButton.setVisible(showExchangeFields);
+            Studiesbox.setVisible(true);
         }
     }
 
@@ -169,15 +191,20 @@ public class RegisterInstituteFrame extends JDialog {
             if (event.getSource() == registerButton) {
                 if (city == null || address == null || name == null || country == null) {
                     JOptionPane.showMessageDialog(RegisterInstituteFrame.this, "Registering of institute failed", "Error", JOptionPane.WARNING_MESSAGE);
+                    
                 } else {
                     int register = JOptionPane.showOptionDialog(RegisterInstituteFrame.this, "Institute has been Registerd", "Registerd", JOptionPane.PLAIN_MESSAGE,
                             JOptionPane.INFORMATION_MESSAGE, null, null, null);
                     if (register == JOptionPane.OK_OPTION) {
 
-                        is_business = yesRadio.isSelected() ? 1 : 0;
-                        int org_id = Institute.insertInstitute(city, name, country, address, is_business);
+                        is_business = yesRadio.isSelected() ? 0 : 1;
+                        org_idreturn = Institute.insertInstitute(city, name, country, address, is_business);
+
+                        for (int i = 0; i < RegisterStudyDialog.codearray.size(); i++) {
+                            Study.insertStudy(RegisterStudyDialog.codearray.get(i), RegisterStudyDialog.emailarray.get(i), RegisterStudyDialog.numberarray.get(i), org_idreturn);
+                        }
+                        RegisterStudyDialog.codearray.clear();
                         clearField();
-                        
                         setVisible(false);
                         dispose();
 
