@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
@@ -68,26 +69,32 @@ public class Institute {
         return institute;
     }
 
-    public static void insertInstitute(String city,
+    public static int insertInstitute(String city,
             String name, String country, String address, int is_business) {
         Connection connection = DBConnection.getConnection();
         try {
             PreparedStatement statement = connection.prepareStatement(
                     "INSERT INTO institute "
                     + "(city, name, country, address, is_business) "
-                    + "VALUES (?,?,?,?,?)");
+                    + "VALUES (?,?,?,?,?)",
+                    Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, city);
             statement.setString(2, name);
             statement.setString(3, country);
             statement.setString(4, address);
             statement.setInt(5, is_business);
             statement.executeUpdate();
+            ResultSet generatedSet = statement.getGeneratedKeys();
+            generatedSet.next();
+            int id = generatedSet.getInt(1);
             statement.close();
             System.out.println("preparedstatement werkt");
+            return id;
         } catch (SQLException error) {
             System.out.println("Error: " + error.getMessage());
             System.out.println("preparedstatement werkt niet");
         }
+        return -1;
     }
 
     public boolean updateInstitute(String city,
@@ -121,9 +128,9 @@ public class Institute {
         Connection connection = DBConnection.getConnection();
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "DELETE FROM institute WHERE name = ?");
+                    "DELETE FROM institute WHERE org_id = ?");
 
-            statement.setString(1, name);
+            statement.setInt(1, org_id);
             statement.executeUpdate();
             statement.close();
 

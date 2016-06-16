@@ -70,6 +70,10 @@ public class Student extends DatabaseTableClass {
         }
         refreshCellData();
     }
+
+    public ArrayList<Enrollment> getEnrollments() {
+        return enrollments;
+    }
     
     protected static boolean insertNewStudent(int student_id, String name, 
             Gender gender, String email, ArrayList<PhoneNumber> numbers) {

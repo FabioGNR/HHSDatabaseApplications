@@ -118,6 +118,7 @@ public class SearchStudentFrame extends JDialog {
 
         enrollmentsButton = new JButton("Enrollments");
         enrollmentsButton.setBounds(450, 260, 130, 30);
+        enrollmentsButton.addActionListener(new EnrollmentsListener());
         add(enrollmentsButton);
         
         hhsStudyCombo = new JComboBox(HHSStudent.LocalStudy.values());
@@ -234,7 +235,8 @@ public class SearchStudentFrame extends JDialog {
         public void actionPerformed(ActionEvent e) {
             if(selectedStudent == null) return;
             EnrollmentFrame frame = new EnrollmentFrame(
-                (JFrame)SearchStudentFrame.this.getOwner(), new ArrayList<>(), 
+                (JFrame)SearchStudentFrame.this.getOwner(), 
+                    selectedStudent.getEnrollments(), 
                     selectedStudent);
             frame.setVisible(true);
         }
