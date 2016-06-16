@@ -202,7 +202,7 @@ public class RegisterInstituteFrame extends JDialog {
                             JOptionPane.INFORMATION_MESSAGE, null, null, null);
                     if (register == JOptionPane.OK_OPTION) {
 
-                        is_business = yesRadio.isSelected() ? 0 : 1;
+                        is_business = yesRadio.isSelected() ? 1 : 0;
                         org_idreturn = Institute.insertInstitute(city, name, country, address, is_business);
 
                         for (int i = 0; i < RegisterStudyDialog.codearray.size(); i++) {
