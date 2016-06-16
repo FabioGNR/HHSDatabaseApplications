@@ -13,30 +13,30 @@ import java.util.ArrayList;
  */
 public class StudyProgram extends ExProgram {
 
-    private String org_id, studyType, study_code, maxCredit;
+    private int org_id;
+    private String study_code, studyType;
 
     public StudyProgram(ResultSet result) throws SQLException {
         super(result);
-        org_id = result.getString("org_id");
+        org_id = result.getInt("org_id");
         studyType = result.getString("type");
         study_code = result.getString("study_code");
-        maxCredit = result.getString("max_credit");
     }
 
-    public static ArrayList<ExProgram> searchStudyProgram(String filter, String conditionColumn){
+    public static ArrayList<ExProgram> searchStudyProgram(String filter, String conditionColumn) {
         ArrayList<ExProgram> programs = new ArrayList<>();
         String sql = "SELECT EX.code, EX.name, SP.org_id, I.org_id \n"
-                + "FROM ex_program EX JOIN studyProgram SP ON EX.code = SP.code " 
+                + "FROM ex_program EX JOIN studyProgram SP ON EX.code = SP.code "
                 + "JOIN I ON I.org_id = SP.org_id"
                 + "WHERE ex_program. `" + conditionColumn + "` LIKE ?\n"
                 + "ORDER BY ex_program. `name` asc";
-        try{
+        try {
             PreparedStatement statement = DBConnection.getConnection().prepareStatement(
                     sql);
             statement.setString(1, "%" + filter + "%");
             ResultSet results = statement.executeQuery();
             while (results.next()) {
-                programs.add(new Internship(results));
+                programs.add(new StudyProgram(results));
             }
             results.close();
             statement.close();
@@ -44,15 +44,38 @@ public class StudyProgram extends ExProgram {
             ex.printStackTrace();
         }
         return programs;
+    }
+
+    @Override
+    public boolean update() {
+        if (!super.update()) {
+            return false;
         }
-    
+        Connection connection = DBConnection.getConnection();
+        String sql = "UPDATE internship SET org_id = ?, type = ?, study_code = ? WHERE code ?";
+        try {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, org_id);
+            statement.setString(2, studyType);
+            statement.setString(3, study_code);
+            statement.setInt(4, exProcode);
+            statement.executeUpdate();
+            statement.close();
+        } catch (Exception error) {
+            System.out.println("Error: " + error.getMessage());
+            System.out.println("preparedstatement werkt niet :(");
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public boolean delete() {
         Connection connect = DBConnection.getConnection();
         String sql = "DELETE FROM study_program WHERE code = ?";
         try {
             PreparedStatement statement = connect.prepareStatement(sql);
-            statement.setString(1, exPcode);
+            statement.setInt(1, exProcode);
             statement.executeUpdate();
             System.out.println("Study Program was succesfully deleted.");
         } catch (SQLException e) {
@@ -63,18 +86,17 @@ public class StudyProgram extends ExProgram {
     }
 
     public static boolean insertNewStudyProgram(String name, boolean[] terms,
-            String org_id, String studyType, int maxCredits, String studyCode) {
+            int org_id, String studyType, int maxCredits, String studyCode) {
         Connection connect = DBConnection.getConnection();
         int code = ExProgram.insertExProgram(name, terms, maxCredits);
         if (code <= -1) {
             return false;
         }
         String sql = "INSERT INTO study_program (code, org_id, type, study_code) VALUES (?,?,?,?)";
-        //studyCode is een name van study bijv hbo ict.
         try {
             PreparedStatement statement = connect.prepareStatement(sql);
             statement.setInt(1, code);
-            statement.setString(2, org_id);
+            statement.setInt(2, org_id);
             statement.setString(3, studyType);
             statement.setString(4, studyCode);
             statement.executeUpdate();
@@ -86,7 +108,7 @@ public class StudyProgram extends ExProgram {
         return true;
     }
 
-    public void setOrg_id(String org_id) {
+    public void setOrg_id(int org_id) {
         this.org_id = org_id;
     }
 
@@ -98,11 +120,7 @@ public class StudyProgram extends ExProgram {
         this.study_code = study_code;
     }
 
-    public void setMaxCredit(String maxCredit) {
-        this.maxCredit = maxCredit;
-    }
-
-    public String getOrg_id() {
+    public int getOrg_id() {
         return org_id;
     }
 
@@ -114,7 +132,4 @@ public class StudyProgram extends ExProgram {
         return study_code;
     }
 
-    public String getMaxCredit() {
-        return maxCredit;
-    }
 }

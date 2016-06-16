@@ -153,31 +153,30 @@ public class RegisterProgramFrame extends JDialog {
             if (name.isEmpty()) {
                 name = null;
             }
-            String org_id = instituteField.getText();
-            if (org_id.isEmpty()) {
+
+            if (selectedInstitute == -1) {
                 JOptionPane.showMessageDialog(RegisterProgramFrame.this,
-                        "Please choose an institute.",
+                        "Please choose an institute!",
                         "Institute not selected.", JOptionPane.WARNING_MESSAGE);
-                org_id = null;
+                return;
             }
             maxCredits = (maxCreditBox.getSelectedIndex() + 1) * 15;
 
             for (int i = 0; i < 5; i++) {
                 terms[i] = termBoxes[i].isSelected();
             }
-
             if (internshipButton.isSelected()) {
-                Internship.insertNewInternship(org_id, name, terms, maxCredits);
+                Internship.insertNewInternship(selectedInstitute, name, terms, maxCredits);
             } else {
                 String study = studyField.getText();
                 if (study.isEmpty()) {
                     JOptionPane.showMessageDialog(RegisterProgramFrame.this,
                             "Please choose a study.",
                             "Study not selected.", JOptionPane.WARNING_MESSAGE);
-                    study = null;
+                    return;
                 }
                 studyType = (String) studyTypeBox.getSelectedItem();
-                StudyProgram.insertNewStudyProgram(name, terms, org_id, studyType, maxCredits, selectedStudy);
+                StudyProgram.insertNewStudyProgram(name, terms, selectedInstitute, studyType, maxCredits, selectedStudy);
             }
         }
     }

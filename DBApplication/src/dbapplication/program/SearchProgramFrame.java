@@ -1,5 +1,7 @@
 package dbapplication.program;
 
+import dbapplication.DatabaseTableClass;
+import dbapplication.DatabaseTableModel;
 import dbapplication.JEditField;
 import dbapplication.JSearchField;
 import dbapplication.SearchFilter;
@@ -29,7 +31,7 @@ public class SearchProgramFrame extends JDialog {
     private String[] programType = {INTERSHIP_CARD_ID, STUDYPROGRAM_CARD_ID};
     private JTable resultTable;
     private JScrollPane resultPanel;
-    private ProgramTableModel resultModel;
+    private DatabaseTableModel<ExProgram> resultModel;
     private JLabel selectedProgramLabel, programCodeLabel;
     private ExProgram selectedProgram = null;
     private Internship internshipSelected = null;
@@ -40,7 +42,6 @@ public class SearchProgramFrame extends JDialog {
         super(owner, true);
         setupFrame();
         createComponents();
-//        search("", "name");
     }
 
     private void setupFrame() {
@@ -82,7 +83,7 @@ public class SearchProgramFrame extends JDialog {
 
         resultTable = new JTable();
         resultTable.setBounds(0, 0, 555, 300);
-        resultModel = new ProgramTableModel();
+        resultModel = new DatabaseTableModel<>(new String[]{"Name", "Institute", "Max Credit"});
         resultTable.setModel(resultModel);
         resultTable.setPreferredScrollableViewportSize(new Dimension(400, 300));
         resultTable.setFillsViewportHeight(true);
@@ -102,7 +103,7 @@ public class SearchProgramFrame extends JDialog {
 
         //maak een button om org name te zoeken
         ActionListener instituteButtonListener = new SelectInstitute();
-        instituteField = new JEditField("Organisation");
+        instituteField = new JEditField("Institute ID");
         instituteField.setBounds(600, 100, 100, 30);
         add(instituteField);
         instituteButton = new JButton("...");
@@ -111,7 +112,7 @@ public class SearchProgramFrame extends JDialog {
         add(instituteButton);
 
         //maak een combobox van
-        studyTypeField = new JEditField("Study Type");
+        studyTypeField = new JEditField("Type");
         studyTypeField.setBounds(600, 140, 100, 30);
         add(studyTypeField);
         studyTypeField.setVisible(false);
@@ -121,7 +122,7 @@ public class SearchProgramFrame extends JDialog {
         add(studyTypeButton);
         studyTypeButton.setVisible(false);
 
-        studyField = new JEditField("Study Code");
+        studyField = new JEditField("Study ID");
         studyField.setBounds(600, 180, 150, 30);
         add(studyField);
         studyField.setVisible(false);
@@ -139,14 +140,14 @@ public class SearchProgramFrame extends JDialog {
 
     private void search(String filter, String conditionColumn, ExProgram.ProgramType type) {
         ArrayList<ExProgram> program;
-        
-        if(type == ExProgram.ProgramType.Internship){
+
+        if (type == ExProgram.ProgramType.Internship) {
             program = Internship.searchProgram(filter, conditionColumn);
-        }else{
+        } else {
             program = StudyProgram.searchStudyProgram(filter, conditionColumn);
         }
-        resultModel.setResults(program);
-        
+        resultModel.setItems(program);
+
     }
 
     class ProgramEditListener implements ActionListener {
@@ -182,9 +183,9 @@ public class SearchProgramFrame extends JDialog {
             if (selectedRow < 0) {
                 return;
             }
-            selectedProgram = resultModel.getProgramAt(selectedRow);
-            selectedProgramLabel.setText("Selected program: " + selectedProgram.getExPcode());
-            nameField.setText(selectedProgram.getName());
+//            selectedProgram = resultModel.getProgramAt(selectedRow);
+//            selectedProgramLabel.setText("Selected program: " + selectedProgram.getExPcode());
+//            nameField.setText(selectedProgram.getName());
 //            orgIDField.setText(); 
 //            studyCodeField.setText();
 
@@ -203,7 +204,7 @@ public class SearchProgramFrame extends JDialog {
                 int selectedIndex = studyProgramBox.getSelectedIndex();
                 selectedFilter = (SearchFilter) studyProgramBox.getItemAt(selectedIndex);
             }
-//            search(searchField.getText(), selectedFilter.getColumnName());
+            search(searchField.getText(), selectedFilter.getColumnName());
         }
     }
 
@@ -233,7 +234,7 @@ public class SearchProgramFrame extends JDialog {
             Institute institute = instituteDlg.getSelectedInstitute();
             if (institute != null) {
                 instituteField.setText(institute.getName());
-                selectedInstitute = institute.getOrgid();
+//                selectedInstitute = institute.getOrgid();
             }
         }
 

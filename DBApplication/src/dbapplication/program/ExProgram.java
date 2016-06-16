@@ -1,6 +1,7 @@
 package dbapplication.program;
 
 import dbapplication.DBConnection;
+import dbapplication.DatabaseTableClass;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,21 +13,22 @@ import java.util.ArrayList;
  *
  * @author RLH
  */
-public class ExProgram {
+public class ExProgram extends DatabaseTableClass {
 
     enum ProgramType {
         Internship, StudyProgram
     }
-    protected String name, exPcode;
+    protected String name;
+    protected int exProcode;
     protected int maxCredits;
     protected String[] cellData;
     protected boolean[] terms = new boolean[5];
 
     public ExProgram(ResultSet result) throws SQLException {
         name = result.getString("name");
-        exPcode = result.getString("code");
+        exProcode = result.getInt("code");
 //        maxCredits = result.getInt("max_credits"); // dit zorgt voor problemen bij het tonen van de tabel
-        cellData = new String[]{exPcode, name, maxCredits+ " ECS"};
+        refreshCellData();
     }
 
     public static ArrayList<ExProgram> searchExProgram(String searchFilter, String conditionColumn) {
@@ -80,13 +82,14 @@ public class ExProgram {
         return code;
     }
 
-    public boolean update(String name, String maxCredits) {
+    public boolean update() {
         Connection connect = DBConnection.getConnection();
         String sql = "UPDATE ex_program SET name = ?, max_credits = ?";
+        // update term needed?
         try {
             PreparedStatement updateStatement = connect.prepareStatement(sql);
             updateStatement.setString(1, name);
-            updateStatement.setString(2, maxCredits);
+            updateStatement.setInt(2, maxCredits);
             updateStatement.executeUpdate();
             updateStatement.close();
         } catch (SQLException e) {
@@ -101,7 +104,7 @@ public class ExProgram {
         String sql = "DELETE FROM ex_program WHERE code = ?";
         try {
             PreparedStatement statement = connect.prepareStatement(sql);
-            statement.setString(1, exPcode);
+            statement.setInt(1, exProcode);
             statement.executeUpdate();
             System.out.println("PreparedStatement was succesful");
         } catch (SQLException error) {
@@ -111,16 +114,37 @@ public class ExProgram {
         return true;
     }
 
+    public void refreshCellData() {
+        String programID = String.format("%08d", exProcode);
+        cellData = new String[]{programID, name, maxCredits + " ECS"};
+    }
+
     public String getName() {
         return name;
     }
 
-    public String getExPcode() {
-        return exPcode;
+    public int getExPcode() {
+        return exProcode;
     }
 
+    @Override
     public String getDataAt(int cell) {
         return cellData[cell];
     }
 
+    public int getMaxCredits() {
+        return maxCredits;
+    }
+
+    public void setMaxCredits(int maxCredits) {
+        this.maxCredits = maxCredits;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setExProcode(int exProcode) {
+        this.exProcode = exProcode;
+    }
 }
