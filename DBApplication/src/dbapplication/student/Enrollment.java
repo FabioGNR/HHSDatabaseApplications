@@ -80,7 +80,7 @@ public class Enrollment extends DatabaseTableClass {
             updateStat.setInt(1, acquiredCredits);
             updateStat.setDate(2, registrationDate);
             updateStat.setInt(3, student_id);
-            updateStat.setInt(4, program.getExPcode());
+            updateStat.setInt(4, program.getCode());
         }
         catch (Exception error) {
             return false;

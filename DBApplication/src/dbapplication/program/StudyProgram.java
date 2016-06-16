@@ -58,7 +58,7 @@ public class StudyProgram extends ExProgram {
             statement.setInt(1, org_id);
             statement.setString(2, studyType);
             statement.setString(3, study_code);
-            statement.setInt(4, exProcode);
+            statement.setInt(4, code);
             statement.executeUpdate();
             statement.close();
         } catch (Exception error) {
@@ -75,7 +75,7 @@ public class StudyProgram extends ExProgram {
         String sql = "DELETE FROM study_program WHERE code = ?";
         try {
             PreparedStatement statement = connect.prepareStatement(sql);
-            statement.setInt(1, exProcode);
+            statement.setInt(1, code);
             statement.executeUpdate();
             System.out.println("Study Program was succesfully deleted.");
         } catch (SQLException e) {

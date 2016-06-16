@@ -117,7 +117,7 @@ public class EnrollStudentFrame extends JDialog {
                 return;
             }
             if(!Enrollment.insertEnrollment(student.getStudentid(), 
-                    selectedProgram.getExPcode(), credits, date)) {
+                    selectedProgram.getCode(), credits, date)) {
                 JOptionPane.showMessageDialog(EnrollStudentFrame.this.getOwner(), 
                         "Failed to enroll student for program", 
                         "Error", JOptionPane.ERROR_MESSAGE);
