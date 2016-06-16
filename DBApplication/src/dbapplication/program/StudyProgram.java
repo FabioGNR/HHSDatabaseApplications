@@ -86,9 +86,9 @@ public class StudyProgram extends ExProgram {
     }
 
     public static boolean insertNewStudyProgram(String name, boolean[] terms,
-            int org_id, String studyType, int maxCredits, String studyCode) {
+            int org_id, String studyType, int maxCredit, String studyCode) {
         Connection connect = DBConnection.getConnection();
-        int code = ExProgram.insertExProgram(name, terms, maxCredits);
+        int code = ExProgram.insertExProgram(name, terms, maxCredit);
         if (code <= -1) {
             return false;
         }
