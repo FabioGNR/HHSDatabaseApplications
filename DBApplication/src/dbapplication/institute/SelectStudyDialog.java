@@ -39,17 +39,19 @@ public class SelectStudyDialog extends JDialog {
 
     private StudyTableModel resultModel;
     private Study selectedStudy = null;
+    private final int instituteID;
 
-    public SelectStudyDialog(Frame owner) {
+    public SelectStudyDialog(Frame owner, int institute) {
         super(owner, true);
         setupFrame();
         createComponents();
+        instituteID = institute;
         // fill JTable searching on empty filter
         search("", "code");
     }
 
     private void setupFrame() {
-        setSize(700, 500);
+        setSize(430, 500);
         setResizable(false);
         setLayout(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -79,7 +81,7 @@ public class SelectStudyDialog extends JDialog {
         add(searchConditionCombo);
 
         selectedStudyLabel = new JLabel("Selected study:");
-        selectedStudyLabel.setLocation(440, 20);
+        selectedStudyLabel.setLocation(20, 370);
         selectedStudyLabel.setSize(200, 30);
         add(selectedStudyLabel);
 
@@ -115,7 +117,8 @@ public class SelectStudyDialog extends JDialog {
     }
 
     private void search(String filter, String conditionColumn) {
-        ArrayList<dbapplication.institute.Study> study = dbapplication.institute.Study.searchStudy(filter, conditionColumn);
+        ArrayList<Study> study = Study.searchStudy(filter, 
+                conditionColumn, instituteID);
         resultModel.setResults(study);
     }
 

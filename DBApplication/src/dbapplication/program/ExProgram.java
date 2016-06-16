@@ -16,7 +16,13 @@ import java.util.ArrayList;
 public class ExProgram extends DatabaseTableClass {
 
     enum ProgramType {
-        Internship, StudyProgram
+        Internship
+        ,StudyProgram {
+            @Override
+            public String toString() {
+                return "Study Program";
+            }
+        }
     }
     protected String name;
     protected int maxCredits, code;
@@ -25,27 +31,9 @@ public class ExProgram extends DatabaseTableClass {
 
     public ExProgram(ResultSet result) throws SQLException {
         name = result.getString("name");
-        code = result.getInt("code");       
+        code = result.getInt("code");          
         maxCredits = result.getInt("max_credit"); // dit zorgt voor problemen bij het tonen van de tabel
         cellData = new String[]{name, maxCredits + " ECS"};
-    }
-
-    public static ArrayList<ExProgram> searchExProgram(String searchFilter, String conditionColumn) {
-        ArrayList<ExProgram> program = new ArrayList<>();
-        String sql = "SELECT * FROM ex_program WHERE `" + conditionColumn + "` LIKE ?";
-        try {
-            PreparedStatement state = DBConnection.getConnection().prepareStatement(sql);
-            state.setString(1, "%" + searchFilter + "%");
-            ResultSet result = state.executeQuery();
-            while (result.next()) {
-                program.add(new ExProgram(result));
-            }
-            result.close();
-            state.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return program;
     }
 
     protected static int insertExProgram(String name, boolean[] terms, int maxCredits) {

@@ -127,7 +127,9 @@ public class EnrollStudentFrame extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            SelectStudyDialog dlg = new SelectStudyDialog((JFrame) getOwner());
+            if(selectedInstitute == null) return;
+            SelectStudyDialog dlg = new SelectStudyDialog(
+                    (JFrame) getOwner(), selectedInstitute.getOrgid());
             dlg.setVisible(true);
             // pauses until dialog is closed
             Study study = dlg.getSelectedStudy();

@@ -23,7 +23,7 @@ public class Internship extends ExProgram {
     public static ArrayList<ExProgram> searchProgram(String filter, String conditionColumn) {
         ArrayList<ExProgram> programs = new ArrayList<>();
         //wat er moet er gebeuren?
-        String sql = "SELECT EX.code, EX.max_credit, EX.name, I.org_id, IT.`name` \n"
+        String sql = "SELECT EX.code, EX.max_credit, EX.name, I.org_id, IT.`name` as inst_name \n"
                 + "FROM ex_program EX JOIN internship I ON EX.code = I.code "
                 + "JOIN institute IT ON I.org_id = IT.org_id "
                 + "WHERE EX.`" + conditionColumn + "` LIKE ?\n"
