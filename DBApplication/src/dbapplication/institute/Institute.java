@@ -15,7 +15,7 @@ public class Institute {
 
     private int org_id;
     private boolean is_business;
-    private String  city, name, country, address;
+    private String city, name, country, address;
     private String[] cellData;
 
     public Institute(ResultSet result) throws SQLException {
@@ -48,7 +48,7 @@ public class Institute {
         return institute;
     }
 
-    public static ArrayList<Institute> searchInstituteC(String filter, String conditionColumn) {
+    public static ArrayList<Institute> searchInstituteUniversity(String filter, String conditionColumn) {
         ArrayList<Institute> institute = new ArrayList<>();
         try {
             // column names can't be set dynamically with preparedstatement

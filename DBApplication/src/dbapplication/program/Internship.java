@@ -13,22 +13,22 @@ import java.util.ArrayList;
  */
 public class Internship extends ExProgram {
 
-    private String exProgram, org_id; //moeten maxCredit en name erbij? en term?
+    private int institute; //moeten maxCredit en name erbij? en term?
 
     public Internship(ResultSet result) throws SQLException {
         super(result);
-        exProgram = result.getString("code");
-        org_id = result.getString("org_id");
+        institute = result.getInt("org_id");
     }
-    
-    public static ArrayList<ExProgram> searchProgram(String filter, String conditionColumn){
-        ArrayList<ExProgram> programs = new ArrayList<>();//wat er moet er gebeuren?
+
+    public static ArrayList<ExProgram> searchProgram(String filter, String conditionColumn) {
+        ArrayList<ExProgram> programs = new ArrayList<>();
+        //wat er moet er gebeuren?
         String sql = "SELECT EX.code, EX.name, I.org_id, IN.org_id \n"
-                + "FROM ex_program EX JOIN internship I ON EX.code = I.code " 
+                + "FROM ex_program EX JOIN internship I ON EX.code = I.code "
                 + "JOIN institute IN ON I.org_id = IN.org_id"
                 + "WHERE ex_program. `" + conditionColumn + "` LIKE ?\n"
-                + "ORDER BY ex_program. `name` asc";
-        try{
+                + "ORDER BY ex_program. `name` ASC";
+        try {
             PreparedStatement statement = DBConnection.getConnection().prepareStatement(
                     sql);
             statement.setString(1, "%" + filter + "%");
@@ -42,21 +42,36 @@ public class Internship extends ExProgram {
             ex.printStackTrace();
         }
         return programs;
-        }
-    
+    }
 
-//    @Override
-//    public boolean update(){
-//        
-//    }
-    
+    @Override
+    public boolean update() {
+        if (!super.update()) {
+            return false;
+        }
+        Connection connection = DBConnection.getConnection();
+        String sql = "UPDATE internship SET org_id = ? WHERE code = ?";
+        try {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, institute);
+            statement.setInt(1, exProcode);
+            statement.executeUpdate();
+            statement.close();
+        } catch (Exception error) {
+            System.out.println("Error: " + error.getMessage());
+            System.out.println("preparedstatement werkt niet :(");
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public boolean delete() {
         Connection connect = DBConnection.getConnection();
         String sql = "DELETE FROM internship WHERE code = ?";
         try {
             PreparedStatement statement = connect.prepareStatement(sql);
-            statement.setString(1, exPcode);
+            statement.setInt(1, exProcode);
             statement.executeUpdate();
             System.out.println("PreparedStatement was succesful");
         } catch (SQLException e) {
@@ -66,7 +81,7 @@ public class Internship extends ExProgram {
         return super.delete();
     }
 
-    public static boolean insertNewInternship(String orgID, String name, boolean[] terms, int maxCredit) {
+    public static boolean insertNewInternship(int orgID, String name, boolean[] terms, int maxCredit) {
         Connection connect = DBConnection.getConnection();
         int code = ExProgram.insertExProgram(name, terms, maxCredit);
         if (code <= -1) {
@@ -76,7 +91,7 @@ public class Internship extends ExProgram {
         try {
             PreparedStatement statement = connect.prepareStatement(sql);
             statement.setInt(1, code);
-            statement.setString(2, orgID);
+            statement.setInt(2, orgID);
             statement.executeUpdate();
             System.out.println("Inserting new Internship was succesful");
         } catch (SQLException e) {
@@ -86,11 +101,7 @@ public class Internship extends ExProgram {
         return true;
     }
 
-    public String getProgram() {
-        return exProgram;
-    }
-
-    public String getOrg_id() {
-        return org_id;
+    public int getOrg_id() {
+        return institute;
     }
 }

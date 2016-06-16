@@ -269,7 +269,7 @@ public class SearchInstituteFrame extends JDialog {
     private void search(String filter, String conditionColumn) {
         if (type.getSelectedIndex() == 0) {
             ArrayList<dbapplication.institute.Institute> institute
-                    = dbapplication.institute.Institute.searchInstituteC(filter, conditionColumn);
+                    = dbapplication.institute.Institute.searchInstituteUniversity(filter, conditionColumn);
             resultModel.setResults(institute);
             studyField.setVisible(false);
             showButton.setVisible(false);
