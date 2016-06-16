@@ -25,7 +25,7 @@ public class StudyProgram extends ExProgram {
 
     public static ArrayList<ExProgram> searchStudyProgram(String filter, String conditionColumn) {
         ArrayList<ExProgram> programs = new ArrayList<>();
-        String sql = "SELECT EX.code, EX.max_credits, SP.type, SP.study_code, EX.name, SP.org_id, I.`name` \n"
+        String sql = "SELECT EX.code, EX.max_credit, SP.type, SP.study_code, EX.name, SP.org_id, I.`name` \n"
                 + "FROM ex_program EX JOIN study_program SP ON EX.code = SP.code "
                 + "JOIN institute I ON I.org_id = SP.org_id "
                 + "WHERE EX.`" + conditionColumn + "` LIKE ?\n"
@@ -86,9 +86,9 @@ public class StudyProgram extends ExProgram {
     }
 
     public static boolean insertNewStudyProgram(String name, boolean[] terms,
-            int org_id, String studyType, int maxCredits, String studyCode) {
+            int org_id, String studyType, int maxCredit, String studyCode) {
         Connection connect = DBConnection.getConnection();
-        int code = ExProgram.insertExProgram(name, terms, maxCredits);
+        int code = ExProgram.insertExProgram(name, terms, maxCredit);
         if (code <= -1) {
             return false;
         }
