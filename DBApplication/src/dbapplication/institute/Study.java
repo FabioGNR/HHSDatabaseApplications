@@ -48,16 +48,16 @@ public class Study {
     }
 
     public static void insertStudy(String code,
-            String email, String phone_nr , int org_id) {
+            String email, String phonenr , int org_id) {
         Connection connection = DBConnection.getConnection();
         try {
             PreparedStatement statement = connection.prepareStatement(
                     "INSERT INTO study "
-                    + "(code, email, phone_nr ,org_id) "
+                    + "(code, email, phonenr ,org_id) "
                     + "VALUES (?,?,?,?)");
             statement.setString(1, code);
             statement.setString(2, email);
-            statement.setString(3, phone_nr);
+            statement.setString(3, phonenr);
              statement.setInt(4, org_id);
 
             statement.executeUpdate();
@@ -70,16 +70,16 @@ public class Study {
     }
 
     public boolean updateStudy(String code,
-            String email, String phone_nr) {
+            String email, String phonenr) {
 
         Connection connection = DBConnection.getConnection();
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "UPDATE study SET code = ?, email = ?, phone_nr = ? WHERE code = ?");
+                    "UPDATE study SET code = ?, email = ?, phonenr = ? WHERE code = ?");
 
             statement.setString(1, code);
             statement.setString(2, email);
-            statement.setString(3, phone_nr);
+            statement.setString(3, phonenr);
             statement.setString(4, code);
             statement.executeUpdate();
             statement.close();
