@@ -33,6 +33,7 @@ public class SearchProgramFrame extends JDialog {
     private Internship internshipSelected = null;
     private StudyProgram studyProgramSelected = null;
     private String selectedInstitute;
+    private int internshipID = -1;
 
     public SearchProgramFrame(JFrame owner) {
         super(owner, true);
@@ -126,12 +127,12 @@ public class SearchProgramFrame extends JDialog {
 
         saveButton = new JButton("Save");
         saveButton.setBounds(600, 335, 75, 30);
-        saveButton.addActionListener(new ProgramEditListener());
+        saveButton.addActionListener(new saveChanges());
         add(saveButton);
 
         deleteButton = new JButton("Delete");
         deleteButton.setBounds(685, 335, 75, 30);
-        deleteButton.addActionListener(new ProgramEditListener());
+        deleteButton.addActionListener(new saveChanges());
         add(deleteButton);
     }
 
@@ -147,13 +148,27 @@ public class SearchProgramFrame extends JDialog {
         
     }
 
-    class ProgramEditListener implements ActionListener {
+    class saveChanges implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
             if (selectedProgram == null) {
                 return;
             }
+            int selectedProgramIndex = programBox.getSelectedIndex();
+            ExProgram.ProgramType type = (ExProgram.ProgramType) programBox.getItemAt(selectedProgramIndex);
+            if(type == ExProgram.ProgramType.Internship){
+                if(internshipID == -1){
+                    JOptionPane.showMessageDialog(SearchProgramFrame.this, "Please select an internship!", 
+                        "Internship missing", JOptionPane.ERROR_MESSAGE);
+                return;
+                }
+                // set the fields
+                Internship program = (Internship) selectedProgram;
+                program.setName(nameField.getName());
+                
+            }
+            
             if (e.getSource() == saveButton) {
                 int save = JOptionPane.showConfirmDialog(SearchProgramFrame.this, "Save Program?",
                         "Save", JOptionPane.OK_CANCEL_OPTION);

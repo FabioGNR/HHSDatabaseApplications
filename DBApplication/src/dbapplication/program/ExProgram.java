@@ -19,15 +19,15 @@ public class ExProgram extends DatabaseTableClass {
         Internship, StudyProgram
     }
     protected String name;
-    protected int maxCredits, code;
+    protected int maxCredit, code;
     protected String[] cellData;
     protected boolean[] terms = new boolean[5];
 
     public ExProgram(ResultSet result) throws SQLException {
         name = result.getString("name");
         code = result.getInt("code");       
-        maxCredits = result.getInt("max_credits"); // dit zorgt voor problemen bij het tonen van de tabel
-        cellData = new String[]{name, maxCredits+ " ECS"};
+        maxCredit = result.getInt("max_credits"); // dit zorgt voor problemen bij het tonen van de tabel
+        cellData = new String[]{name, maxCredit + " ECS"};
     }
 
     public static ArrayList<ExProgram> searchExProgram(String searchFilter, String conditionColumn) {
@@ -48,16 +48,16 @@ public class ExProgram extends DatabaseTableClass {
         return program;
     }
 
-    protected static int insertExProgram(String name, boolean[] terms, int maxCredits) {
+    protected static int insertExProgram(String name, boolean[] terms, int maxCredit) {
         Connection connection = DBConnection.getConnection();
-        String insertExProgram = "INSERT INTO ex_program (name, max_credits) VALUES (?,?)";
+        String insertExProgram = "INSERT INTO ex_program (name, max_credit) VALUES (?,?)";
         String insertTerm = "INSERT INTO ex_program_term (code, term) VALUES (?,?)";
         int code = -1;
 
         try {
             PreparedStatement exProgramStatement = connection.prepareStatement(insertExProgram, Statement.RETURN_GENERATED_KEYS);
             exProgramStatement.setString(1, name);
-            exProgramStatement.setInt(2, maxCredits);
+            exProgramStatement.setInt(2, maxCredit);
             exProgramStatement.executeUpdate();
             System.out.println("Preparedstatement passed ");
             ResultSet set = exProgramStatement.getGeneratedKeys();
@@ -83,12 +83,12 @@ public class ExProgram extends DatabaseTableClass {
 
     public boolean update() {
         Connection connect = DBConnection.getConnection();
-        String sql = "UPDATE ex_program SET name = ?, max_credits = ?"
+        String sql = "UPDATE ex_program SET name = ?, max_credit = ?"
                 + "WHERE code=?";
         try {
             PreparedStatement updateStatement = connect.prepareStatement(sql);
             updateStatement.setString(1, name);
-            updateStatement.setInt(2, maxCredits);
+            updateStatement.setInt(2, maxCredit);
             updateStatement.setInt(3, code);
             updateStatement.executeUpdate();
             updateStatement.close();
@@ -127,8 +127,8 @@ public class ExProgram extends DatabaseTableClass {
         return cellData[cell];
     }
 
-    public int getMaxCredits() {
-        return maxCredits;
+    public int getMaxCredit() {
+        return maxCredit;
     }
 
     public boolean[] getTerms() {
@@ -139,8 +139,8 @@ public class ExProgram extends DatabaseTableClass {
         this.name = name;
     }
 
-    public void setMaxCredits(int maxCredits) {
-        this.maxCredits = maxCredits;
+    public void setMaxCredit(int maxCredit) {
+        this.maxCredit = maxCredit;
     }
     
 }
