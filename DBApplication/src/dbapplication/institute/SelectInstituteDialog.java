@@ -114,7 +114,7 @@ public class SelectInstituteDialog extends JDialog{
     }
     
     private void search(String filter, String conditionColumn) {
-        ArrayList<dbapplication.institute.Institute> institute = dbapplication.institute.Institute.searchInstitute(filter, conditionColumn);
+        ArrayList<Institute> institute = Institute.searchInstitute(filter, conditionColumn);
         resultModel.setResults(institute);
     }
     
