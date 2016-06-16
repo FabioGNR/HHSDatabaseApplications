@@ -123,4 +123,12 @@ public class ExProgram {
         return cellData[cell];
     }
 
+    public int getMaxCredits() {
+        return maxCredits;
+    }
+
+    public boolean[] getTerms() {
+        return terms;
+    }
+
 }
