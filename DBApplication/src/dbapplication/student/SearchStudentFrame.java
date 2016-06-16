@@ -31,7 +31,7 @@ public class SearchStudentFrame extends JDialog {
 
     private JEditField nameField, emailField, cityField, addressField;
     private JRadioButton genderFBox, genderMBox;
-    private JButton saveButton, deleteButton, searchButton;
+    private JButton saveButton, deleteButton, searchButton, enrollmentsButton;
 
     private JLabel selectedStudentLabel;
     private Student selectedStudent = null;
@@ -116,29 +116,33 @@ public class SearchStudentFrame extends JDialog {
         phoneButton.addActionListener(new PhoneNumbersListener());
         add(phoneButton);
 
+        enrollmentsButton = new JButton("Enrollments");
+        enrollmentsButton.setBounds(450, 260, 130, 30);
+        add(enrollmentsButton);
+        
         hhsStudyCombo = new JComboBox(HHSStudent.LocalStudy.values());
-        hhsStudyCombo.setBounds(450, 260, 130, 30);
+        hhsStudyCombo.setBounds(450, 300, 130, 30);
         add(hhsStudyCombo);
         hhsStudyCombo.setVisible(false);
 
         cityField = new JEditField("City");
-        cityField.setBounds(450, 260, 150, 30);
+        cityField.setBounds(450, 300, 150, 30);
         add(cityField);
         cityField.setVisible(false);
 
         addressField = new JEditField("Address");
-        addressField.setBounds(450, 300, 150, 30);
+        addressField.setBounds(450, 340, 150, 30);
         add(addressField);
         addressField.setVisible(false);
 
         uniField = new JEditField("University");
-        uniField.setBounds(450, 340, 120, 30);
+        uniField.setBounds(450, 380, 120, 30);
         add(uniField);
         uniField.setEnabled(false);
         uniField.setVisible(false);
 
         selectUniButton = new JButton("...");
-        selectUniButton.setBounds(570, 340, 30, 30);
+        selectUniButton.setBounds(570, 380, 30, 30);
         add(selectUniButton);
         selectUniButton.addActionListener(new SelectUniversityListener());
         selectUniButton.setVisible(false);
@@ -222,6 +226,18 @@ public class SearchStudentFrame extends JDialog {
         // refresh result table
         selectedStudent.refreshCellData();
         resultModel.fireTableDataChanged();
+    }
+    
+    class EnrollmentsListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if(selectedStudent == null) return;
+            EnrollmentFrame frame = new EnrollmentFrame(
+                (JFrame)SearchStudentFrame.this.getOwner(), new ArrayList<>(), 
+                    selectedStudent);
+        }
+        
     }
     
     class PhoneNumbersListener implements ActionListener {
