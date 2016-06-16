@@ -26,11 +26,11 @@ import javax.swing.event.ListSelectionListener;
  */
 public class SearchInstituteFrame extends JDialog {
 
-    private JTextField searchField;
-    private JTextField cityField;
-    private JTextField nameField;
-    private JTextField countryField;
-    private JTextField addressField;
+    private  JTextField searchField;
+    private  JTextField cityField;
+    private  JTextField nameField;
+    private  JTextField countryField;
+    private  JTextField addressField;
    
 
     private JLabel cityLabel;
@@ -62,8 +62,9 @@ public class SearchInstituteFrame extends JDialog {
     private void setupFrame() {
         setSize(700, 450);
         setTitle("Search Institute");
-        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(null);
+        
     }
 
     private void createComponents() {
@@ -305,4 +306,5 @@ public class SearchInstituteFrame extends JDialog {
         }
 
     }
+  
 }
