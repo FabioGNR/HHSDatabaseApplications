@@ -38,7 +38,9 @@ public class Enrollment extends DatabaseTableClass {
     
     public void refreshCellData() {
         cellData = new String[] { program.getName(), acquiredCredits+"", 
-            program.getMaxCredits()+"", registrationDate.toString()};
+            program.getMaxCredits()+"", 
+            acquiredCredits >= program.getMaxCredits() ? "Yes" : "No", 
+            registrationDate.toString()};
     }
 
     public int getAcquiredCredits() {

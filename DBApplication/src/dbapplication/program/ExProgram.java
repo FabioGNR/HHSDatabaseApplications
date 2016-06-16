@@ -55,7 +55,8 @@ public class ExProgram extends DatabaseTableClass {
         int code = -1;
 
         try {
-            PreparedStatement exProgramStatement = connection.prepareStatement(insertExProgram, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement exProgramStatement = connection.prepareStatement(
+                    insertExProgram, Statement.RETURN_GENERATED_KEYS);
             exProgramStatement.setString(1, name);
             exProgramStatement.setInt(2, maxCredits);
             exProgramStatement.executeUpdate();
