@@ -187,7 +187,9 @@ public class SearchInstituteFrame extends JDialog {
     private class SelectStudyListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            StudyFrame dlg = new StudyFrame((JFrame) getOwner(), StudyFrame.ProgramType.studyProgram);
+            if(selectedInstitute == null) return;
+            StudyFrame dlg = new StudyFrame((JFrame) getOwner(), 
+                    selectedInstitute.getOrgid());
             dlg.setVisible(true);          
         }
     }

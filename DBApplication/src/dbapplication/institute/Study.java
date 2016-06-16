@@ -13,31 +13,33 @@ import java.util.ArrayList;
  */
 public class Study {
 
-    private String code, email, phone_nr;
+    private String code, email, phonenr;
     private String[] cellData;
 
     public Study(ResultSet result) throws SQLException {
         code = result.getString("code");
         email = result.getString("email");
-        phone_nr = result.getString("phone_nr");
+        phonenr = result.getString("phonenr");
 
-        cellData = new String[]{code, email, phone_nr};
+        cellData = new String[]{code, email, phonenr};
     }
 
-    public static ArrayList<Study> searchStudy(String filter, String conditionColumn) {
+    public static ArrayList<Study> searchStudy(String filter, 
+            String conditionColumn, int institute) {
         ArrayList<Study> study = new ArrayList<>();
         try {
             // column names can't be set dynamically with preparedstatement
             // luckily conditionColumn isn't user input
             PreparedStatement stat = DBConnection.getConnection().prepareStatement(
-                    "SELECT * FROM study WHERE `" + conditionColumn + "` LIKE ?");
+                    "SELECT `code`, org_id, email, phonenr FROM study WHERE `" + conditionColumn + "` LIKE ?"
+                            + " AND org_id=?");
 
             stat.setString(1, "%" + filter + "%");
+            stat.setInt(2, institute);
             ResultSet results = stat.executeQuery();
             while (results.next()) {
                 study.add(new Study(results));
             }
-            results.close();
             stat.close();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -126,8 +128,8 @@ public class Study {
         return email;
     }
 
-    public String getPhone_number() {
-        return phone_nr;
+    public String getPhoneNumber() {
+        return phonenr;
     }
 
 }

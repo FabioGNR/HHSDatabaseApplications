@@ -40,6 +40,7 @@ public class Enrollment extends DatabaseTableClass {
         this.acquiredCredits = acquiredCredits;
         registrationDate = regDate;
         existsInDB = false;
+        refreshCellData();
     }
     
     public void refreshCellData() {
@@ -143,7 +144,7 @@ public class Enrollment extends DatabaseTableClass {
             PreparedStatement statement = connection.prepareStatement(
                 "INSERT INTO enrollment (student_id, ex_program, "
                         + "acquired_credits, registration_date) "
-                        + "VALUES(?,?,?,?");
+                        + "VALUES(?,?,?,?)");
             statement.setInt(1, student_id);
             statement.setInt(2, program);
             statement.setInt(3, credits);
@@ -152,7 +153,7 @@ public class Enrollment extends DatabaseTableClass {
             statement.close();
         }
         catch(Exception error) {
-            
+            error.printStackTrace();
             return false;
         }
         return true;
