@@ -9,6 +9,8 @@ import dbapplication.institute.SelectInstituteDialog;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -40,6 +42,7 @@ public class SearchStudentFrame extends JDialog {
         super(owner, true);
         setupFrame();
         createComponents();
+        searchOnFilter();
     }
 
     private void setupFrame() {
@@ -47,6 +50,15 @@ public class SearchStudentFrame extends JDialog {
         setTitle("Search Students");
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setLayout(null);
+    }
+
+    @Override
+    public void setVisible(boolean state) {
+        super.setVisible(state);
+        if (state) {
+            resetFields();
+            searchOnFilter();
+        }
     }
 
     private void createComponents() {
@@ -74,7 +86,7 @@ public class SearchStudentFrame extends JDialog {
         add(searchConditionCombo);
 
         resultTable = new JTable();
-        resultModel = new DatabaseTableModel<>(new String[] { "Student ID", "Name", "Gender", "Email" });
+        resultModel = new DatabaseTableModel<>(new String[]{"Student ID", "Name", "Gender", "Email"});
         resultTable.setModel(resultModel);
         resultTable.setPreferredScrollableViewportSize(new Dimension(400, 500));
         resultTable.setFillsViewportHeight(true);
@@ -110,7 +122,7 @@ public class SearchStudentFrame extends JDialog {
         genderGroup.add(genderMBox);
         add(genderFBox);
         add(genderMBox);
-        
+
         phoneButton = new JButton("Phone numbers");
         phoneButton.setBounds(450, 220, 130, 30);
         phoneButton.addActionListener(new PhoneNumbersListener());
@@ -120,7 +132,7 @@ public class SearchStudentFrame extends JDialog {
         enrollmentsButton.setBounds(450, 260, 130, 30);
         enrollmentsButton.addActionListener(new EnrollmentsListener());
         add(enrollmentsButton);
-        
+
         hhsStudyCombo = new JComboBox(HHSStudent.LocalStudy.values());
         hhsStudyCombo.setBounds(450, 300, 130, 30);
         add(hhsStudyCombo);
@@ -184,99 +196,127 @@ public class SearchStudentFrame extends JDialog {
         resultModel.setItems(students);
         setSelectedStudent(null);
     }
-    
+
+    private void searchOnFilter() {
+        int selectedTypeIndex = searchTypeCombo.getSelectedIndex();
+        Student.StudentType type = (Student.StudentType) searchTypeCombo.getItemAt(selectedTypeIndex);
+        int selectedConditionIndex = searchConditionCombo.getSelectedIndex();
+        SearchFilter selectedFilter = (SearchFilter) searchConditionCombo.getItemAt(selectedConditionIndex);
+        search(searchField.getText(), selectedFilter.getColumnName(), type);
+    }
+
     private void setSelectedStudent(Student student) {
         selectedStudent = student;
-        if(student != null) {
-            selectedStudentLabel.setText("Selected student: "+student.getStudentid());
-        }
-        else
+        if (student != null) {
+            selectedStudentLabel.setText("Selected student: " + student.getStudentid());
+        } else {
             selectedStudentLabel.setText("Selected student: ");
+        }
     }
-    
+
     private void saveSelectedStudent() {
-        if(selectedStudent == null) return;
+        if (selectedStudent == null) {
+            return;
+        }
         int selectedTypeIndex = searchTypeCombo.getSelectedIndex();
         Student.StudentType type = (Student.StudentType) searchTypeCombo.getItemAt(selectedTypeIndex);
         // set new student properties
-        if(type == Student.StudentType.Exchange) {
-            if(exchangeUniID == -1) {
-                JOptionPane.showMessageDialog(this, "Select a university", 
+        if (type == Student.StudentType.Exchange) {
+            if (exchangeUniID == -1) {
+                JOptionPane.showMessageDialog(this, "Select a university",
                         "Missing university", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            ExchangeStudent student = (ExchangeStudent)selectedStudent;
+            ExchangeStudent student = (ExchangeStudent) selectedStudent;
             student.setAddress(addressField.getText());
             student.setCity(cityField.getText());
             student.setUniID(exchangeUniID);
             student.setUniName(uniField.getText());
-        }
-        else if(type == Student.StudentType.HHS) {
-            HHSStudent student = (HHSStudent)selectedStudent;
-            student.setLocalStudy((HHSStudent.LocalStudy)hhsStudyCombo.getSelectedItem());
+        } else if (type == Student.StudentType.HHS) {
+            HHSStudent student = (HHSStudent) selectedStudent;
+            student.setLocalStudy((HHSStudent.LocalStudy) hhsStudyCombo.getSelectedItem());
         }
         selectedStudent.setEmail(emailField.getText());
-        selectedStudent.setGender(genderFBox.isSelected() 
+        selectedStudent.setGender(genderFBox.isSelected()
                 ? Student.Gender.Female : Student.Gender.Male);
         selectedStudent.setName(nameField.getText());
         // attempt to save
-        if(!selectedStudent.save()) {
-            JOptionPane.showMessageDialog(this, "Error saving student", 
+        if (!selectedStudent.save()) {
+            JOptionPane.showMessageDialog(this, "Error saving student",
                     "Could not save student", JOptionPane.ERROR_MESSAGE);
         }
         // refresh result table
         selectedStudent.refreshCellData();
         resultModel.fireTableDataChanged();
     }
-    
+
+    private void resetFields() {
+        // reset all fields
+        searchField.setText("");
+        uniField.setText("");
+        nameField.setText("");
+        emailField.setText("");
+        cityField.setText("");
+        addressField.setText("");
+        setSelectedStudent(null);
+    }
+
     class EnrollmentsListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(selectedStudent == null) return;
+            if (selectedStudent == null) {
+                return;
+            }
             EnrollmentFrame frame = new EnrollmentFrame(
-                (JFrame)SearchStudentFrame.this.getOwner(), 
-                    selectedStudent.getEnrollments(), 
+                    (JFrame) SearchStudentFrame.this.getOwner(),
+                    selectedStudent.getEnrollments(),
                     selectedStudent);
             frame.setVisible(true);
         }
-        
+
     }
-    
+
     class PhoneNumbersListener implements ActionListener {
+
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(selectedStudent == null) return;
+            if (selectedStudent == null) {
+                return;
+            }
             PhoneFrame frame = new PhoneFrame(
-                    (JFrame)SearchStudentFrame.this.getOwner(), 
+                    (JFrame) SearchStudentFrame.this.getOwner(),
                     selectedStudent.getPhoneNumbers(),
                     selectedStudent);
             frame.setVisible(true);
             // frame will save
-        }    
+        }
     }
 
     class SelectTypeListener implements ActionListener {
+
         @Override
         public void actionPerformed(ActionEvent e) {
             toggleFields();
             setSelectedStudent(null);
             resultModel.clear();
-            
+
         }
     }
 
     class SelectFilterListener implements ActionListener {
+
         @Override
         public void actionPerformed(ActionEvent e) {
             SearchFilterDialog dlg = new SearchFilterDialog(
-                    (JFrame)SearchStudentFrame.this.getOwner());
+                    (JFrame) SearchStudentFrame.this.getOwner());
             dlg.setVisible(true);
             selectedFilterInstitute = dlg.getSelectedInstitute();
         }
     }
 
     class StudentEditListener implements ActionListener {
+
         @Override
         public void actionPerformed(ActionEvent e) {
             if (selectedStudent == null) {
@@ -298,6 +338,7 @@ public class SearchStudentFrame extends JDialog {
     }
 
     private class SelectUniversityListener implements ActionListener {
+
         @Override
         public void actionPerformed(ActionEvent e) {
             SelectInstituteDialog dlg = new SelectInstituteDialog((JFrame) getOwner(), Institute.InstituteType.University);
@@ -312,6 +353,7 @@ public class SearchStudentFrame extends JDialog {
     }
 
     class SelectionListener implements ListSelectionListener {
+
         @Override
         public void valueChanged(ListSelectionEvent e) {
             // get the corresponding 'Student' object 
@@ -345,13 +387,10 @@ public class SearchStudentFrame extends JDialog {
     }
 
     class SearchListener implements ActionListener {
+
         @Override
         public void actionPerformed(ActionEvent e) {
-            int selectedTypeIndex = searchTypeCombo.getSelectedIndex();
-            Student.StudentType type = (Student.StudentType) searchTypeCombo.getItemAt(selectedTypeIndex);
-            int selectedConditionIndex = searchConditionCombo.getSelectedIndex();
-            SearchFilter selectedFilter = (SearchFilter) searchConditionCombo.getItemAt(selectedConditionIndex);
-            search(searchField.getText(), selectedFilter.getColumnName(), type);
+            searchOnFilter();
         }
     }
 }
