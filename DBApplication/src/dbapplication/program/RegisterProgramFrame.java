@@ -148,7 +148,12 @@ public class RegisterProgramFrame extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(selectedInstitute == -1) return;
+            if(selectedInstitute == -1) {
+                JOptionPane.showMessageDialog(RegisterProgramFrame.this, 
+                        "Please select an university first.", 
+                        "Select university", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
             SelectStudyDialog dlg = new SelectStudyDialog(
                     (JFrame) getOwner(), selectedInstitute); 
             dlg.setVisible(true);
