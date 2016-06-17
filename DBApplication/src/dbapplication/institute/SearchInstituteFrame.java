@@ -56,7 +56,7 @@ public class SearchInstituteFrame extends JDialog {
         super(owner, true);
         setupFrame();
         createComponents();
-        search("", "name");
+        searchOnFilter();
     }
 
     private void setupFrame() {
@@ -65,6 +65,16 @@ public class SearchInstituteFrame extends JDialog {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(null);
         
+    }
+    
+    @Override
+    public void setVisible(boolean state) {
+        super.setVisible(state);
+        if (state) {
+            resetFields();
+            searchOnFilter();
+            typeCombo.setSelectedIndex(0);
+        }
     }
 
     private void createComponents() {
@@ -177,19 +187,14 @@ public class SearchInstituteFrame extends JDialog {
 
     }
 
-    public void refresh() {
-        int selectedIndex = searchConditionCombo.getSelectedIndex();
-        SearchFilter selectedFilter = (SearchFilter) searchConditionCombo.getItemAt(selectedIndex);
-        search(searchField.getText(), selectedFilter.getColumnName());
-
-    }
+   
     
-    public void textRefresh() {
+    public void resetFields() {
         nameField.setText("");
         cityField.setText("");
         countryField.setText("");
         addressField.setText("");
-        
+        selectedInstituteLabel.setText("Selected institute: ");
     }
 
     private class SelectStudyListener implements ActionListener {
@@ -242,7 +247,7 @@ public class SearchInstituteFrame extends JDialog {
                     if (update == JOptionPane.OK_OPTION) {
                         selectedInstitute.updateInstitute(cityField.getText(), nameField.getText(), countryField.getText(), addressField.getText());
                         selectedInstituteLabel.setText("Selected institute: " + nameField.getText());
-                        refresh();
+                        searchOnFilter();
 
                     }
                 }
@@ -255,9 +260,8 @@ public class SearchInstituteFrame extends JDialog {
                             "Delete institute", JOptionPane.OK_CANCEL_OPTION);
                     if (choice == JOptionPane.OK_OPTION) {
                         selectedInstitute.deleteInstitute();
-                        selectedInstituteLabel.setText("Selected institute: ");
-                        refresh();
-                        textRefresh();
+                        searchOnFilter();
+                        resetFields();
                     }
 
                 }
@@ -265,9 +269,8 @@ public class SearchInstituteFrame extends JDialog {
         }
     }
 
-    private void search(String filter, String conditionColumn) {
-        if ((Institute.InstituteType)typeCombo.getSelectedItem() 
-                == Institute.InstituteType.University) {
+    private void search(String filter, String conditionColumn, Institute.InstituteType type) {
+        if (type == Institute.InstituteType.University) {
             ArrayList<dbapplication.institute.Institute> institute
                     = dbapplication.institute.Institute.searchUniversity(filter, conditionColumn);
             resultModel.setResults(institute);
@@ -286,9 +289,7 @@ public class SearchInstituteFrame extends JDialog {
         @Override
         public void actionPerformed(ActionEvent event) {
 
-            int selectedIndex = searchConditionCombo.getSelectedIndex();
-            SearchFilter selectedFilter = (SearchFilter) searchConditionCombo.getItemAt(selectedIndex);
-            search(searchField.getText(), selectedFilter.getColumnName());
+            searchOnFilter();
 
         }
 
@@ -318,6 +319,23 @@ public class SearchInstituteFrame extends JDialog {
 
         }
 
+    }
+    
+    class SearchFilterListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            searchOnFilter();
+        }
+        
+    }
+    
+    private void searchOnFilter() {
+        int selectedTypeIndex = typeCombo.getSelectedIndex();
+        Institute.InstituteType type = (Institute.InstituteType) typeCombo.getItemAt(selectedTypeIndex);
+        int selectedConditionIndex = searchConditionCombo.getSelectedIndex();
+        SearchFilter selectedFilter = (SearchFilter) searchConditionCombo.getItemAt(selectedConditionIndex);
+        search(searchField.getText(), selectedFilter.getColumnName(), type);
     }
   
 }
