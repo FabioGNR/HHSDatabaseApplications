@@ -5,6 +5,7 @@ import dbapplication.JEditField;
 import dbapplication.JSearchField;
 import dbapplication.SearchFilter;
 import dbapplication.institute.Institute;
+import static dbapplication.institute.Institute.InstituteType.Company;
 import dbapplication.institute.SelectInstituteDialog;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -27,11 +28,13 @@ public class SearchProgramFrame extends JDialog {
     private JComboBox internshipConditionBox, studyProgramBox;
     private JComboBox programBox, maxCreditBox, studyTypeBox;
     private String[] studyType = {"Minor", "EPS", "Summer School"};
+    private String[] maxCredits = {"15 ECS", "30 ECS", "45 ECS", "60 ECS"};
     private JTable resultTable;
     private JScrollPane resultPanel;
     private DatabaseTableModel<ExProgram> tableModel;
     private JLabel selectedProgramLabel, programCodeLabel;
     private ExProgram selectedProgram = null;
+    private Institute instituteSelected = null;
     private Internship internshipSelected = null;
     private StudyProgram studyProgramSelected = null;
     private String selectedInstitute;
@@ -50,13 +53,14 @@ public class SearchProgramFrame extends JDialog {
         setLayout(null);
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
     }
-    
+
     @Override
     public void setVisible(boolean state) {
         super.setVisible(state);
         // reset fields here
-        if(state)
+        if (state) {
             search("", "name");
+        }
     }
 
     private void createComponents() {
@@ -110,44 +114,43 @@ public class SearchProgramFrame extends JDialog {
         nameField.setBounds(600, 60, 150, 30);
         add(nameField);
 
-        ActionListener instituteButtonListener = new SelectInstitute();
+        maxCreditBox = new JComboBox(maxCredits);
+        maxCreditBox.setBounds(600, 100, 100, 30);
+        add(maxCreditBox);
+
         instituteField = new JEditField("Organisation");
-        instituteField.setBounds(600, 100, 100, 30);
+        instituteField.setBounds(600, 140, 150, 30);
         add(instituteField);
-        instituteButton = new JButton("...");
-        instituteButton.setBounds(710, 100, 40, 30);
-        instituteButton.addActionListener(instituteButtonListener);
-        add(instituteButton);
 
         studyTypeBox = new JComboBox(studyType);
-        studyTypeBox.setBounds(600, 140, 150, 30);
+        studyTypeBox.setBounds(600, 180, 150, 30);
         add(studyTypeBox);
         studyTypeBox.setVisible(false);
 
         studyField = new JEditField("Study Name");
-        studyField.setBounds(600, 180, 100, 30);
+        studyField.setBounds(600, 220, 100, 30);
         add(studyField);
         studyField.setVisible(false);
 
         // add listener
         studyCodeButton = new JButton("...");
-        studyCodeButton.setBounds(710, 180, 40, 30);
+        studyCodeButton.setBounds(710, 220, 40, 30);
         add(studyCodeButton);
         studyCodeButton.setVisible(false);
 
         saveButton = new JButton("Save");
-        saveButton.setBounds(600, 335, 75, 30);
+        saveButton.setBounds(600, 350, 75, 30);
         saveButton.addActionListener(new saveChanges());
         add(saveButton);
 
         deleteButton = new JButton("Delete");
-        deleteButton.setBounds(685, 335, 75, 30);
+        deleteButton.setBounds(685, 350, 75, 30);
         deleteButton.addActionListener(new saveChanges());
         add(deleteButton);
     }
-    
+
     private ExProgram.ProgramType getSelectedType() {
-        return (ExProgram.ProgramType)programBox.getSelectedItem();
+        return (ExProgram.ProgramType) programBox.getSelectedItem();
     }
 
     private void search(String filter, String conditionColumn) {
@@ -200,33 +203,55 @@ public class SearchProgramFrame extends JDialog {
         }
     }
 
+    private void setSelectedProgram(ExProgram program) {
+        selectedProgram = program;
+        if (program != null) {
+            selectedProgramLabel.setText("Selected Program: " + program.getCode());
+        } else {
+            selectedProgramLabel.setText("Selected Program: ");
+        }
+    }
+
     class SelectionListener implements ListSelectionListener {
 
         @Override
         public void valueChanged(ListSelectionEvent e) {
             int selectedRow = resultTable.getSelectedRow();
             if (selectedRow < 0) {
+                setSelectedProgram(null);
                 return;
             }
-            selectedProgram = tableModel.get(selectedRow);
-            selectedProgramLabel.setText("Selected program: " + selectedProgram.getName());
+            setSelectedProgram(tableModel.get(selectedRow));
+            selectedProgramLabel.setText(selectedProgram.getName());
             nameField.setText(selectedProgram.getName());
-//            orgIDField.setText(); 
-//            studyCodeField.setText();
+            selectInstitute();
+
+            int selectedProgramTypeIndex = programBox.getSelectedIndex();
+            ExProgram.ProgramType type = (ExProgram.ProgramType) programBox.getItemAt(selectedProgramTypeIndex);
 
         }
     }
-    
+
     private void searchOnFilter() {
-            SearchFilter selectedFilter;
-            if (getSelectedType() == ExProgram.ProgramType.Internship) {
-                int selectedIndex = internshipConditionBox.getSelectedIndex();
-                selectedFilter = (SearchFilter) internshipConditionBox.getItemAt(selectedIndex);
-            } else {
-                int selectedIndex = studyProgramBox.getSelectedIndex();
-                selectedFilter = (SearchFilter) studyProgramBox.getItemAt(selectedIndex);
-            }
-            search(searchField.getText(), selectedFilter.getColumnName());        
+        SearchFilter selectedFilter;
+        if (getSelectedType() == ExProgram.ProgramType.Internship) {
+            int selectedIndex = internshipConditionBox.getSelectedIndex();
+            selectedFilter = (SearchFilter) internshipConditionBox.getItemAt(selectedIndex);
+        } else {
+            int selectedIndex = studyProgramBox.getSelectedIndex();
+            selectedFilter = (SearchFilter) studyProgramBox.getItemAt(selectedIndex);
+        }
+        search(searchField.getText(), selectedFilter.getColumnName());
+    }
+
+    private void selectInstitute() {
+        SelectInstituteDialog instituteDlg = new SelectInstituteDialog((JFrame) getOwner(), Institute.InstituteType.University);
+
+        Institute institute = instituteDlg.getSelectedInstitute();
+        if (institute != null) {
+            instituteField.setText(institute.getName());
+            selectedInstitute = institute.getOrgid() + "";
+        }
     }
 
     class SearchListener implements ActionListener {
@@ -241,8 +266,8 @@ public class SearchProgramFrame extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            boolean internshipSelected = 
-                    getSelectedType() == ExProgram.ProgramType.Internship;
+            boolean internshipSelected
+                    = getSelectedType() == ExProgram.ProgramType.Internship;
             internshipConditionBox.setVisible(internshipSelected);
             studyProgramBox.setVisible(!internshipSelected);
             // maakt het uit bij het updaten?
@@ -255,19 +280,6 @@ public class SearchProgramFrame extends JDialog {
         }
     }
 
-    class SelectInstitute implements ActionListener {
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            SelectInstituteDialog instituteDlg = new SelectInstituteDialog((JFrame) getOwner(), Institute.InstituteType.University);
-            instituteDlg.setVisible(true);
 
-            Institute institute = instituteDlg.getSelectedInstitute();
-            if (institute != null) {
-                instituteField.setText(institute.getName());
-                selectedInstitute = institute.getOrgid() + "";
-            }
-        }
-
-    }
 }
