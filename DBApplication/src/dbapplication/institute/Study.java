@@ -23,6 +23,13 @@ public class Study {
 
         cellData = new String[]{code, email, phonenr};
     }
+    
+    public Study(String code, String email, String phonenr) {
+        this.code = code;
+        this.email = email;
+        this.phonenr = phonenr;
+        cellData = new String[]{code, email, phonenr};
+    }
 
     public static ArrayList<Study> searchStudy(String filter, 
             String conditionColumn, int institute) {
@@ -116,6 +123,11 @@ public class Study {
 
     }
 
+    @Override
+    public String toString() {
+        return code;
+    }
+    
     public String getDataAt(int cell) {
         return cellData[cell];
     }

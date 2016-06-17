@@ -37,7 +37,6 @@ public class StudyFrame extends JDialog {
     private JButton deleteButton;
     private JButton okButton;
     private JButton addButton;
-    private JButton registerButton;
 
     private JLabel codeLabel;
     private JLabel numberLabel;
@@ -49,7 +48,6 @@ public class StudyFrame extends JDialog {
     private JTextField contactpersonField;
 
     private JComboBox searchConditionCombo;
-    private static JComboBox StudiesCombo;
     
     private JTable resultTable;
     private JScrollPane resultPanel;
@@ -79,7 +77,6 @@ public class StudyFrame extends JDialog {
         SelectionListener select = new SelectionListener();
         searchListener search = new searchListener();
         CloseDialogListener close = new CloseDialogListener();
-        AddStudyListener add = new AddStudyListener();
 
         searchField = new JSearchField();
         searchField.setBounds(20, 20, 180, 30);
@@ -167,19 +164,8 @@ public class StudyFrame extends JDialog {
         addButton = new JButton("Add Study");
         addButton.setLocation(570, 220);
         addButton.setSize(120, 30);
-        addButton.addActionListener(add);
+        addButton.addActionListener(new AddStudyListener());
         add(addButton);
-        
-        StudiesCombo = new JComboBox();
-        StudiesCombo.setLocation(440, 220);
-        StudiesCombo.setSize(120, 30);
-        add(StudiesCombo);
-        
-        registerButton = new JButton("Register study");
-        registerButton.setLocation(440, 270);
-        registerButton.setSize(90, 30);
-        registerButton.addActionListener(new RegisterStudyListener());
-        add(registerButton);
 
     }
 
@@ -200,15 +186,18 @@ public class StudyFrame extends JDialog {
         }
 
     }
+    
+    private void searchOnFilter() {
+        int selectedIndex = searchConditionCombo.getSelectedIndex();
+        SearchFilter selectedFilter = (SearchFilter) searchConditionCombo.getItemAt(selectedIndex);
+        search(searchField.getText(), selectedFilter.getColumnName());       
+    }
 
     class searchListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent event) {
-            int selectedIndex = searchConditionCombo.getSelectedIndex();
-            SearchFilter selectedFilter = (SearchFilter) searchConditionCombo.getItemAt(selectedIndex);
-            search(searchField.getText(), selectedFilter.getColumnName());
-
+            searchOnFilter();
         }
     }
 
@@ -274,21 +263,17 @@ public class StudyFrame extends JDialog {
     }
 
     private class AddStudyListener implements ActionListener {
-
         @Override
         public void actionPerformed(ActionEvent e) {
-            RegisterStudyDialog rsf = new RegisterStudyDialog((JFrame) getOwner(), RegisterStudyDialog.StudyType.Study);
+            RegisterStudyDialog rsf = new RegisterStudyDialog((JFrame) getOwner());
             rsf.setVisible(true);
-        }
-    }
-    
-    private class RegisterStudyListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent ee) {
-            
-        }
-        
+            Study study = rsf.getNewStudy();
+            if(study != null) {
+                Study.insertStudy(study.getCode(), study.getEmail(), 
+                        study.getPhoneNumber(), instituteID);
+                searchOnFilter();
+            }
+        }  
     }
     
     public void textRefresh() {
@@ -300,9 +285,5 @@ public class StudyFrame extends JDialog {
     
     public Study getSelectedStudy() {
         return selectedStudy;
-    }
-    
-    public static void addStudiesbox(String text) {
-        StudiesCombo.addItem(text);
     }
 }
