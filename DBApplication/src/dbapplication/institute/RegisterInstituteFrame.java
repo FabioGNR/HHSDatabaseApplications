@@ -29,6 +29,7 @@ public class RegisterInstituteFrame extends JDialog {
 
     private JButton showButton;
     private static JComboBox studiesBox;
+     ButtonGroup group;
 
     private JRadioButton yesRadio;
     private JRadioButton noRadio;
@@ -104,7 +105,7 @@ public class RegisterInstituteFrame extends JDialog {
         noRadio.addActionListener(switchLis);
         add(noRadio);
 
-        ButtonGroup group = new ButtonGroup();
+        group = new ButtonGroup();
         group.add(yesRadio);
         group.add(noRadio);
 
@@ -158,6 +159,7 @@ public class RegisterInstituteFrame extends JDialog {
         nameField.setText("");
         countryField.setText("");
         addressField.setText("");
+        group.clearSelection();
     }
 
     private class AddButtonListener implements ActionListener {
@@ -225,6 +227,7 @@ public class RegisterInstituteFrame extends JDialog {
                                     org_id);
                         }
                         clearField();
+                        
                         setVisible(false);
                         dispose();
 
