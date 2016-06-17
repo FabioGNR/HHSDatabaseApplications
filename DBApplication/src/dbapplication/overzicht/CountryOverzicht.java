@@ -33,7 +33,7 @@ public class CountryOverzicht extends JDialog {
     }
 
     private void setupFrame() {
-        setSize(420, 400);
+        setSize(820, 850);
         setTitle("Country overzicht");
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setLayout(null);     
@@ -41,14 +41,14 @@ public class CountryOverzicht extends JDialog {
 
     private void createComponents() {
         selectedDestionationLabel = new JLabel("Selected destination: ");
-        selectedDestionationLabel.setBounds(10, 10, 185, 30);
+        selectedDestionationLabel.setBounds(10, 10, 370, 30);
         add(selectedDestionationLabel);
         popularDestinationsChart = new JPieChart();
-        popularDestinationsChart.setBounds(10, 40, 185, 185);
+        popularDestinationsChart.setBounds(10, 40, 370, 370);
         popularDestinationsChart.addListener(new DestinationSliceClicked());
         add(popularDestinationsChart);
         popularOriginChart = new JPieChart();
-        popularOriginChart.setBounds(205, 40, 185, 185);
+        popularOriginChart.setBounds(390, 40, 370, 370);
         add(popularOriginChart);
     }
     
@@ -101,7 +101,9 @@ public class CountryOverzicht extends JDialog {
         @Override
         public void SliceClicked(Slice slice) {
             if(slice != null) 
-                selectedDestionationLabel.setText("Selected destination: "+slice.getUserData()+": "+slice.getValue());
+                selectedDestionationLabel.setText("Selected destination: "
+                        +slice.getUserData()+": "
+                        +slice.getValue()+" students");
         }
     }
 }
