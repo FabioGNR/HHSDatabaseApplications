@@ -4,15 +4,11 @@ import dbapplication.JEditField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.ButtonGroup;
-import javax.swing.ComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 /**
@@ -34,8 +30,6 @@ public class RegisterInstituteFrame extends JDialog {
     private static JComboBox studiesBox;
 
     int org_idreturn;
-
-    private String selectedStudy;
 
     public RegisterInstituteFrame(JFrame owner) {
         super(owner, true);
@@ -140,6 +134,7 @@ public class RegisterInstituteFrame extends JDialog {
         countryField.setText("");
         addressField.setText("");
         box.setSelectedIndex(0);
+        studiesBox.removeAllItems();
     }
 
     private class AddButtonListener implements ActionListener {
