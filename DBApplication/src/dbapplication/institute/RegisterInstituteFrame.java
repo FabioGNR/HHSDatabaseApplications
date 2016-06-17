@@ -3,7 +3,6 @@ package dbapplication.institute;
 import dbapplication.JEditField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -24,9 +23,8 @@ public class RegisterInstituteFrame extends JDialog {
 
     private JButton registerButton;
     private JButton showButton;
-    
-    String boxList[] = { "Company", "University" };
-    private JComboBox box;
+
+    private JComboBox typeBox;
     private static JComboBox studiesBox;
 
     int org_idreturn;
@@ -76,12 +74,12 @@ public class RegisterInstituteFrame extends JDialog {
         registerButton.setSize(90, 60);
         registerButton.addActionListener(lis);
         add(registerButton);
-        
-        box = new JComboBox(boxList);
-        box.setLocation(250, 20);
-        box.setSize(150, 30);
-        box.addActionListener(switchLis);
-        add(box);
+
+        typeBox = new JComboBox(Institute.InstituteType.values());
+        typeBox.setLocation(250, 20);
+        typeBox.setSize(150, 30);
+        typeBox.addActionListener(switchLis);
+        add(typeBox);
 
         showButton = new JButton("Add Studies");
         showButton.setLocation(180, 220);
@@ -107,7 +105,7 @@ public class RegisterInstituteFrame extends JDialog {
             RegisterStudyDialog dlg = new RegisterStudyDialog((JFrame) getOwner());
             dlg.setVisible(true);
             Study newStudy = dlg.getNewStudy();
-            if(newStudy != null) {
+            if (newStudy != null) {
                 studiesBox.addItem(newStudy);
             }
         }
@@ -117,14 +115,13 @@ public class RegisterInstituteFrame extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (box.getSelectedIndex() == 0) {
+            if ((Institute.InstituteType) typeBox.getSelectedItem() == Institute.InstituteType.Company) {
                 showButton.setVisible(false);
                 studiesBox.setVisible(false);
+            } else {
+                showButton.setVisible(true);
+                studiesBox.setVisible(true);
             }
-            else {
-               showButton.setVisible(true);
-               studiesBox.setVisible(true); 
-    }
         }
     }
 
@@ -133,7 +130,7 @@ public class RegisterInstituteFrame extends JDialog {
         nameField.setText("");
         countryField.setText("");
         addressField.setText("");
-        box.setSelectedIndex(0);
+        typeBox.setSelectedIndex(0);
         studiesBox.removeAllItems();
     }
 
@@ -147,7 +144,7 @@ public class RegisterInstituteFrame extends JDialog {
             if (city.isEmpty()) {
                 JOptionPane.showMessageDialog(RegisterInstituteFrame.this,
                         "city cannot be a Empty", "Incorrect input", JOptionPane.WARNING_MESSAGE);
-             
+
             }
             if (city.matches(".*\\d+.*")) {
                 JOptionPane.showMessageDialog(RegisterInstituteFrame.this,
@@ -158,7 +155,7 @@ public class RegisterInstituteFrame extends JDialog {
             if (name.isEmpty()) {
                 JOptionPane.showMessageDialog(RegisterInstituteFrame.this,
                         "name cannot be a Empty", "Incorrect input", JOptionPane.WARNING_MESSAGE);
-             
+
             }
             if (name.matches(".*\\d+.*")) {
                 JOptionPane.showMessageDialog(RegisterInstituteFrame.this,
@@ -169,7 +166,7 @@ public class RegisterInstituteFrame extends JDialog {
             if (country.isEmpty()) {
                 JOptionPane.showMessageDialog(RegisterInstituteFrame.this,
                         "country cannot be a Empty", "Incorrect input", JOptionPane.WARNING_MESSAGE);
-              
+
             }
             if (country.matches(".*\\d+.*")) {
                 JOptionPane.showMessageDialog(RegisterInstituteFrame.this,
@@ -182,40 +179,32 @@ public class RegisterInstituteFrame extends JDialog {
                         "Adress cannot be a Empty", "Incorrect input", JOptionPane.WARNING_MESSAGE);
                 address = null;
             }
+            if (city == null || address == null || name == null || country == null) {
+                JOptionPane.showMessageDialog(RegisterInstituteFrame.this, "Registering of institute failed", "Error", JOptionPane.WARNING_MESSAGE);
 
-            if (event.getSource() == registerButton) {
-                if (city == null || address == null || name == null || country == null) {
-                    JOptionPane.showMessageDialog(RegisterInstituteFrame.this, "Registering of institute failed", "Error", JOptionPane.WARNING_MESSAGE);
-                    
-                } else {
-                    int register = JOptionPane.showOptionDialog(RegisterInstituteFrame.this, "Institute has been Registerd", "Registerd", JOptionPane.PLAIN_MESSAGE,
-                            JOptionPane.INFORMATION_MESSAGE, null, null, null);
-                    if (register == JOptionPane.OK_OPTION) {
-                        
-                        if (box.getSelectedIndex() == 0) {
-                            is_business = 1;
-                        }else 
-                            is_business = 0;
-                        
-                        int org_id = Institute.insertInstitute(city, name, country, address, is_business);
+            } else {
+                int register = JOptionPane.showOptionDialog(RegisterInstituteFrame.this, "Institute has been Registerd", "Registerd", JOptionPane.PLAIN_MESSAGE,
+                        JOptionPane.INFORMATION_MESSAGE, null, null, null);
+                if (register == JOptionPane.OK_OPTION) {
 
-                        for(int i = 0; i < studiesBox.getItemCount(); i++) {
-                            Study study = (Study)studiesBox.getItemAt(i);
-                            Study.insertStudy(study.getCode(), 
-                                    study.getEmail(), study.getPhoneNumber(), 
-                                    org_id);
-                        }
-                        clearField();
-                        setVisible(false);
-                        dispose();
-
+                    if ((Institute.InstituteType) typeBox.getSelectedItem() == Institute.InstituteType.Company) {
+                        is_business = 1;
+                    } else {
+                        is_business = 0;
                     }
+
+                    int org_id = Institute.insertInstitute(city, name, country, address, is_business);
+
+                    for (int i = 0; i < studiesBox.getItemCount(); i++) {
+                        Study study = (Study) studiesBox.getItemAt(i);
+                        Study.insertStudy(study.getCode(),
+                                study.getEmail(), study.getPhoneNumber(),
+                                org_id);
+                    }
+                    clearField();
+                    setVisible(false);
                 }
             }
         }
-    }
-
-        public int getOrg_idreturn() {
-        return org_idreturn;
     }
 }

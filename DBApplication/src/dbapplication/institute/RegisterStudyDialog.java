@@ -1,10 +1,8 @@
 package dbapplication.institute;
 
 import dbapplication.JEditField;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
