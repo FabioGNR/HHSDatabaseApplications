@@ -183,14 +183,6 @@ public class StudyFrame extends JDialog {
 
     }
 
-    public Study getSelectedStudy() {
-        return selectedStudy;
-    }
-    
-    public static void addStudiesbox(String text) {
-        StudiesCombo.addItem(text);
-    }
-
     private void search(String filter, String conditionColumn) {
         ArrayList<Study> study = Study.searchStudy(filter, 
                 conditionColumn, instituteID);
@@ -261,6 +253,7 @@ public class StudyFrame extends JDialog {
                     int selectedIndex = searchConditionCombo.getSelectedIndex();
                     SearchFilter selectedFilter = (SearchFilter) searchConditionCombo.getItemAt(selectedIndex);
                     search(searchField.getText(), selectedFilter.getColumnName());
+                    selectedStudyLabel.setText("Selected study: " + codeField.getText());
                 }
             }
             if (e.getSource() == deleteButton) {
@@ -273,6 +266,8 @@ public class StudyFrame extends JDialog {
                     int selectedIndex = searchConditionCombo.getSelectedIndex();
                     SearchFilter selectedFilter = (SearchFilter) searchConditionCombo.getItemAt(selectedIndex);
                     search(searchField.getText(), selectedFilter.getColumnName());
+                    selectedStudyLabel.setText("Selected study: ");
+                    textRefresh();
                 }
             }
         }
@@ -294,5 +289,20 @@ public class StudyFrame extends JDialog {
             
         }
         
+    }
+    
+    public void textRefresh() {
+        codeField.setText("");
+        contactpersonField.setText("");
+        numberField.setText("");
+        
+    }
+    
+    public Study getSelectedStudy() {
+        return selectedStudy;
+    }
+    
+    public static void addStudiesbox(String text) {
+        StudiesCombo.addItem(text);
     }
 }

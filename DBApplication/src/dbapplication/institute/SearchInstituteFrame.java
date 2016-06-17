@@ -115,26 +115,26 @@ public class SearchInstituteFrame extends JDialog {
         selectedInstituteLabel.setLocation(440, 55);
         selectedInstituteLabel.setSize(200, 30);
         add(selectedInstituteLabel);
-
-        cityLabel = new JLabel("City");
-        cityLabel.setLocation(440, 85);
-        cityLabel.setSize(90, 30);
-        add(cityLabel);
-
-        cityField = new JEditField("City");
-        cityField.setLocation(490, 85);
-        cityField.setSize(120, 30);
-        add(cityField);
-
+        
         nameLabel = new JLabel("Name");
-        nameLabel.setLocation(440, 135);
+        nameLabel.setLocation(440, 85);
         nameLabel.setSize(90, 30);
         add(nameLabel);
 
         nameField = new JEditField("Name");
-        nameField.setLocation(490, 135);
+        nameField.setLocation(490, 85);
         nameField.setSize(120, 30);
         add(nameField);
+
+        cityLabel = new JLabel("City");
+        cityLabel.setLocation(440, 135);
+        cityLabel.setSize(90, 30);
+        add(cityLabel);
+
+        cityField = new JEditField("City");
+        cityField.setLocation(490, 135);
+        cityField.setSize(120, 30);
+        add(cityField);
 
         countryLabel = new JLabel("Country");
         countryLabel.setLocation(440, 185);
@@ -182,6 +182,14 @@ public class SearchInstituteFrame extends JDialog {
         SearchFilter selectedFilter = (SearchFilter) searchConditionCombo.getItemAt(selectedIndex);
         search(searchField.getText(), selectedFilter.getColumnName());
 
+    }
+    
+    public void textRefresh() {
+        nameField.setText("");
+        cityField.setText("");
+        countryField.setText("");
+        addressField.setText("");
+        
     }
 
     private class SelectStudyListener implements ActionListener {
@@ -233,6 +241,7 @@ public class SearchInstituteFrame extends JDialog {
                             JOptionPane.INFORMATION_MESSAGE, null, null, null);
                     if (update == JOptionPane.OK_OPTION) {
                         selectedInstitute.updateInstitute(cityField.getText(), nameField.getText(), countryField.getText(), addressField.getText());
+                        selectedInstituteLabel.setText("Selected institute: " + nameField.getText());
                         refresh();
 
                     }
@@ -246,7 +255,9 @@ public class SearchInstituteFrame extends JDialog {
                             "Delete institute", JOptionPane.OK_CANCEL_OPTION);
                     if (choice == JOptionPane.OK_OPTION) {
                         selectedInstitute.deleteInstitute();
+                        selectedInstituteLabel.setText("Selected institute: ");
                         refresh();
+                        textRefresh();
                     }
 
                 }
