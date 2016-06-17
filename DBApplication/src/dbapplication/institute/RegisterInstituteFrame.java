@@ -167,26 +167,42 @@ public class RegisterInstituteFrame extends JDialog {
             String city, name, country, address;
             int is_business;
             city = cityField.getText();
-            if (city.isEmpty() || city.matches(".*\\d+.*")) {
+            if (city.isEmpty()) {
+                JOptionPane.showMessageDialog(RegisterInstituteFrame.this,
+                        "city cannot be a Empty", "Incorrect input", JOptionPane.WARNING_MESSAGE);
+             
+            }
+            if (city.matches(".*\\d+.*")) {
                 JOptionPane.showMessageDialog(RegisterInstituteFrame.this,
                         "city cannot be a number", "Incorrect input", JOptionPane.WARNING_MESSAGE);
                 city = null;
             }
             name = nameField.getText();
-            if (name.isEmpty() || name.matches(".*\\d+.*")) {
+            if (name.isEmpty()) {
+                JOptionPane.showMessageDialog(RegisterInstituteFrame.this,
+                        "name cannot be a Empty", "Incorrect input", JOptionPane.WARNING_MESSAGE);
+             
+            }
+            if (name.matches(".*\\d+.*")) {
                 JOptionPane.showMessageDialog(RegisterInstituteFrame.this,
                         "name cannot be a number", "Incorrect input", JOptionPane.WARNING_MESSAGE);
                 name = null;
             }
             country = countryField.getText();
-            if (country.isEmpty() || country.matches(".*\\d+.*")) {
+            if (country.isEmpty()) {
+                JOptionPane.showMessageDialog(RegisterInstituteFrame.this,
+                        "country cannot be a Empty", "Incorrect input", JOptionPane.WARNING_MESSAGE);
+              
+            }
+            if (country.matches(".*\\d+.*")) {
                 JOptionPane.showMessageDialog(RegisterInstituteFrame.this,
                         "country cannot be a number", "Incorrect input", JOptionPane.WARNING_MESSAGE);
                 country = null;
             }
             address = addressField.getText();
             if (address.isEmpty()) {
-
+ JOptionPane.showMessageDialog(RegisterInstituteFrame.this,
+                        "Adress cannot be a Empty", "Incorrect input", JOptionPane.WARNING_MESSAGE);
                 address = null;
             }
 
