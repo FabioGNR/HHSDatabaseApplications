@@ -18,7 +18,7 @@ public class ExProgram extends DatabaseTableClass {
     public enum ProgramType {
         Internship, StudyProgram
     }
-    protected String name, description;
+    protected String name, description, instituteName;
     protected int maxCredits, code;
     protected String[] cellData;
     protected boolean[] terms = new boolean[5];
@@ -27,6 +27,11 @@ public class ExProgram extends DatabaseTableClass {
         name = result.getString("name");
         code = result.getInt("code");
         maxCredits = Integer.parseInt(result.getString("max_credit"));
+        try{
+        instituteName = result.getString("inst_name");
+        }catch(Exception e){
+            instituteName = null;
+        }
         description = result.getString("description");
         cellData = new String[]{name, maxCredits + " ECS", description};
         if(termSet != null) {
@@ -165,5 +170,9 @@ public class ExProgram extends DatabaseTableClass {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+    
+    public String getInstituteName() {
+        return instituteName;
     }
 }

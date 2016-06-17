@@ -22,7 +22,7 @@ import javax.swing.event.ListSelectionListener;
 public class SearchProgramFrame extends JDialog {
 
     private JTextField searchField, nameField;
-    private JTextField instituteField, studyField;
+    private JTextField instituteField, studyField, descriptionField;
     private JButton searchButton, saveButton, deleteButton;
     private JButton instituteButton, studyCodeButton;
     private JComboBox internshipConditionBox, studyProgramBox;
@@ -49,7 +49,7 @@ public class SearchProgramFrame extends JDialog {
 
     private void setupFrame() {
         setTitle("Search Program");
-        setSize(800, 500);
+        setSize(1200, 500);
         setLayout(null);
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
     }
@@ -103,7 +103,7 @@ public class SearchProgramFrame extends JDialog {
         resultTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         resultTable.getSelectionModel().addListSelectionListener(new SelectionListener());
         resultPanel = new JScrollPane(resultTable);
-        resultPanel.setBounds(20, 60, 555, 300);
+        resultPanel.setBounds(20, 60, 555, 350);
         add(resultPanel);
 
         selectedProgramLabel = new JLabel("Selected Program: ");
@@ -120,6 +120,7 @@ public class SearchProgramFrame extends JDialog {
 
         instituteField = new JEditField("Organisation");
         instituteField.setBounds(600, 140, 150, 30);
+        instituteField.setEnabled(false);
         add(instituteField);
 
         studyTypeBox = new JComboBox(studyType);
@@ -129,6 +130,7 @@ public class SearchProgramFrame extends JDialog {
 
         studyField = new JEditField("Study Name");
         studyField.setBounds(600, 220, 100, 30);
+        studyField.setEnabled(false);
         add(studyField);
         studyField.setVisible(false);
 
@@ -179,10 +181,10 @@ public class SearchProgramFrame extends JDialog {
                     return;
                 }
                 // set the fields
-                Internship program = (Internship) selectedProgram;
-                program.setName(nameField.getName());
-                program.setMaxCredit(maxCreditBox.getSelectedIndex());
-
+                Internship instituteSelected = (Internship) selectedProgram;
+                instituteSelected.setName(nameField.getName());
+                instituteSelected.setMaxCredit(maxCreditBox.getSelectedIndex());
+//                instituteSelected.setDescription();
             }
 
             if (e.getSource() == saveButton) {
@@ -224,11 +226,10 @@ public class SearchProgramFrame extends JDialog {
             setSelectedProgram(tableModel.get(selectedRow));
             selectedProgramLabel.setText(selectedProgram.getName());
             nameField.setText(selectedProgram.getName());
-            selectInstitute();
-
-            int selectedProgramTypeIndex = programBox.getSelectedIndex();
-            ExProgram.ProgramType type = (ExProgram.ProgramType) programBox.getItemAt(selectedProgramTypeIndex);
-
+            int itemIndex = (selectedProgram.getMaxCredits()/15)-1;
+            itemIndex = Math.min(itemIndex, maxCreditBox.getItemCount()-1);
+            maxCreditBox.setSelectedIndex(itemIndex);
+            instituteField.setText(selectedProgram.getInstituteName());
         }
     }
 
