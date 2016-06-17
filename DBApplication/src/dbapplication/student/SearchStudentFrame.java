@@ -300,7 +300,7 @@ public class SearchStudentFrame extends JDialog {
         public void actionPerformed(ActionEvent e) {
             toggleFields();
             resetFields();
-            resultModel.clear();
+            searchOnFilter();
         }
     }
 
