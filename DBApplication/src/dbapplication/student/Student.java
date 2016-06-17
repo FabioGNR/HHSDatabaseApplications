@@ -57,9 +57,7 @@ public class Student extends DatabaseTableClass {
         phoneNumbers = new ArrayList<>();
         if(numbersSet != null) {
             while(numbersSet.next()) {
-                phoneNumbers.add(new PhoneNumber(
-                        numbersSet.getString("phonenr"), 
-                        numbersSet.getBoolean("is_cell")));
+                phoneNumbers.add(new PhoneNumber(numbersSet));
             }
         }
         enrollments = new ArrayList<>();
@@ -95,15 +93,8 @@ public class Student extends DatabaseTableClass {
             // add phone numbers
             for(int i = 0; i < numbers.size(); i++) {
                 PhoneNumber number = numbers.get(i);
-                PreparedStatement phoneStat = connection.prepareStatement(
-                    "INSERT INTO student_phone "
-                    + "(student_id,phonenr, is_cell) "
-                    + "VALUES (?,?,?)");
-                phoneStat.setInt(1, student_id);
-                phoneStat.setString(2, number.getNumber());
-                phoneStat.setInt(3, number.isCellular() ? 1 : 0);
-                phoneStat.executeUpdate();
-                phoneStat.close();
+                PhoneNumber.insertNumber(student_id, 
+                        number.getNumber(), number.isCellular());
             }
         } catch (SQLException error) {
             System.out.println("Error: " + error.getMessage());
@@ -154,7 +145,8 @@ public class Student extends DatabaseTableClass {
     protected static ResultSet requestPhoneNumbers(int student_id) {
         Connection connection = DBConnection.getConnection();
         try {
-            PreparedStatement statement = connection.prepareStatement("SELECT phonenr, is_cell "
+            PreparedStatement statement = connection.prepareStatement(
+                    "SELECT phonenr, is_cell, student_id "
                     + "FROM student_phone WHERE student_id=?");
             statement.setInt(1, student_id);
             statement.closeOnCompletion();

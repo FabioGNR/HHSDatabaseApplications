@@ -25,17 +25,26 @@ public class PhoneFrame extends JDialog {
 
     private JTable numbersTable;
     private PhoneNumber selectedNumber = null;
+    private PhoneNumber[] existingNumbers;
     private DatabaseTableModel<PhoneNumber> tableModel;
     private JScrollPane tablePanel;
     private JEditField numberField;
     private JCheckBox cellularBox;
-    private JButton okButton, addButton, saveButton, deleteButton;
+    private JButton okButton, cancelButton;
+    private JButton addButton, saveButton, deleteButton;
+    private Student student;
 
-    public PhoneFrame(JFrame owner, ArrayList<PhoneNumber> numbers) {
+    public PhoneFrame(JFrame owner, ArrayList<PhoneNumber> numbers, Student student) {
         super(owner, true);
         setupFrame();
         createComponents();
+        this.student = student;
         tableModel.setItems(numbers);
+        existingNumbers = numbers.toArray(new PhoneNumber[numbers.size()]);
+    }
+
+    public PhoneFrame(JFrame owner, ArrayList<PhoneNumber> numbers) {
+        this(owner, numbers, null);
     }
 
     private void setupFrame() {
@@ -80,6 +89,11 @@ public class PhoneFrame extends JDialog {
         addButton.addActionListener(new AddNumberListener());
         add(addButton);
 
+        cancelButton = new JButton("Cancel");
+        cancelButton.setBounds(180, 250, 70, 30);
+        cancelButton.addActionListener(new CancelListener());
+        add(cancelButton);
+        
         okButton = new JButton("OK");
         okButton.setBounds(260, 250, 70, 30);
         okButton.addActionListener(new OKButtonListener());
@@ -139,13 +153,46 @@ public class PhoneFrame extends JDialog {
             selectedNumber.setNumber(number);
             selectedNumber.setCellular(cellular);
             selectedNumber.refreshCellData();
+            tableModel.fireTableDataChanged();
         }
     }
 
+    private class CancelListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            tableModel.setItems(new ArrayList<>());
+            PhoneFrame.this.dispose();
+        }        
+    }
+    
     private class OKButtonListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            if(student != null) { // update our student
+                ArrayList<PhoneNumber> numbers = tableModel.getAll();
+                // save and add enrollments
+                for(int i = 0; i < numbers.size();i ++) {
+                    PhoneNumber number = numbers.get(i);
+                    if(!number.existsInDB()) {
+                        // insert new
+                        PhoneNumber.insertNumber(student.getStudentid(), 
+                                number.getNumber(), number.isCellular());
+                        number.setExistsInDB(true);
+                    }
+                    else if(number.needsUpdate()) {
+                        number.save();
+                    }              
+                }
+                // remove enrollments by comparing to new list
+                for(int i = 0; i < existingNumbers.length; i++) {
+                    PhoneNumber number = existingNumbers[i];
+                    if(!numbers.contains(number)) {
+                        number.delete();
+                    }           
+                }
+            }
             PhoneFrame.this.dispose();
         }
     }

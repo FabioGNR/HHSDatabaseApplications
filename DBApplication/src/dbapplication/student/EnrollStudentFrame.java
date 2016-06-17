@@ -211,6 +211,7 @@ public class EnrollStudentFrame extends JDialog {
             }
             insertedEnrollment = new Enrollment(student.getStudentid(),
                     selectedProgram, credits, date);
+            insertedEnrollment.setExistsInDB(true);
             dispose();
         }
 

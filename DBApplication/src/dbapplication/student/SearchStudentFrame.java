@@ -247,10 +247,12 @@ public class SearchStudentFrame extends JDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             if(selectedStudent == null) return;
-            PhoneFrame frame = new PhoneFrame((JFrame)SearchStudentFrame.this.getOwner(), selectedStudent.getPhoneNumbers());
+            PhoneFrame frame = new PhoneFrame(
+                    (JFrame)SearchStudentFrame.this.getOwner(), 
+                    selectedStudent.getPhoneNumbers(),
+                    selectedStudent);
             frame.setVisible(true);
-            ArrayList<PhoneNumber> numbers = frame.getPhoneNumbers();
-            
+            // frame will save
         }    
     }
 
