@@ -117,7 +117,7 @@ public class SelectStudyDialog extends JDialog {
     }
 
     private void search(String filter, String conditionColumn) {
-        ArrayList<Study> study = Study.searchStudy(filter, 
+        ArrayList<Study> study = Study.searchStudy(filter,
                 conditionColumn, instituteID);
         resultModel.setResults(study);
     }
@@ -162,12 +162,4 @@ public class SelectStudyDialog extends JDialog {
         }
 
     }
-    
-        private class RegisterStudyListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            RegisterStudyDialog rsf = new RegisterStudyDialog((JFrame)getOwner(), RegisterStudyDialog.StudyType.Study);
-            rsf.setVisible(true);
-    }
-        }
-    }
+}

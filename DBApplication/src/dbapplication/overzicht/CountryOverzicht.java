@@ -102,8 +102,8 @@ public class CountryOverzicht extends JDialog {
         public void SliceClicked(Slice slice) {
             if(slice != null) 
                 selectedDestionationLabel.setText("Selected destination: "
-                        +slice.getUserData()+": "
-                        +slice.getValue()+" students");
+                        +slice.getUserData()+" "
+                        +(int)slice.getValue()+" students");
         }
     }
 }

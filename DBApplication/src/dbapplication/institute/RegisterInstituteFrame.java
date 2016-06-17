@@ -28,9 +28,7 @@ public class RegisterInstituteFrame extends JDialog {
     private JButton registerButton;
 
     private JButton showButton;
-    RegisterStudyDialog s = null;
-    private Study study;
-    private static JComboBox Studiesbox;
+    private static JComboBox studiesBox;
 
     private JRadioButton yesRadio;
     private JRadioButton noRadio;
@@ -117,17 +115,13 @@ public class RegisterInstituteFrame extends JDialog {
         showButton.addActionListener(studyLis);
         showButton.setVisible(false);
 
-        Studiesbox = new JComboBox();
-        Studiesbox.setLocation(20, 220);
-        Studiesbox.setSize(150, 30);
-        Studiesbox.setVisible(false);
+        studiesBox = new JComboBox();
+        studiesBox.setLocation(20, 220);
+        studiesBox.setSize(150, 30);
+        studiesBox.setVisible(false);
 
-        add(Studiesbox);
+        add(studiesBox);
 
-    }
-
-    public static void addStudiesbox(String text) {
-        Studiesbox.addItem(text);
     }
 
     private class RegisterStudyListener implements ActionListener {
@@ -135,9 +129,12 @@ public class RegisterInstituteFrame extends JDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
 
-            RegisterStudyDialog dlg = new RegisterStudyDialog((JFrame) getOwner(), RegisterStudyDialog.StudyType.Study);
+            RegisterStudyDialog dlg = new RegisterStudyDialog((JFrame) getOwner());
             dlg.setVisible(true);
-
+            Study newStudy = dlg.getNewStudy();
+            if(newStudy != null) {
+                studiesBox.addItem(newStudy);
+            }
         }
     }
 
@@ -147,11 +144,11 @@ public class RegisterInstituteFrame extends JDialog {
         public void actionPerformed(ActionEvent e) {
             if (yesRadio.isSelected()) {
                 showButton.setVisible(false);
-                Studiesbox.setVisible(false);
+                studiesBox.setVisible(false);
             }
             else {
                showButton.setVisible(true);
-               Studiesbox.setVisible(true); 
+               studiesBox.setVisible(true); 
     }
         }
     }
@@ -203,12 +200,14 @@ public class RegisterInstituteFrame extends JDialog {
                     if (register == JOptionPane.OK_OPTION) {
 
                         is_business = yesRadio.isSelected() ? 1 : 0;
-                        org_idreturn = Institute.insertInstitute(city, name, country, address, is_business);
+                        int org_id = Institute.insertInstitute(city, name, country, address, is_business);
 
-                        for (int i = 0; i < RegisterStudyDialog.codearray.size(); i++) {
-                            Study.insertStudy(RegisterStudyDialog.codearray.get(i), RegisterStudyDialog.emailarray.get(i), RegisterStudyDialog.numberarray.get(i), org_idreturn);
+                        for(int i = 0; i < studiesBox.getItemCount(); i++) {
+                            Study study = (Study)studiesBox.getItemAt(i);
+                            Study.insertStudy(study.getCode(), 
+                                    study.getEmail(), study.getPhoneNumber(), 
+                                    org_id);
                         }
-                        RegisterStudyDialog.codearray.clear();
                         clearField();
                         setVisible(false);
                         dispose();
