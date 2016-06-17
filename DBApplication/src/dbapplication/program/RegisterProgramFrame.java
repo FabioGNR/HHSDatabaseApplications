@@ -24,7 +24,6 @@ public class RegisterProgramFrame extends JDialog {
     private JCheckBox[] termBoxes = new JCheckBox[ExProgram.Terms];
     private JComboBox maxCreditBox, studyTypeBox;
     private String[] maxCredit = {"15 EC", "30 EC", "45 EC", "60 EC"};
-    private String[] studyType = {"Minor", "European Project", "Summer School"};
     private int selectedInstitute = -1;
     private Study selectedStudy = null;
 
@@ -105,7 +104,7 @@ public class RegisterProgramFrame extends JDialog {
         selectStudyButton.setVisible(false);
         
 
-        studyTypeBox = new JComboBox(studyType);
+        studyTypeBox = new JComboBox(StudyProgram.StudyType.values());
         studyTypeBox.setBounds(20, 250, 125, 25);
         add(studyTypeBox);
         studyTypeBox.setVisible(false);
