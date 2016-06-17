@@ -15,8 +15,8 @@ import javax.swing.*;
  */
 public class RegisterProgramFrame extends JDialog {
 
-    private JTextField instituteField, nameField;
-    private JTextField studyField, descriptionField;
+    private JTextField instituteField, nameField, studyField;
+    private JTextArea descriptionField;
     private JButton registerButton, instituteButton, selectStudyButton;
     private JRadioButton internshipButton, studyProgramButton;
     private ButtonGroup buttonGroup;
@@ -109,7 +109,7 @@ public class RegisterProgramFrame extends JDialog {
         add(studyTypeBox);
         studyTypeBox.setVisible(false);
         
-        descriptionField = new JEditField("Write a description");
+        descriptionField = new JTextArea("Write a description");
         descriptionField.setBounds(20, 300, 350, 100);
         add(descriptionField);
 
