@@ -139,6 +139,7 @@ public class RegisterInstituteFrame extends JDialog {
         nameField.setText("");
         countryField.setText("");
         addressField.setText("");
+        box.setSelectedIndex(0);
     }
 
     private class AddButtonListener implements ActionListener {

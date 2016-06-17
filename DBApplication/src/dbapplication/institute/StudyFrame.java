@@ -162,7 +162,7 @@ public class StudyFrame extends JDialog {
         add(deleteButton);
 
         addButton = new JButton("Add Study");
-        addButton.setLocation(570, 220);
+        addButton.setLocation(490, 220);
         addButton.setSize(120, 30);
         addButton.addActionListener(new AddStudyListener());
         add(addButton);
