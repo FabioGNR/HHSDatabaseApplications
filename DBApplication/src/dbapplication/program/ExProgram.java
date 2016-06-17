@@ -15,6 +15,7 @@ import java.util.ArrayList;
  */
 public class ExProgram extends DatabaseTableClass {
 
+    public static final int Terms = 5;
     public enum ProgramType {
         Internship, StudyProgram {
             @Override
@@ -26,7 +27,7 @@ public class ExProgram extends DatabaseTableClass {
     protected String name, description, instituteName;
     protected int maxCredits, code;
     protected String[] cellData;
-    protected boolean[] terms = new boolean[5];
+    protected boolean[] terms = new boolean[Terms];
 
     public ExProgram(ResultSet result, ResultSet termSet) throws SQLException {
         name = result.getString("name");
@@ -101,6 +102,22 @@ public class ExProgram extends DatabaseTableClass {
             error.printStackTrace();
             return null;
         }
+    }
+    
+    public boolean save() {
+        Connection connect = DBConnection.getConnection();
+        String sql = "UPDATE ex_program SET WHERE code = ?";
+        try {
+            PreparedStatement statement = connect.prepareStatement(sql);
+            statement.setInt(1, code);
+            statement.executeUpdate();
+            System.out.println("Updated ExProgram");
+        } catch (SQLException error) {
+            System.out.println("Error: " + error.getMessage());
+            System.out.println("Failed updating ExProgram");
+            return false;
+        }
+        return true;       
     }
     
     public boolean update() {
