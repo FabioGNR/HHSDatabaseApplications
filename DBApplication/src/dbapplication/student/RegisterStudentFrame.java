@@ -132,18 +132,22 @@ public class RegisterStudentFrame extends JDialog {
         group.add(ex_studentButton);
     }
     
+    private void resetFields() {
+        // reset all fields
+        selectedInstCode = -1;
+        uniField.setText("");
+        nameField.setText("");
+        emailField.setText("");
+        cityField.setText("");
+        addressField.setText("");
+        studentidField.setText("");
+        numbers = new ArrayList<>();      
+    }
+    
     class CloseListener extends WindowAdapter {
         @Override
         public void windowClosed(WindowEvent e) {
-            // reset all fields
-            selectedInstCode = 01;
-            uniField.setText("");
-            nameField.setText("");
-            emailField.setText("");
-            cityField.setText("");
-            addressField.setText("");
-            studentidField.setText("");
-            numbers = new ArrayList<>();
+            resetFields();
         }  
     }
     
@@ -243,6 +247,8 @@ public class RegisterStudentFrame extends JDialog {
             else {
                 JOptionPane.showMessageDialog(RegisterStudentFrame.this, 
                     "Registering of student succeeded", "Success", JOptionPane.PLAIN_MESSAGE);
+                setVisible(false);
+                resetFields();
             }
         }
     }
