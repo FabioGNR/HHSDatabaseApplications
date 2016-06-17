@@ -72,16 +72,26 @@ public class RegisterStudyDialog extends JDialog {
             String code, email, nr;
 
             code = codeField.getText();
-            if (code.isEmpty() || code.matches(".*\\d+.*")) {
+            if (code.isEmpty()) {
+                JOptionPane.showMessageDialog(RegisterStudyDialog.this,
+                        "Code cannot be a Empty", "Incorrect input", JOptionPane.WARNING_MESSAGE);
+                 return;
+            }
+             if (code.matches(".*\\d+.*")) {
                 JOptionPane.showMessageDialog(RegisterStudyDialog.this,
                         "Code cannot be a number", "Incorrect input", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
+               
+                 return;
+             }
             email = emailField.getText();
-            if (!email.contains("@") || email.isEmpty()) {
+            if (!email.contains("@")) {
                 JOptionPane.showMessageDialog(RegisterStudyDialog.this,
                         "Email must be in format of a@b.ccc", "Incorrect input", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            if (email.isEmpty()) {
+                JOptionPane.showMessageDialog(RegisterStudyDialog.this,
+                        "Email cannot be empty", "Incorrect input", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             nr = numberField.getText();

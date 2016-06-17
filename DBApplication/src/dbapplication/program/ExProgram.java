@@ -16,7 +16,12 @@ import java.util.ArrayList;
 public class ExProgram extends DatabaseTableClass {
 
     public enum ProgramType {
-        Internship, StudyProgram
+        Internship, StudyProgram {
+            @Override
+            public String toString() {
+                return "Study Program"; 
+            }
+        }
     }
     protected String name, description, instituteName;
     protected int maxCredits, code;

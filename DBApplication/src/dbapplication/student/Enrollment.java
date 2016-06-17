@@ -121,8 +121,8 @@ public class Enrollment extends DatabaseTableClass {
             Connection connection = DBConnection.getConnection();
             PreparedStatement updateStat = connection.prepareStatement(
                     "UPDATE enrollment "
-                            + "SET (acquired_credits, registration_date) "
-                            + "VALUES(?,?) WHERE student_id=? AND ex_program=?");
+                            + "SET acquired_credits=?, registration_date=? "
+                            + "WHERE student_id=? AND ex_program=?");
             updateStat.setInt(1, acquiredCredits);
             updateStat.setDate(2, registrationDate);
             updateStat.setInt(3, student_id);

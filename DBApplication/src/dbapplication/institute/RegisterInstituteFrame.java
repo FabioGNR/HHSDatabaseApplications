@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.ButtonGroup;
+import javax.swing.ComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -26,18 +27,13 @@ public class RegisterInstituteFrame extends JDialog {
     private JTextField addressField;
 
     private JButton registerButton;
-
     private JButton showButton;
+    
+    String boxList[] = { "Company", "University" };
+    private JComboBox box;
     private static JComboBox studiesBox;
 
-    private JRadioButton yesRadio;
-    private JRadioButton noRadio;
-    private JLabel isBusinessLabel;
     int org_idreturn;
-
-    public int getOrg_idreturn() {
-        return org_idreturn;
-    }
 
     private String selectedStudy;
 
@@ -86,27 +82,12 @@ public class RegisterInstituteFrame extends JDialog {
         registerButton.setSize(90, 60);
         registerButton.addActionListener(lis);
         add(registerButton);
-
-        isBusinessLabel = new JLabel("Company?");
-        isBusinessLabel.setLocation(230, 20);
-        isBusinessLabel.setSize(100, 30);
-        add(isBusinessLabel);
-
-        yesRadio = new JRadioButton("Yes");
-        yesRadio.setLocation(300, 20);
-        yesRadio.setSize(100, 30);
-        yesRadio.addActionListener(switchLis);
-        add(yesRadio);
-
-        noRadio = new JRadioButton("No");
-        noRadio.setLocation(300, 50);
-        noRadio.setSize(100, 30);
-        noRadio.addActionListener(switchLis);
-        add(noRadio);
-
-        ButtonGroup group = new ButtonGroup();
-        group.add(yesRadio);
-        group.add(noRadio);
+        
+        box = new JComboBox(boxList);
+        box.setLocation(250, 20);
+        box.setSize(150, 30);
+        box.addActionListener(switchLis);
+        add(box);
 
         showButton = new JButton("Add Studies");
         showButton.setLocation(180, 220);
@@ -142,7 +123,7 @@ public class RegisterInstituteFrame extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (yesRadio.isSelected()) {
+            if (box.getSelectedIndex() == 0) {
                 showButton.setVisible(false);
                 studiesBox.setVisible(false);
             }
@@ -158,6 +139,7 @@ public class RegisterInstituteFrame extends JDialog {
         nameField.setText("");
         countryField.setText("");
         addressField.setText("");
+        box.setSelectedIndex(0);
     }
 
     private class AddButtonListener implements ActionListener {
@@ -167,26 +149,42 @@ public class RegisterInstituteFrame extends JDialog {
             String city, name, country, address;
             int is_business;
             city = cityField.getText();
-            if (city.isEmpty() || city.matches(".*\\d+.*")) {
+            if (city.isEmpty()) {
+                JOptionPane.showMessageDialog(RegisterInstituteFrame.this,
+                        "city cannot be a Empty", "Incorrect input", JOptionPane.WARNING_MESSAGE);
+             
+            }
+            if (city.matches(".*\\d+.*")) {
                 JOptionPane.showMessageDialog(RegisterInstituteFrame.this,
                         "city cannot be a number", "Incorrect input", JOptionPane.WARNING_MESSAGE);
                 city = null;
             }
             name = nameField.getText();
-            if (name.isEmpty() || name.matches(".*\\d+.*")) {
+            if (name.isEmpty()) {
+                JOptionPane.showMessageDialog(RegisterInstituteFrame.this,
+                        "name cannot be a Empty", "Incorrect input", JOptionPane.WARNING_MESSAGE);
+             
+            }
+            if (name.matches(".*\\d+.*")) {
                 JOptionPane.showMessageDialog(RegisterInstituteFrame.this,
                         "name cannot be a number", "Incorrect input", JOptionPane.WARNING_MESSAGE);
                 name = null;
             }
             country = countryField.getText();
-            if (country.isEmpty() || country.matches(".*\\d+.*")) {
+            if (country.isEmpty()) {
+                JOptionPane.showMessageDialog(RegisterInstituteFrame.this,
+                        "country cannot be a Empty", "Incorrect input", JOptionPane.WARNING_MESSAGE);
+              
+            }
+            if (country.matches(".*\\d+.*")) {
                 JOptionPane.showMessageDialog(RegisterInstituteFrame.this,
                         "country cannot be a number", "Incorrect input", JOptionPane.WARNING_MESSAGE);
                 country = null;
             }
             address = addressField.getText();
             if (address.isEmpty()) {
-
+                JOptionPane.showMessageDialog(RegisterInstituteFrame.this,
+                        "Adress cannot be a Empty", "Incorrect input", JOptionPane.WARNING_MESSAGE);
                 address = null;
             }
 
@@ -198,8 +196,12 @@ public class RegisterInstituteFrame extends JDialog {
                     int register = JOptionPane.showOptionDialog(RegisterInstituteFrame.this, "Institute has been Registerd", "Registerd", JOptionPane.PLAIN_MESSAGE,
                             JOptionPane.INFORMATION_MESSAGE, null, null, null);
                     if (register == JOptionPane.OK_OPTION) {
-
-                        is_business = yesRadio.isSelected() ? 1 : 0;
+                        
+                        if (box.getSelectedIndex() == 0) {
+                            is_business = 1;
+                        }else 
+                            is_business = 0;
+                        
                         int org_id = Institute.insertInstitute(city, name, country, address, is_business);
 
                         for(int i = 0; i < studiesBox.getItemCount(); i++) {
@@ -216,5 +218,9 @@ public class RegisterInstituteFrame extends JDialog {
                 }
             }
         }
+    }
+
+        public int getOrg_idreturn() {
+        return org_idreturn;
     }
 }

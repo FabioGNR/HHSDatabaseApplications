@@ -181,6 +181,7 @@ public class EnrollmentFrame extends JDialog {
                 return;
             }
             selectedEnrollment.refreshCellData();
+            tableModel.fireTableDataChanged();
         }
     }
 

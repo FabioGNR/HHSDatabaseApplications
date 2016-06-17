@@ -28,23 +28,22 @@ public class SelectProgramFrame extends JDialog {
     private int instituteID;
     private String study;
 
-    protected SelectProgramFrame(JFrame owner) {
+    public SelectProgramFrame(JFrame owner, int company) {
         super(owner, true);
+        instituteID = company;
+        study = null;       
         setupFrame();
         createComponents();   
         search("", "name");
     }
     
-    public SelectProgramFrame(JFrame owner, int company) {
-        this(owner);
-        instituteID = company;
-        study = null;
-    }
-    
     public SelectProgramFrame(JFrame owner, int university, String study) {
-        this(owner);
+        super(owner, true);
         instituteID = university;
         this.study = study;
+        setupFrame();
+        createComponents();   
+        search("", "name");
     }
 
     private void setupFrame() {
