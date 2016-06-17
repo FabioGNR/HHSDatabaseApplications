@@ -29,7 +29,6 @@ public class SearchProgramFrame extends JDialog {
     private JButton studyCodeButton;
     private JComboBox internshipConditionBox, studyProgramBox;
     private JComboBox programBox, maxCreditBox, studyTypeBox;
-    private String[] studyType = {"Minor", "EPS", "Summer School"};
     private String[] maxCredits = {"15 ECS", "30 ECS", "45 ECS", "60 ECS"};
     private JTable resultTable;
     private JScrollPane resultPanel;
@@ -120,7 +119,7 @@ public class SearchProgramFrame extends JDialog {
 
         //nameField
         nameField = new JEditField("Name");
-        nameField.setBounds(600, 60, 150, 30);
+        nameField.setBounds(600, 60, 220, 30);
         add(nameField);
 
         //maxCreditBox
@@ -139,7 +138,7 @@ public class SearchProgramFrame extends JDialog {
         add(instituteField);
 
         //studyTypeBox
-        studyTypeBox = new JComboBox(studyType);
+        studyTypeBox = new JComboBox(StudyProgram.StudyType.values());
         studyTypeBox.setBounds(600, 180, 150, 30);
         add(studyTypeBox);
         studyTypeBox.setVisible(false);
@@ -253,11 +252,12 @@ public class SearchProgramFrame extends JDialog {
             //instituteField
             instituteField.setText(selectedProgram.getInstituteName());
             //studyType
-            int selectedTypeIndex = studyTypeBox.getSelectedIndex();
-            ExProgram.ProgramType type = (ExProgram.ProgramType) studyTypeBox.getItemAt(selectedTypeIndex);
-            //studyCode
-            
-            
+            if (getSelectedType() == ExProgram.ProgramType.StudyProgram) {
+                StudyProgram studyProgram = (StudyProgram)selectedProgram;
+                studyTypeBox.setSelectedItem(studyProgram.getStudyType());
+              //studyCode  
+              studyField.setText(studyProgram.getStudy_code());
+            }
         }
     }
 
