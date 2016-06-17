@@ -12,14 +12,30 @@ import java.util.ArrayList;
  * @author RLH
  */
 public class StudyProgram extends ExProgram {
+    public enum StudyType{
+        Minor, EPS, SummerSchool{
+            @Override
+            public String toString(){
+                return "Summer School";
+            }
+        }
+    }
 
-    private int org_id, studyType;
+    private int org_id;
+    private StudyType type;
     private String study_code;
 
     public StudyProgram(ResultSet result, ResultSet termSet) throws SQLException {
         super(result, termSet);
         org_id = result.getInt("org_id");
-        studyType = result.getInt("type");
+        String studyType = result.getString("type");
+        StudyType[] studyTypes = StudyType.values();
+        for(int i = 0; i < studyTypes.length; i++){
+            if(studyTypes[i].name().equals(studyType)){
+                type = studyTypes[i];
+                break;
+            }
+        }
         study_code = result.getString("study_code");
     }
 
@@ -59,7 +75,7 @@ public class StudyProgram extends ExProgram {
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, org_id);
-            statement.setInt(2, studyType);
+            statement.setString(2, type.name());
             statement.setString(3, study_code);
             statement.setInt(4, code);
             statement.executeUpdate();
@@ -115,8 +131,8 @@ public class StudyProgram extends ExProgram {
         this.org_id = org_id;
     }
 
-    public void setStudyType(int studyType) {
-        this.studyType = studyType;
+    public void setStudyType(StudyType type) {
+        this.type = type;
     }
 
     public void setStudy_code(String study_code) {
@@ -127,8 +143,8 @@ public class StudyProgram extends ExProgram {
         return org_id;
     }
 
-    public int getStudyType() {
-        return studyType;
+    public StudyType getStudyType() {
+        return type;
     }
 
     public String getStudy_code() {
