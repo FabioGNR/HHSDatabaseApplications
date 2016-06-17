@@ -105,7 +105,7 @@ public class StudyProgram extends ExProgram {
     }
 
     public static boolean insertNewStudyProgram(String name, boolean[] terms,
-            int maxCredit, String description, int org_id, int studyType, String studyCode) {
+            int maxCredit, String description, int org_id, String type, String studyCode) {
         Connection connect = DBConnection.getConnection();
         int code = ExProgram.insertExProgram(name, terms, maxCredit, description);
         if (code <= -1) {
@@ -116,7 +116,7 @@ public class StudyProgram extends ExProgram {
             PreparedStatement statement = connect.prepareStatement(sql);
             statement.setInt(1, code);
             statement.setInt(2, org_id);
-            statement.setInt(3, studyType);
+            statement.setString(3, type);
             statement.setString(4, studyCode);
             statement.executeUpdate();
             System.out.println("A new studyProgram was succesfully added.");

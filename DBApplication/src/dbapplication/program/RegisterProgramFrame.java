@@ -223,10 +223,10 @@ public class RegisterProgramFrame extends JDialog {
                     return;
                 }
                 // studyTypeBox
-                int selectedStudyType = studyTypeBox.getSelectedIndex();
+                String studyType = ((StudyProgram.StudyType)studyTypeBox.getSelectedItem()).name();
                 // insert studyProgram data
                 result = StudyProgram.insertNewStudyProgram(name, terms, maxCredit,
-                        description, selectedInstitute, selectedStudyType, 
+                        description, selectedInstitute, studyType, 
                         selectedStudy.getCode());
             }
             if (!result) {
