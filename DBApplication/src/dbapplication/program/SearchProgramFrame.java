@@ -32,7 +32,7 @@ public class SearchProgramFrame extends JDialog {
     private JComboBox internshipConditionBox, studyProgramBox;
     private JComboBox programBox, maxCreditBox, studyTypeBox;
     private final String[] maxCredits = {"15 ECS", "30 ECS", "45 ECS", "60 ECS"};
-    private JCheckBox[] termBoxes = new JCheckBox[ExProgram.Terms];
+    private final JCheckBox[] termBoxes = new JCheckBox[ExProgram.Terms];
     private JTable resultTable;
     private JScrollPane resultPanel;
     private DatabaseTableModel<ExProgram> tableModel;
@@ -59,6 +59,17 @@ public class SearchProgramFrame extends JDialog {
         // reset fields here
         if (state) {
             search("", "name");
+        }
+    }
+    
+    private void resetFields() {
+        nameField.setText("");
+        studyField.setText("");
+        instituteField.setText("");
+        descriptionAreaField.setText("");
+        descriptionAreaField.setText("");
+        for(int i = 0; i < termBoxes.length; i++) {
+            termBoxes[i].setSelected(false);
         }
     }
 
@@ -157,6 +168,13 @@ public class SearchProgramFrame extends JDialog {
         descriptionAreaField = new JEditArea("Write a description.");
         descriptionAreaField.setBounds(850, 40, 300, 200);
         add(descriptionAreaField);
+        
+        // term boxes
+        for(int i = 0; i < ExProgram.Terms; i++) {
+            termBoxes[i] = new JCheckBox("Term "+(i+1));
+            termBoxes[i].setBounds(850, 250+(i*30), 130, 30);
+            add(termBoxes[i]);
+        }
 
         saveButton = new JButton("Save");
         saveButton.setBounds(600, 350, 75, 30);
@@ -191,6 +209,7 @@ public class SearchProgramFrame extends JDialog {
             program = StudyProgram.searchStudyProgram(filter, conditionColumn);
         }
         tableModel.setItems(program);
+        resetFields();
     }
 
     private void setSelectedProgram(ExProgram program) {
@@ -198,6 +217,7 @@ public class SearchProgramFrame extends JDialog {
         if (program != null) {
             selectedProgramLabel.setText("Selected Program: " + program.getName());
         } else {
+            resetFields();
             selectedProgramLabel.setText("Selected Program: ");
         }
     }
@@ -236,8 +256,8 @@ public class SearchProgramFrame extends JDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (selectedProgram == null) {
-                JOptionPane.showMessageDialog(SearchProgramFrame.this, "Please select an internship!",
-                        "Internship missing", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(SearchProgramFrame.this, "Please select a program!",
+                        "Program not selected", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             int choice = JOptionPane.showConfirmDialog(SearchProgramFrame.this,
@@ -245,6 +265,8 @@ public class SearchProgramFrame extends JDialog {
                     "Delete program", JOptionPane.OK_CANCEL_OPTION);
             if (choice == JOptionPane.OK_OPTION) {
                 selectedProgram.delete();
+                setSelectedProgram(null);
+                tableModel.fireTableDataChanged();
             }
         }
     }
@@ -254,18 +276,23 @@ public class SearchProgramFrame extends JDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (selectedProgram == null) {
-                JOptionPane.showMessageDialog(SearchProgramFrame.this, "Please select an internship!",
-                        "Internship missing", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(SearchProgramFrame.this, "Please select a program!",
+                        "Program not selected", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             ExProgram.ProgramType type = getSelectedType();
             if (type == ExProgram.ProgramType.StudyProgram) {
-                // set the fields
+                // set study attributes
                 StudyProgram studyProgram = (StudyProgram) selectedProgram;
                 studyProgram.setStudy_code(studyField.getText());
                 studyProgram.setStudyType((StudyProgram.StudyType) studyTypeBox.getSelectedItem());
             }
-            selectedProgram.setName(nameField.getName());
+            boolean[] terms = new boolean[ExProgram.Terms];
+            for(int i = 0; i < terms.length; i++) {
+                terms[i] = termBoxes[i].isSelected();
+            }
+            selectedProgram.setTerms(terms);
+            selectedProgram.setName(nameField.getText());
             selectedProgram.setDescription(descriptionAreaField.getText());
             int credits = (maxCreditBox.getSelectedIndex() + 1) * 15;
             selectedProgram.setMaxCredit(credits);
@@ -273,6 +300,7 @@ public class SearchProgramFrame extends JDialog {
                 JOptionPane.showMessageDialog(SearchProgramFrame.this, "Saving program failed!",
                         "Error saving program", JOptionPane.ERROR_MESSAGE);
             } else {
+                selectedProgram.refreshCellData();
                 tableModel.fireTableDataChanged();
             }
         }
@@ -304,6 +332,10 @@ public class SearchProgramFrame extends JDialog {
                 //studyCode  
                 studyField.setText(studyProgram.getStudy_code());
             }
+            // set term boxes
+            for(int i = 0; i < ExProgram.Terms; i++) {
+                termBoxes[i].setSelected(selectedProgram.getTerms()[i]);
+            }
         }
     }
 
@@ -322,9 +354,6 @@ public class SearchProgramFrame extends JDialog {
             boolean internshipSelected = getSelectedType() == ExProgram.ProgramType.Internship;
             internshipConditionBox.setVisible(internshipSelected);
             studyProgramBox.setVisible(!internshipSelected);
-            // maakt het uit bij het updaten?
-//                instituteField.setVisible(!internshipSelected);
-//                instituteButton.setVisible(!internshipSelected);
             studyTypeBox.setVisible(!internshipSelected);
             studyField.setVisible(!internshipSelected);
             studyCodeButton.setVisible(!internshipSelected);

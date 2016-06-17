@@ -66,12 +66,12 @@ public class StudyProgram extends ExProgram {
     }
 
     @Override
-    public boolean update() {
-        if (!super.update()) {
+    public boolean save() {
+        if (!super.save()) {
             return false;
         }
         Connection connection = DBConnection.getConnection();
-        String sql = "UPDATE internship SET org_id = ?, type = ?, study_code = ? WHERE code ?";
+        String sql = "UPDATE study_program SET org_id = ?, type = ?, study_code = ? WHERE code = ?";
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, org_id);

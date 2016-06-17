@@ -38,7 +38,8 @@ public class HHSStudent extends Student {
         String lStudy = result.getString("hhs_study");
         LocalStudy[] localStudies = LocalStudy.values();
         for (int i = 0; i < localStudies.length; i++) {
-            if (localStudies[i].toString().equals(lStudy)) {
+            if (localStudies[i].toString().equals(lStudy) ||
+                    localStudies[i].name().equals(lStudy)) {
                 localStudy = localStudies[i];
                 break;
             }

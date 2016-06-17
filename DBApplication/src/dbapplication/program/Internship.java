@@ -48,8 +48,8 @@ public class Internship extends ExProgram {
     }
 
     @Override
-    public boolean update() {
-        if (!super.update()) {
+    public boolean save() {
+        if (!super.save()) {
             return false;
         }
         Connection connection = DBConnection.getConnection();
