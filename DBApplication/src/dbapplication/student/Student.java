@@ -137,7 +137,7 @@ public class Student extends DatabaseTableClass {
         try {
             PreparedStatement statement = connection.prepareStatement(
                 "SELECT student_id, ex_program, acquired_credits, "
-                        + "registration_date, "
+                        + "registration_date, P.description, "
                         + "P.`code`, P.`name`, P.max_credit FROM enrollment E "
                         + "JOIN ex_program P ON P.`code` = ex_program WHERE student_id=?");
             statement.setInt(1, student_id);
