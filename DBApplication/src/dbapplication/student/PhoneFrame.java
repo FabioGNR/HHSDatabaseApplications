@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -39,6 +40,9 @@ public class PhoneFrame extends JDialog {
         setupFrame();
         createComponents();
         this.student = student;
+        if(numbers == null) {
+            numbers = new ArrayList<>();
+        }
         tableModel.setItems(numbers);
         existingNumbers = numbers.toArray(new PhoneNumber[numbers.size()]);
     }
@@ -161,7 +165,12 @@ public class PhoneFrame extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            tableModel.setItems(new ArrayList<>());
+            // reset to old list
+            ArrayList<PhoneNumber> newList = tableModel.getAll();
+            newList.clear();
+            for(int i = 0; i < existingNumbers.length; i++) {
+                newList.add(existingNumbers[i]);
+            }
             PhoneFrame.this.dispose();
         }        
     }
@@ -172,6 +181,12 @@ public class PhoneFrame extends JDialog {
         public void actionPerformed(ActionEvent e) {
             if(student != null) { // update our student
                 ArrayList<PhoneNumber> numbers = tableModel.getAll();
+                if(numbers.isEmpty()) {
+                    JOptionPane.showMessageDialog(PhoneFrame.this, 
+                            "Student must have at least one phone number",
+                            "Missing phone number", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 // save and add enrollments
                 for(int i = 0; i < numbers.size();i ++) {
                     PhoneNumber number = numbers.get(i);
