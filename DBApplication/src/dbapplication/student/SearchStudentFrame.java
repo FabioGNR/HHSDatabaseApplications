@@ -258,6 +258,7 @@ public class SearchStudentFrame extends JDialog {
         emailField.setText("");
         cityField.setText("");
         addressField.setText("");
+        resultModel.clear();
         setSelectedStudent(null);
     }
 
@@ -298,9 +299,8 @@ public class SearchStudentFrame extends JDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             toggleFields();
-            setSelectedStudent(null);
+            resetFields();
             resultModel.clear();
-
         }
     }
 
