@@ -64,7 +64,6 @@ public class SearchProgramFrame extends JDialog {
         studyField.setText("");
         instituteField.setText("");
         descriptionAreaField.setText("");
-        descriptionAreaField.setText("");
         for(int i = 0; i < termBoxes.length; i++) {
             termBoxes[i].setSelected(false);
         }
