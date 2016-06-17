@@ -85,7 +85,7 @@ public class ExchangeStudent extends Student {
 
     public static boolean insertNewExchangeStudent(int student_id, String name, Gender gender, 
             String email, String city, String address, int university, ArrayList<PhoneNumber> numbers) {
-        if (!Student.insertNewStudent(student_id, name, gender, email, numbers)) {
+        if(!Student.insertNewStudent(student_id, name, gender, email, numbers)) {
             return false;
         }
         Connection connection = DBConnection.getConnection();
@@ -94,7 +94,7 @@ public class ExchangeStudent extends Student {
                     "INSERT INTO exchange_student "
                     + "(student_id, city, address, university) "
                     + "VALUES (?, ?, ?, ?)");
-            statement.setInt(1, student_id);
+            statement.setString(1, student_id+"");
             statement.setString(2, city);
             statement.setString(3, address);
             statement.setInt(4, university);
@@ -105,6 +105,17 @@ public class ExchangeStudent extends Student {
         } catch (SQLException error) {
             System.out.println("Error: " + error.getMessage());
             System.out.println("preparedstatement werkt niet :(");
+            // delete student from supertype table
+            try {
+                PreparedStatement delete = connection.prepareStatement(
+                    "DELETE FROM student WHERE student_id=?");
+                delete.setString(1, student_id+"");
+                delete.executeUpdate();
+                delete.close();
+            }
+            catch(Exception ex) {
+
+            }
             return false;
         }
         return true;

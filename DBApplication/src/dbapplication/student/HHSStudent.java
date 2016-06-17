@@ -110,6 +110,17 @@ public class HHSStudent extends Student {
         } catch (SQLException error) {
             System.out.println("Error: " + error.getMessage());
             System.out.println("preparedstatement werkt niet :(");
+            // delete student from supertype table
+            try {
+                PreparedStatement delete = connection.prepareStatement(
+                    "DELETE FROM student WHERE student_id=?");
+                delete.setString(1, student_id+"");
+                delete.executeUpdate();
+                delete.close();
+            }
+            catch(Exception ex) {
+
+            }
             return false;
         }
         return true;
