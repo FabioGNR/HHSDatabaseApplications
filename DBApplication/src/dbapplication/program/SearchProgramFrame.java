@@ -1,6 +1,7 @@
 package dbapplication.program;
 
 import dbapplication.DatabaseTableModel;
+import dbapplication.JEditArea;
 import dbapplication.JEditField;
 import dbapplication.JSearchField;
 import dbapplication.SearchFilter;
@@ -22,9 +23,10 @@ import javax.swing.event.ListSelectionListener;
 public class SearchProgramFrame extends JDialog {
 
     private JTextField searchField, nameField;
-    private JTextField instituteField, studyField, descriptionField;
+    private JTextField instituteField, studyField;
+    private JTextArea descriptionAreaField;
     private JButton searchButton, saveButton, deleteButton;
-    private JButton instituteButton, studyCodeButton;
+    private JButton studyCodeButton;
     private JComboBox internshipConditionBox, studyProgramBox;
     private JComboBox programBox, maxCreditBox, studyTypeBox;
     private String[] studyType = {"Minor", "EPS", "Summer School"};
@@ -32,7 +34,7 @@ public class SearchProgramFrame extends JDialog {
     private JTable resultTable;
     private JScrollPane resultPanel;
     private DatabaseTableModel<ExProgram> tableModel;
-    private JLabel selectedProgramLabel, programCodeLabel;
+    private JLabel selectedProgramLabel, instituteLabel;
     private ExProgram selectedProgram = null;
     private Institute instituteSelected = null;
     private Internship internshipSelected = null;
@@ -64,27 +66,31 @@ public class SearchProgramFrame extends JDialog {
     }
 
     private void createComponents() {
+        //searchfield
         searchField = new JSearchField();
         searchField.setBounds(20, 20, 180, 30);
         add(searchField);
 
+        //searchButton
         searchButton = new JButton("Search");
         searchButton.setBounds(220, 20, 90, 30);
         searchButton.addActionListener(new SearchListener());
         add(searchButton);
 
+        //programBox
         programBox = new JComboBox(ExProgram.ProgramType.values());
         programBox.setBounds(330, 20, 100, 30);
         programBox.addActionListener(new SwitchProgramListener());
         add(programBox);
 
+        //internshipConditionBox
         internshipConditionBox = new JComboBox(new SearchFilter[]{
             new SearchFilter("Name", "name")});
-        //misschien zoeken op credits}
         internshipConditionBox.setBounds(450, 20, 125, 30);
         add(internshipConditionBox);
         internshipConditionBox.setVisible(true);
 
+        //studyProgramBox
         studyProgramBox = new JComboBox(new SearchFilter[]{
             new SearchFilter("Name", "name")
         });
@@ -92,6 +98,7 @@ public class SearchProgramFrame extends JDialog {
         add(studyProgramBox);
         studyProgramBox.setVisible(false);
 
+        //resultTable
         resultTable = new JTable();
         resultTable.setBounds(0, 0, 555, 300);
         tableModel = new DatabaseTableModel<>(
@@ -106,23 +113,32 @@ public class SearchProgramFrame extends JDialog {
         resultPanel.setBounds(20, 60, 555, 350);
         add(resultPanel);
 
+        //selectedprogramLabel
         selectedProgramLabel = new JLabel("Selected Program: ");
-        selectedProgramLabel.setBounds(600, 20, 150, 30);
+        selectedProgramLabel.setBounds(600, 20, 250, 30);
         add(selectedProgramLabel);
 
+        //nameField
         nameField = new JEditField("Name");
         nameField.setBounds(600, 60, 150, 30);
         add(nameField);
 
+        //maxCreditBox
         maxCreditBox = new JComboBox(maxCredits);
         maxCreditBox.setBounds(600, 100, 100, 30);
         add(maxCreditBox);
 
-        instituteField = new JEditField("Organisation");
-        instituteField.setBounds(600, 140, 150, 30);
+        instituteLabel = new JLabel("Institute: ");
+        instituteLabel.setBounds(600, 140, 60, 30);
+        add(instituteLabel);
+
+        //instituteField
+        instituteField = new JEditField("");
+        instituteField.setBounds(660, 140, 150, 30);
         instituteField.setEnabled(false);
         add(instituteField);
 
+        //studyTypeBox
         studyTypeBox = new JComboBox(studyType);
         studyTypeBox.setBounds(600, 180, 150, 30);
         add(studyTypeBox);
@@ -139,6 +155,10 @@ public class SearchProgramFrame extends JDialog {
         studyCodeButton.setBounds(710, 220, 40, 30);
         add(studyCodeButton);
         studyCodeButton.setVisible(false);
+
+        descriptionAreaField = new JEditArea("Write a description.");
+        descriptionAreaField.setBounds(850, 40, 300, 200);
+        add(descriptionAreaField);
 
         saveButton = new JButton("Save");
         saveButton.setBounds(600, 350, 75, 30);
@@ -184,7 +204,7 @@ public class SearchProgramFrame extends JDialog {
                 Internship instituteSelected = (Internship) selectedProgram;
                 instituteSelected.setName(nameField.getName());
                 instituteSelected.setMaxCredit(maxCreditBox.getSelectedIndex());
-//                instituteSelected.setDescription();
+
             }
 
             if (e.getSource() == saveButton) {
@@ -208,7 +228,7 @@ public class SearchProgramFrame extends JDialog {
     private void setSelectedProgram(ExProgram program) {
         selectedProgram = program;
         if (program != null) {
-            selectedProgramLabel.setText("Selected Program: " + program.getCode());
+            selectedProgramLabel.setText("Selected Program: " + program.getName());
         } else {
             selectedProgramLabel.setText("Selected Program: ");
         }
@@ -223,13 +243,21 @@ public class SearchProgramFrame extends JDialog {
                 setSelectedProgram(null);
                 return;
             }
+            setSelectedProgram(selectedProgram);
             setSelectedProgram(tableModel.get(selectedRow));
-            selectedProgramLabel.setText(selectedProgram.getName());
             nameField.setText(selectedProgram.getName());
-            int itemIndex = (selectedProgram.getMaxCredits()/15)-1;
-            itemIndex = Math.min(itemIndex, maxCreditBox.getItemCount()-1);
+            //maxCredit
+            int itemIndex = (selectedProgram.getMaxCredits() / 15) - 1;
+            itemIndex = Math.min(itemIndex, maxCreditBox.getItemCount() - 1);
             maxCreditBox.setSelectedIndex(itemIndex);
+            //instituteField
             instituteField.setText(selectedProgram.getInstituteName());
+            //studyType
+            int selectedTypeIndex = studyTypeBox.getSelectedIndex();
+            ExProgram.ProgramType type = (ExProgram.ProgramType) studyTypeBox.getItemAt(selectedTypeIndex);
+            //studyCode
+            
+            
         }
     }
 
@@ -280,7 +308,5 @@ public class SearchProgramFrame extends JDialog {
             searchOnFilter();
         }
     }
-
-
 
 }

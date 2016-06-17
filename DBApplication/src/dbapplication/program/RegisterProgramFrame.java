@@ -1,5 +1,6 @@
 package dbapplication.program;
 
+import dbapplication.JEditArea;
 import dbapplication.JEditField;
 import dbapplication.institute.Institute;
 import dbapplication.institute.SelectInstituteDialog;
@@ -16,7 +17,7 @@ import javax.swing.*;
 public class RegisterProgramFrame extends JDialog {
 
     private JTextField instituteField, nameField, studyField;
-    private JTextArea descriptionField;
+    private JEditArea descriptionArea;
     private JButton registerButton, instituteButton, selectStudyButton;
     private JRadioButton internshipButton, studyProgramButton;
     private ButtonGroup buttonGroup;
@@ -50,7 +51,7 @@ public class RegisterProgramFrame extends JDialog {
         selectedInstitute = -1;
         instituteField.setText("");
         studyField.setText("");
-        descriptionField.setText("");
+        descriptionArea.setText("");
         nameField.setText("");
         for(int i = 0; i < termBoxes.length; i++) {
             termBoxes[i].setSelected(false);
@@ -109,9 +110,9 @@ public class RegisterProgramFrame extends JDialog {
         add(studyTypeBox);
         studyTypeBox.setVisible(false);
         
-        descriptionField = new JTextArea("Write a description");
-        descriptionField.setBounds(20, 300, 350, 100);
-        add(descriptionField);
+        descriptionArea = new JEditArea("Write a description");
+        descriptionArea.setBounds(20, 300, 350, 100);
+        add(descriptionArea);
 
         maxCreditBox = new JComboBox(maxCredit);
         maxCreditBox.setBounds(20, 150, 75, 25);
@@ -199,7 +200,7 @@ public class RegisterProgramFrame extends JDialog {
                 return;
             }
             // descriptionField
-            String description = descriptionField.getText();
+            String description = descriptionArea.getText();
             if (description.isEmpty()) {
                 description = null;
                 JOptionPane.showMessageDialog(RegisterProgramFrame.this,
