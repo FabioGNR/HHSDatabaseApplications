@@ -100,7 +100,12 @@ public class RegisterStudyDialog extends JDialog {
                         "Phone number must be entered", "Incorrect input", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            
+             if (!nr.matches(".*\\d+.*")) {
+                JOptionPane.showMessageDialog(RegisterStudyDialog.this,
+                        "Number cannot have letters", "Incorrect input", JOptionPane.WARNING_MESSAGE);
+               
+                 return;
+             }
             newStudy = new Study(code, email, nr);
             dispose();
         }
