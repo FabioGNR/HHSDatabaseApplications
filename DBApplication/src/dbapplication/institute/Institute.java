@@ -89,11 +89,9 @@ public class Institute {
             generatedSet.next();
             int id = generatedSet.getInt(1);
             statement.close();
-            System.out.println("preparedstatement werkt");
             return id;
         } catch (SQLException error) {
             System.out.println("Error: " + error.getMessage());
-            System.out.println("preparedstatement werkt niet");
         }
         return -1;
     }
@@ -113,12 +111,8 @@ public class Institute {
             statement.setInt(5, org_id);
             statement.executeUpdate();
             statement.close();
-
-            System.out.println("preparedstatement werkt");
         } catch (SQLException error) {
-
             System.out.println("Error: " + error.getMessage());
-            System.out.println("preparedstatement werkt niet");
             return false;
         }
         return true;
@@ -134,12 +128,8 @@ public class Institute {
             statement.setInt(1, org_id);
             statement.executeUpdate();
             statement.close();
-
-            System.out.println("preparedstatement werkt");
         } catch (SQLException error) {
-
             System.out.println("Error: " + error.getMessage());
-            System.out.println("preparedstatement werkt niet");
             return false;
         }
         return true;
@@ -158,10 +148,8 @@ public class Institute {
 
             statement.executeUpdate();
             statement.close();
-            System.out.println("preparedstatement werkt");
         } catch (SQLException error) {
             System.out.println("Error: " + error.getMessage());
-            System.out.println("preparedstatement werkt niet");
         }
     }
 

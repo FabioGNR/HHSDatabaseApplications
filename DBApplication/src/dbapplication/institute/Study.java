@@ -69,10 +69,8 @@ public class Study {
 
             statement.executeUpdate();
             statement.close();
-            System.out.println("preparedstatement werkt");
         } catch (SQLException error) {
             System.out.println("Error: " + error.getMessage());
-            System.out.println("preparedstatement werkt niet");
         }
     }
 
@@ -90,12 +88,8 @@ public class Study {
             statement.setString(4, code);
             statement.executeUpdate();
             statement.close();
-
-            System.out.println("Preparedstatement werkt");
         } catch (SQLException error) {
-
             System.out.println("Error: " + error.getMessage());
-            System.out.println("preparedstatement werkt niet");
             return false;
         }
         return true;
@@ -111,12 +105,8 @@ public class Study {
             statement.setString(1, code);
             statement.executeUpdate();
             statement.close();
-
-            System.out.println("preparedstatement werkt");
         } catch (SQLException error) {
-
             System.out.println("Error: " + error.getMessage());
-            System.out.println("preparedstatement werkt niet");
             return false;
         }
         return true;

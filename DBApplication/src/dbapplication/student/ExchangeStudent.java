@@ -58,7 +58,6 @@ public class ExchangeStudent extends Student {
             statement.close();
         } catch (Exception error) {
             System.out.println("Error: " + error.getMessage());
-            System.out.println("preparedstatement werkt niet :(");
             return false;
         }
         return true;
@@ -73,11 +72,8 @@ public class ExchangeStudent extends Student {
             statement.setInt(1, studentid);
             statement.executeUpdate();
             statement.close();
-
-            System.out.println("Preparedstatement werkt!");
         } catch (SQLException error) {
             System.out.println("Error: " + error.getMessage());
-            System.out.println("preparedstatement werkt niet");
             return false;
         }
         return super.delete();
@@ -101,10 +97,8 @@ public class ExchangeStudent extends Student {
 
             statement.executeUpdate();
             statement.close();
-            System.out.println("Preparedstatement werkt ");
         } catch (SQLException error) {
             System.out.println("Error: " + error.getMessage());
-            System.out.println("preparedstatement werkt niet :(");
             // delete student from supertype table
             try {
                 PreparedStatement delete = connection.prepareStatement(

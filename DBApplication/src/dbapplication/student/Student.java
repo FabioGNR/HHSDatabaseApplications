@@ -88,7 +88,6 @@ public class Student extends DatabaseTableClass {
             statement.setString(3, gender.getValue());
             statement.setString(4, email);
             statement.executeUpdate();
-            System.out.println("Preparedstatement werkt ");
             statement.close();
             // add phone numbers
             for(int i = 0; i < numbers.size(); i++) {
@@ -98,7 +97,6 @@ public class Student extends DatabaseTableClass {
             }
         } catch (SQLException error) {
             System.out.println("Error: " + error.getMessage());
-            System.out.println("preparedstatement werkt niet :(");
             return false;
         }  
         return true;
@@ -117,7 +115,6 @@ public class Student extends DatabaseTableClass {
             statement.close();
         } catch (Exception error) {
             System.out.println("Error: " + error.getMessage());
-            System.out.println("preparedstatement werkt niet :(");
             return false;
         }
         return true;
@@ -165,11 +162,8 @@ public class Student extends DatabaseTableClass {
             statement.setInt(1, studentid);
             statement.executeUpdate();
             statement.close();
-            System.out.println("Preparedstatement werkt!");
-        } catch (SQLException error) {
-            
+        } catch (SQLException error) {           
             System.out.println("Error: " + error.getMessage());
-            System.out.println("preparedstatement werkt niet");
             return false;
         }      
         return true;

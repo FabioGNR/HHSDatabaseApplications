@@ -21,9 +21,9 @@ public class RegisterProgramFrame extends JDialog {
     private JButton registerButton, instituteButton, selectStudyButton;
     private JRadioButton internshipButton, studyProgramButton;
     private ButtonGroup buttonGroup;
-    private JCheckBox[] termBoxes = new JCheckBox[ExProgram.Terms];
+    private final JCheckBox[] termBoxes = new JCheckBox[ExProgram.Terms];
     private JComboBox maxCreditBox, studyTypeBox;
-    private String[] maxCredit = {"15 EC", "30 EC", "45 EC", "60 EC"};
+    private final String[] maxCredit = {"15 EC", "30 EC", "45 EC", "60 EC"};
     private int selectedInstitute = -1;
     private Study selectedStudy = null;
 
@@ -170,7 +170,6 @@ public class RegisterProgramFrame extends JDialog {
             // nameField
             String name = nameField.getText();
             if (name.isEmpty()) {
-                name = null;
                 JOptionPane.showMessageDialog(RegisterProgramFrame.this,
                         "Please enter a name!",
                         "No name entered", JOptionPane.WARNING_MESSAGE);
